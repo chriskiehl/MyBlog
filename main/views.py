@@ -13,7 +13,6 @@ def reader_wrapper(g):
 
 def index(request):
   wrap = reader_wrapper(reader())
-
   out = '</h1>Hello world!</h1><p>This Python3 stuff working yet?</p>'
   for i in wrap:
       out += "<p>{0}</p>".format(i)
