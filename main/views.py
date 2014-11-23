@@ -9,7 +9,7 @@ def reader():
 
 def reader_wrapper(g):
     # Manually iterate over data produced by reader
-    yield from g
+    return [1,2]
 
 def index(request):
   wrap = reader_wrapper(reader())
