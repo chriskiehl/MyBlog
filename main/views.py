@@ -18,4 +18,5 @@ def index(request):
   for i in wrap:
       out += "<p>{0}</p>".format(i)
 
+
   return HttpResponse(out)
