@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+	{% load staticfiles %}
+	<link rel="stylesheet" type="text/css" href="{% static 'main/css/reset.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/bootstrap.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/style.css' %}" />
+    <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+	<meta charset="UTF-8">
+	<title>Title of the document</title>
+</head>
+
+<body>
+	<div id="header"></div>
+
+	<div class="blog-container">
+		<div class="sidebar">
+			<div class="sidebar-content">
+				<div class="icon">
+					<img src="{% static 'main/images/circle_avatar.png' %}">
+				</div>
+
+                <div id="menu">
+                    <ul class="list-unstyled">
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Projects</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">Twitter</a></li>
+                        <li><a href="#">RSS Feed</a></li>
+                    </ul>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Then Search Bar</a></li>
+                    </ul>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Then a tasteful ad</a></li>
+                    </ul>
+                </div>
+
+			</div>
+
+		</div>
+
+
+		<div class="primary">
+            <div class="section">
+			    <h2>Most Recent</h2>
+                <div class="most-recent">
+                    <div>
+                        <h3>Refactoring By Example</h3>
+                        <img src="{% static 'main/images/place_holder.png' %}" style="max-width: 100%">
+                        <p>I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or paint a fence, or service you sexually?</p>
+
+                    </div>
+                    <a href="#">Read more >></a>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Most Popular</h2>
+                <div class="pop-section">
+                    <div class="pop-prev">
+                        <img src="{% static 'main/images/pop_prev.png' %}">
+                        <h4>Parallelism in One Line</h4>
+                        <h5>A better model for day to day threading</h5>
+                    </div>
+                    <div class="pop-prev">
+                        <img src="{% static 'main/images/pop_prev.png' %}">
+                        <h4>The Great White Space Debate</h4>
+                        <h5>Putting the most important argument to rest</h5>
+                    </div>
+                    <div class="pop-prev">
+                        <img src="{% static 'main/images/pop_prev.png' %}">
+                        <h4>How I use Python for Windows Automation and other stuff ya know</h4>
+                        <h5>Or how to make adobe premiere less painful</h5>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section section-last">
+                <h2>Backlog</h2>
+                <p>Two col. Twitter style "cards" with previews of each article</p>
+            </div>
+
+		</div>
+	</div>
+</body>
+
+</html>

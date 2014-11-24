@@ -1,0 +1,14 @@
+{% load staticfiles %}
+<div class="popular-slugs">
+    {% if popular_posts %}
+        {% for popular_post in popular_posts %}
+            <div class="slug">
+                <img src="{% static 'myblog/images/bridge.jpeg' %}">
+                <h4>{{popular_post.title}}</h4>
+                <p>{{popular_post.sub_title}}</p>
+            </div>
+            {% endfor %}
+    {% else %}
+        <p>No Data Available : (</p>
+    {% endif %}
+</div>

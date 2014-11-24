@@ -12,10 +12,5 @@ def reader_wrapper(g):
     return [1,2]
 
 def index(request):
-  wrap = reader_wrapper(reader())
-  out = '</h1>Hello world!</h1><p>This Python3 stuff working yet?</p>'
-  for i in wrap:
-      out += "<p>{0}</p>".format(i)
-
-
-  return HttpResponse(out)
+  title = "Hello world!"
+  return render(request, 'main/index.html', locals())

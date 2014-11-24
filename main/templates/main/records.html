@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+
+
+
+{% block head %}
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.0.0-rc13.min.js"></script>
+    <script>
+        // manually adding a format method to the String type because javascript *grumble grumble*
+        String.prototype.format = String.prototype.format = function() {
+            var s = this;
+            var i = arguments.length;
+            while (i--) {
+                s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i]);
+            }
+            return s;
+        };
+
+        var countDisplayTemplate =
+                '<div class="modal-body info-line" id="upload-info">' +
+                '<p><span class="icons b-16 b-info"></span><span id="file-count"></span></p>' +
+                '<p style="float: right">Clear Queue</p>' +
+                '</div>';
+
+
+        var uploadPanelTemplate =
+                '<div class="upload-display">' +
+                '<a href="#" class="modal-close-small">x</a>' +
+                '<p>Filename: <span class="filename-field"></span></p>' +
+                '<div class="inline-ctrl-group">' +
+                '<select class="category-field">' +
+                '{% for category in str_categories %}' +
+                    '<option>{{ category }} </option>' +
+                    '{% endfor %}' +
+                '</select>' +
+                '<input type="text" class="description-field" placeholder="Enter a description (optional)" style="direction: ltr">' +
+                '</div>' +
+                '<div class="progress-section" style="display: none">' +
+                '<p><span class="icons b-16 b-ok" style="display: none; float: right;"></span> Status: <span>queued.</p>' +
+                '<div class="progressbar"></div>' +
+                '</div></div>';
+
+
+        function InfoDisplay(panels) {
+            var self = this;
+            this._element = $('#file-count');
+            this._panels = panels;
+
+            this.messageTemplates = [
+                "{0} files currently staged for upload",
+                "Uploading file 1 of 7",
+                "",
+                "Successfully Uploaded {0} files.",
+                "Failed to upload {0} files. Please try again."
+            ];
+
+            this.setState = function(state) {
+
+            }
+
+            this.update = function() {
+                var msg = "{0} files currently staged for upload".format(self._panels.length);
+                self._element.text(msg);
+            }
+
+
+        }
+
+        function UploadPanel(parent, file) {
+            this.states = {
+                PENDING: 0,
+                UPLOADING: 1,
+                UPLOADED: 2,
+                SYNCHED: 3,
+                COMPLETED: 4,
+                FAILED: 5
+            };
+
+            var self = this;
+            this._parent = parent;
+            this._file = file;
+            this._filename = file.name;
+            this._remoteKey = '';
+            this._bucket = new AWS.S3({params: {Bucket: 'teststore12345'}});
+
+            // UI
+            this._element = $('<div />').html(uploadPanelTemplate);
+            this._element.css('display', 'block');
+
+            this._ctrlGroup = this._element.find('.inline-ctrl-group');
+            this._progressSection = this._element.find('.progress-section');
+            this._progressbar = this._element.find('.progressbar');
+            this._statusText = this._progressSection.find('p span:last');
+            this._successIcon = this._progressSection.find('p span:first');
+
+            // form vars
+            this._fileField = this._element.find('.filename-field').text(file.name);
+            this._categoryField = this._element.find('.category-field');
+            this._descField = this._element.find('.description-field');
+
+            this._currentState = this.states.PENDING;
+
+
+
+            // register handlers
+            this._element.find('.modal-close-small').click(function (evt) {
+                self.onClose(this);
+            });
+
+            this.isValidForm = function () {
+                return (self._category[0].selectedIndex < 1);
+            }
+
+
+            this.getFilename = function () {
+                return self._filename;
+            }
+
+            this.createKeyFromFilename = function (fname) {
+                var path = document.URL.split('advantage/')[1];
+                return path + fname;
+            }
+
+            this.onClose = function () {
+                self._parent.removePanel(self);
+                self._element.animate({height: '0px'}, 300, "swing", function () {
+                    self._element.remove();
+                });
+            }
+
+            this.html = function () {
+                return self._element;
+            }
+
+            this.showProgressSection = function() {
+                self._ctrlGroup.css('display', 'none');
+                self._progressSection.fadeIn('medium');
+            }
+
+            this.flagDuplicateKeys = function(filename) {
+                var key = self.createKeyFromFilename(filename);
+                self._bucket.getObject({Key: key}, function(error, res) {
+                    if (error.statusCode != 404) {
+                        // set this panels status to invalid
+                        // style it as such
+                        // alert the user
+
+                    }
+                })
+            }
+
+            this.upload = function(remainingQueue, callback) {
+                self._element.get(0).scrollIntoView();
+                var params = {Key: self.createKeyFromFilename(self._filename), ContentType: self._file.type, Body: self._file};
+                self._statusText.text('uploading');
+                self._bucket.putObject(params).on('httpUploadProgress', function (progress) {
+                    loaded = (progress.loaded / progress.total) * 100;
+                    self._progressbar.css({'background': '-webkit-linear-gradient(left, #7db9e8 0%,#7db9e8 ' + loaded + '%,#CCCEC8 36%,#CCCEC8 ' + loaded + '%,#CCCEC8 100%)'});
+                    console.log(loaded);
+                }).send(function (err, data) {
+                    if (err) {
+                        console.log('ERROR!!');
+                    } else {
+                        $.ajax({
+                            url: './uploads/',
+                            type: 'POST',
+                            data: {
+                                'category': self._categoryField.find('option:selected').text(),
+                                'description': self._descField.val(),
+                                'csrfmiddlewaretoken': document.cookie['csrftoken']
+                            }
+                        }).done(function (response) {
+                            $.each(response, function(index, elm) {
+                                console.log('Received: ' + elm);
+                            });
+                        });
+
+                        // make pretty
+                        self._statusText.text('Done').css('color', 'green');
+                        self._successIcon.css('display', 'inline-block');
+                        self._element.find('.upload-display').css('background-color', '#E1E1E0');
+                        self._progressbar.fadeOut('fast');
+                        callback(remainingQueue)
+                    }
+                });
+            }
+        }
+
+
+        function Modal() {
+            var self = this;
+            this._container = null;
+            this._mainBody = null;
+            this._panels = [];
+            this._bucket = new AWS.S3({params: {Bucket: 'teststore12345'}});
+
+            this.init = function () {
+                self._container = $('#upload-modal');
+                self._mainBody = $('.panel-area');
+                self._container.css('display', 'block');
+                self._infoPanel = {
+                    count: 0,
+                    elm: $('#file-count')
+                };
+
+                // Register Handlers
+                $('#id_attachment').change(function (evt) {
+                    self.handleFiles(this.files);
+                });
+                $('#close-modal').click(function (evt) {
+                    self.closeModal();
+                });
+            };
+
+            this.updateInfoDisplay = function (amount) {
+                self._infoPanel.count += amount;
+                self._infoPanel.elm.text("You're uploading " + self._infoPanel.count + " files.");
+            }
+
+            this.removePanel = function (panel) {
+                var index = self._panels.indexOf(panel);
+                if (index < 0) throw DOMException('TODO: Fix this!');
+                self._panels.splice(index, 1);
+                self.updateInfoDisplay(-1);
+            }
+
+            this.handleFiles = function (files) {
+                self.updateInfoDisplay(files.length)
+
+                for (var i = 0; i < files.length; i++) {
+                    var panel = new UploadPanel(self, files[i])
+                    self._panels.push(panel);
+                    self._mainBody.append(panel.html())
+                }
+            }
+
+            this.closeModal = function () {
+                console.log('Closing modal');
+            }
+
+            this.uploadQueue = function(queue) {
+                if (queue.length > 0) {
+                    queue[0].upload(queue.slice(1, queue.length), self.uploadQueue);
+                } else {
+                    self._infoPanel.elm.text('' + self._panels.length + ' files uploaded successfully!');
+                }
+            }
+
+            this.getParentContainer = function() {
+                return self._mainBody;
+            }
+
+            $("#upload-button").click(function (evt) {
+                $("#upload-button").css('display', 'none');
+                for (var i = 0; i < self._panels.length; i++) {
+                    setTimeout(self._panels[i].showProgressSection, i * 80);
+                }
+                self.uploadQueue(self._panels);
+
+{#                $.ajax({#}
+{#                    url: '.',#}
+{#                    type: 'POST',#}
+{#                    data: {#}
+{#                        'category': 'G',#}
+{#                        'description': 'my description',#}
+{#                        'csrfmiddlewaretoken': document.cookie['csrftoken']#}
+{#                    }#}
+{#                }).done(function () {#}
+{#                    alert("Hello!");#}
+{#                });#}
+            });
+        }
+
+
+        $(document).ready(function () {
+            AWS.config.update({accessKeyId: 'AKIAJPGACH3JNO5LTGXQ', secretAccessKey: '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'});
+
+            var s3 = new AWS.S3();
+            var bucket = new AWS.S3({params: {Bucket: 'teststore12345'}});
+
+
+            function displayShadowbox() {
+                $('#overlay').css('display', 'block').animate({opacity: 60}, 5000);
+            }
+
+            displayShadowbox();
+            var modal = new Modal();
+            modal.init()
+
+            $('[type=submit]').click(function (evt) {
+                evt.preventDefault();
+                displayShadowbox();
+
+                var progressbar = $('.progressbar');
+                var bucket = new AWS.S3({params: {Bucket: 'teststore12345'}});
+                console.log('hello!');
+                console.log($('#id_attachment').get(0).files[0].size);
+                var fileChooser = $('#id_attachment').get(0);
+                var file = fileChooser.files[0];
+                if (file) {
+                    console.log('Found file!');
+                    $('.uploadbar').css('display', 'block');
+                    var params = {Key: file.name, ContentType: file.type, Body: file};
+                    bucket.putObject(params).on('httpUploadProgress', function (progress) {
+                        loaded = (progress.loaded / progress.total) * 100;
+                        progressbar.css({'background': '-webkit-linear-gradient(left, #7db9e8 0%,#7db9e8 ' + loaded + '%,#CCCEC8 36%,#CCCEC8 ' + loaded + '%,#CCCEC8 100%)'
+                        });
+                        console.log(loaded);
+                    }).send(function (err, data) {
+                        if (err) {
+                            console.log('ERROR!!');
+                        } else {
+                            $('#filename-display').text('filename');
+                            $('#progress-text').text('Upload Complete');
+                            $('.uploadbar ul').removeClass('b-globe');
+                            $('.uploadbar ul').addClass('b-ok');
+                        }
+                    });
+                } else {
+                    console.log('Nothing to upload.');
+                }
+            });
+
+
+
+
+        });
+    </script>
+
+    <style>
+        #overlay {
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 5;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            opacity: 0;
+        }
+
+        .uploadbar {
+            width: 100%;
+            height: 24px;
+            display: none;
+        }
+
+        #upload-modal {
+            display: none;
+            position: fixed;
+            left: 35%;
+            top: 10%;
+            width: 30%;
+            height: 35px;
+            z-index: 10;
+
+        }
+
+        .panel-area {
+            width: 100%;
+            max-height: 350px;
+            overflow-y: auto;
+            color: #203e58;
+        }
+
+        .panel-template {
+            display: none;
+        }
+
+        .progress-section {
+            margin-top: 8px;
+        }
+
+        .modal-top {
+            box-sizing: border-box;
+            border: 1px solid #babdb6;
+            padding: 9px;
+            width: 100%;
+            height: 35px;
+            -webkit-border-radius: 3px 3px 0px 0px;
+            background-color: #eeeeec;
+            margin: 0;
+        }
+
+        .modal-top h4 {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .modal-body {
+            box-sizing: border-box;
+            border-left: 1px solid #babdb6;
+            border-right: 1px solid #babdb6;
+            border-bottom: 1px solid #babdb6;
+            padding: 9px;
+            width: 100%;
+        {#            max-height: 60px;#} {#            overflow-y: auto;#} background-color: #ffffff;
+            margin: 0;
+            font-size: 1.1em;
+        }
+
+        .upload-display {
+            box-sizing: border-box;
+            border-left: 1px solid #babdb6;
+            border-right: 1px solid #babdb6;
+            border-bottom: 1px solid #babdb6;
+            padding: 9px;
+            width: 100%;
+            background-color: #ffffff;
+            margin: 0;
+            font-size: 1.1em;
+        }
+
+        .modal-bottom {
+            box-sizing: border-box;
+            border: 1px solid #babdb6;
+            border-top: none;
+            padding: 9px;
+            width: 100%;
+            height: 35px;
+            -webkit-border-radius: 0px 0px 3px 3px;
+            background-color: #eeeeec;
+            margin: 0;
+        }
+
+        .modal-close {
+            float: right;
+            padding-right: 12px;
+            font-weight: bold;
+            font-size: 1.3em;
+            color: #A4A5A2;
+            text-shadow: 1px 1px 2px #fefffc
+        }
+
+        .modal-close-small {
+            float: right;
+            padding-right: 8px;
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #A4A5A2;
+            text-shadow: 1px 1px 2px #fefffc
+        }
+
+        .info-line {
+            background-color: #f6f5f4;
+        }
+
+        .icons {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-right: 6px;
+        }
+
+        .inline-ctrl-group {
+            margin-top: 6px;
+        }
+
+        .inline-ctrl-group select {
+            width: 30%;
+            display: inline-block;
+        }
+
+        .inline-ctrl-group input {
+            float: right;
+            width: 60%;
+            display: inline-block;
+        }
+
+        .progressbar {
+            width: 100%;
+            height: 10px;
+            background: #CCCEC8;
+            border-radius: 5px;
+            margin-left-left: 10%;
+            margin-top: 6px;
+        }
+
+        ::-webkit-input-placeholder {
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="plan plan-left-column W65">
+        <div class="tabbed-content-box">
+            <ul class="nav b-16 b-folder">
+                <li><span>Uploaded Files &amp; Records</span></li>
+            </ul>
+
+            <div class="content">
+                <table class="grid grid-fixed target" cellspacing="0">
+                    <thead>
+                    <tr>
+                        <th class="W20">Category</th>
+                        <th class="W45">File</th>
+                        <th class="W15">Date</th>
+                        <th class="W20">User</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% if files %}
+                    {% else %}
+                        <tr class="no-data">
+                            <td colspan="99">There are no attached records.</td>
+                        </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="plan plan-right-column W35">
+        <div class="tabbed-content-box">
+            <ul class="nav b-16 b-add">
+                <li><span>Upload a File</span></li>
+            </ul>
+
+            <div class="content">
+                <div class="instructions flush half-width">
+                    <p>
+                        Select a file to upload by clicking the <em>Browse</em> button below. Select a
+                        <em>Category</em>. You may also enter a short description.
+                    </p>
+
+                    <p>
+                        <strong>Please be patient once you click <em>Upload</em>.</strong> Depending on the
+                        file size and the speed of your Internet connection, it may take a short time to
+                        upload the file.
+                    </p>
+
+                    <p>
+                        For best results, scan files in grayscale. To reduce file size, you can scan files
+                        in lower DPI (dots per inch).
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {#        <div class="uploadbar">#}
+    {#            <div class="tabbed-content-box">#}
+    {#                <ul class="nav b-16 b-globe">#}
+    {#                    <li><span>Uploading File</span></li>#}
+    {#                </ul>#}
+    {#                <div class="content">#}
+    {#                    <p id="filename-display">Uploading filename.pdf</p>#}
+    {##}
+    {#                    <p id="progress-text">Progress</p>#}
+    {##}
+    {#                    <div class="progressbar"></div>#}
+    {#                </div>#}
+    {#            </div>#}
+    {#        </div>#}
+
+
+
+
+
+    <div id="upload-modal">
+        <div class="modal-top">
+            <a href="#" class="modal-close" id="close-modal">X</a>
+            <h4>Upload Files</h4>
+        </div>
+
+        <div class="modal-body" id="base-box">
+            <p>Select one or more files to upload by clicking the Browse button below.</p>
+
+            <p>Hold down the <code>Ctrl</code> key to select more than one file.</p>
+
+            <input type="file" name="attachment" id="id_attachment" multiple>
+
+            <p>Bender! Ship! Stop bickering or I'm going to come back there and change
+                your opinions manually! Okay, it's 500 dollars, you have no choice of
+                carrier, the battery can't hold the charge and the reception isn't very
+                … No, just a regular mistake.</p>
+        </div>
+
+        <div class="modal-body info-line" id="upload-info">
+            <p><span class="icons b-16 b-info"></span><span id="file-count">You have 0 files staged for upload. Press 'Choose Files' to get started. </span>
+            </p>
+        </div>
+
+        <div class="panel-area">
+            {# Filled dynamically #}
+        </div>
+
+        <div class="modal-bottom">
+            <button style="float: right;" id="upload-button">Upload</button>
+        </div>
+    </div>
+
+
+    <div id="overlay"></div>
+
+
+
+
+{% endblock %}
+
+{#<form enctype="multipart/form-data" method="post" action=".">#}
+{#    {% csrf_token %}#}
+{##}
+{#    {% form_errors form %}#}
+{##}
+{#    {% form %}#}
+{#        {% field form.attachment span=8 %}#}
+{#        {% field form.category span=4 %}#}
+{#        {% field form.description span=12 %}#}
+{#    {% endform %}#}
+{##}
+{#    {% button divclass="commands flush" classes="next" icon="b-add" text="Upload" %}#}
+{##}
+{#</form>#}
+</body>
+</html>

@@ -1,0 +1,26 @@
+{% if article %}
+	<h1>{{ article.title }}</h1>
+	<h2>{{article.sub_title}}</h2> 
+	<h5>{{article.pub_date}}</h5>
+	<p>{{article.body}}</p> 
+	<hr> 
+	<h3>Comments:</h3> 
+
+	<form action="{% url 'blog:new_comment' article.id %}" method="post"> 
+	{% csrf_token %}
+		<label>Name</label> 
+		<input type="text" name="name">
+		<label>Comment:</label>
+		<textarea name='comment_body' >Your comment</textarea> 
+		<input type="submit">
+	</form>
+	<ul>
+		{% for comment in article.comment_set.all %}
+			<li><em>{{ comment.name }} </em></li>
+			<li> {{ comment.body }}</em>
+		{% endfor %}		
+	</ul>
+
+{% else %}
+	<p>Nothin here, mate</p> 
+{% endif %}
