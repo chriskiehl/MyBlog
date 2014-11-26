@@ -23,7 +23,7 @@ DEBUG = False
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['54.148.72.44', '127.0.0.1']
 
 
 # Application definition
@@ -37,7 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'blog',
     'main',
-    'storages'
+    'storages',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -93,9 +93,7 @@ USE_TZ = True
 
 
 
-AWS_KEY = 'AKIAIHMPWPDK7JNWKYOA'
-AWS_SECRET_KEY = '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'
-AWS_BUCKET = 'teststore1234'
+
 
 
 # Static files (CSS, JavaScript, Images)
@@ -103,17 +101,21 @@ AWS_BUCKET = 'teststore1234'
 
 STATIC_URL = '/static/'
 
-# STATIC_ROOT = '/var/www/blog/static'
+STATIC_ROOT = '/var/www/blog/static'
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'main/static'),
 )
 
-if not DEBUG:
-  AWS_STATIC_BUCKET = 'awsblogstore'
-  STATICFILES_STORAGE = 'storages.backends.s3boto.s3BotoStorage'
-  S3_URL = 'http://{0}.s3.amazonaws.com/'.format(AWS_STATIC_BUCKET)
-  STATIC_URL = S3_URL
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+AWS_ACCESS_KEY_ID = 'AKIAIAFEPKCFEGTKI5LA'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'awsblogstore'
+AWS_CALLING_FORMAT = 'http://{0}.s3.amazonaws.com/'.format(AWS_STORAGE_BUCKET_NAME)
+STATIC_URL = AWS_CALLING_FORMAT
+
 
 
 
