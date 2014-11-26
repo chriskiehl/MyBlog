@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
@@ -20,7 +19,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = '5b@p5_7gw=(9mmtcyn%-iqf8vpe@b5ev0@z*p4#@c)efwjv9vb'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 TEMPLATE_DEBUG = True
 
@@ -37,7 +36,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blog',
-    'main'
+    'main',
+    'storages'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -92,20 +92,30 @@ USE_L10N = True
 USE_TZ = True
 
 
+
+AWS_KEY = 'AKIAIHMPWPDK7JNWKYOA'
+AWS_SECRET_KEY = '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'
+AWS_BUCKET = 'teststore1234'
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = '/var/www/blog/static'
+# STATIC_ROOT = '/var/www/blog/static'
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'main/static'),
 )
 
-AWS_KEY = 'AKIAIHMPWPDK7JNWKYOA'
-AWS_SECRET_KEY = '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'
-AWS_BUCKET = 'teststore1234'
+if not DEBUG:
+  AWS_STATIC_BUCKET = 'awsblogstore'
+  STATICFILES_STORAGE = 'storages.backends.s3boto.s3BotoStorage'
+  S3_URL = 'http://{0}.s3.amazonaws.com/'.format(AWS_STATIC_BUCKET)
+  STATIC_URL = S3_URL
+
+
 
 
 
