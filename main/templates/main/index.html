@@ -1,3 +1,4 @@
+{% load cache %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,7 +8,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'main/css/style.css' %}" />
     <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
 	<meta charset="UTF-8">
-	<title>Title of the document</title>
+	<title>Cool beans</title>
 </head>
 
 <body>
@@ -44,41 +45,80 @@
 		<div class="primary">
             <div class="section">
 			    <h2>Most Recent</h2>
-                <div class="most-recent">
+                <div class="most-recentz">
                     <div>
                         <h3>Refactoring By Example</h3>
-                        <img src="{% static 'main/images/place_holder.png' %}" style="max-width: 100%">
+                        <img src="{% static 'main/images/place_holder.png' %}" >
                         <p>I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or paint a fence, or service you sexually?</p>
 
                     </div>
+{#                    <div style="float: right;">#}
+{#                        <p>9h ago</p>#}
+{#                        <p>24 comments</p>#}
+{#                    </div>#}
                     <a href="#">Read more >></a>
                 </div>
             </div>
 
             <div class="section">
                 <h2>Most Popular</h2>
-                <div class="pop-section">
-                    <div class="pop-prev">
-                        <img src="{% static 'main/images/pop_prev.png' %}">
-                        <h4>Parallelism in One Line</h4>
-                        <h5>A better model for day to day threading</h5>
+{#                {% cache 60 'pop-section' %}#}
+                    <div class="pop-section">
+                        {% for article in most_popular %}
+                            <div class="pop-prev">
+                                <img src="{% static 'main/images/'%}{{ article.title_image }} ">
+                                <h4>{{ article.title }}</h4>
+                                <div class="sub-title">
+                                    <h5>{{ article.sub_title }}</h5>
+                                </div>
+                                <a href="#">Read >></a>
+                            </div>
+                        {% endfor %}
                     </div>
-                    <div class="pop-prev">
-                        <img src="{% static 'main/images/pop_prev.png' %}">
-                        <h4>The Great White Space Debate</h4>
-                        <h5>Putting the most important argument to rest</h5>
-                    </div>
-                    <div class="pop-prev">
-                        <img src="{% static 'main/images/pop_prev.png' %}">
-                        <h4>How I use Python for Windows Automation and other stuff ya know</h4>
-                        <h5>Or how to make adobe premiere less painful</h5>
-                    </div>
-                </div>
-            </div>
+{#                {% endcache %}#}
 
+
+            </div>
+           {% load simple_numer %}
             <div class="section section-last">
                 <h2>Backlog</h2>
                 <p>Two col. Twitter style "cards" with previews of each article</p>
+
+
+
+                <div class="comment-box first-comment">
+
+                    {% with comment=comments|next_item %}
+                        <h4>Author: {{ comment.author }}</h4>
+                        <p>{{ comment.body }}</p>
+                    {% endwith %}
+
+
+                    {% set_int curr_level = 0 %}
+                    {% for level, comment in comments %}
+                        <p>curr_level: {{ curr_level }} level: {{ level }}</p>
+                        {% if level == curr_level %}
+                            <p>curr_level is the same as level!!</p>
+                            </div>
+                        {% elif level > curr_level %}
+                            <p>curr_level is > than level</p>
+                            {% increment curr_level %}
+                        {% elif level < curr_level %}
+                            <p>curr_level is < than level</p>
+                            <p>Decrimenting curr_level so it matches level</p>
+                            {% for _ in level|to:curr_level %}
+                                {% decrement curr_level %}
+                                </div>
+                            {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div class="comment-box">
+                            <h3>{{ comment.author }}</h3>
+                            <p>comment.body</p>
+                            <p>Comment Level: {{ level }}, Prev Level: {{ prev_level }}</p>
+                    {% endfor %}
+{#                </div>#}
             </div>
 
 		</div>
