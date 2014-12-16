@@ -1,0 +1,122 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="{% static 'main/js/jquery-2.1.1.min.js' %}"></script>
+    <script src="{% static 'main/js/Bacon.js' %}"></script>
+
+    <script>
+        function Vector2(x,y) {
+            var self = this;
+            self.x = x;
+            self.y = y;
+
+            var add = function(vector) {
+                return new Vector2(self.x + vector.x, self.y + vector.y);
+            }
+        }
+
+        function sayHi() {
+            console.log("Hello!");
+        }
+
+        function rotateLeft(pos) {
+            return new Vector2(pos.y, -pos.x);
+        }
+
+        function rotateRight(pos) {
+            return new Vector2(-pos.y, pos.x);
+        }
+
+        $(document).ready(function() {
+            var ticks  = $('button.tick').asEventStream('click');
+            var lefts  = $('button.left').asEventStream('click');
+            var rights = $('button.right').asEventStream('click');
+
+            var actions =
+                lefts.map(function()  { return rotateLeft  }).merge(
+                rights.map(function() { return rotateRight }));
+
+            var startDirection = new Vector2(0,1);
+            var startPosition  = new Vector2(0,0);
+
+            var direction = actions.scan(startDirection, function(x, f) {
+               return f(x);
+            });
+
+            var currentDirection = direction.sampledBy(ticks);
+
+            var position = currentDirection.scan(startPosition, function(x,y) {
+                return x.add(y);
+            });
+
+            position.map(Array).onValue(function(x) {
+                console.log(x);
+            });
+
+
+
+
+
+        });
+
+    </script>
+
+
+
+
+    <style>
+        body {
+            background-color: #f2f2f2;
+        }
+        .contents {
+            margin: 0 auto;
+            margin-top: 100px;
+            width: 450px;
+            background-color: #ffffff;
+        }
+
+        .head {
+            box-sizing: border-box;
+            padding: 5px;
+            border: 1px solid #cecece;
+            border-bottom: none;
+        }
+
+        .body {
+            box-sizing: border-box;
+            padding: 5px;
+            border-top: 1px solid #cecece;
+            border-left: 1px solid #cecece;
+            border-right: 1px solid #cecece;
+        }
+
+        .foot {
+            box-sizing: border-box;
+            padding: 5px;
+            border: 1px solid #cecece;
+            text-align: right;
+        }
+    </style>
+
+
+</head>
+
+
+
+<body>
+{#    <div class="contents">#}
+{#        <div class="head">I'm an upload panel!</div>#}
+{#        <div class="body"><input type="file" name="myfiles" multiple="multiple"></div>#}
+{#        <div class="body">There</div>#}
+{#        <div class="body">Partner</div>#}
+{#        <div class="foot"><button>upload</button></div>#}
+{#    </div>#}
+    <button class="left">Left</button>
+    <button class="right">Right</button>
+    <button class="tick">Tick</button>
+</body>
+</html>

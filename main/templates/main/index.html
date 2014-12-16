@@ -26,11 +26,11 @@
                         <li><a href="#">About</a></li>
                         <li><a href="#">Projects</a></li>
                         <li><a href="#">Contact</a></li>
-                        <li><a href="#">Twitter</a></li>
+                        <li><a target="_blank" href="https://twitter.com/thechriskiehl">Twitter</a></li>
                         <li><a href="#">RSS Feed</a></li>
                     </ul>
                     <ul class="list-unstyled">
-                        <li><a href="#">Then Search Bar</a></li>
+                        <li><input type="text" placeholder="search"></li>
                     </ul>
                     <ul class="list-unstyled">
                         <li><a href="#">Then a tasteful ad</a></li>
@@ -45,10 +45,10 @@
 		<div class="primary">
             <div class="section">
 			    <h2>Most Recent</h2>
-                <div class="most-recentz">
+                <div class="most-recent">
                     <div>
-                        <h3>Refactoring By Example</h3>
-                        <img src="{% static 'main/images/place_holder.png' %}" >
+                        <h3>Quick and Dirty Computer Vision</h3>
+                        <img src="{% static 'main/images/grumpy.png' %}" >
                         <p>I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or paint a fence, or service you sexually?</p>
 
                     </div>
@@ -79,48 +79,39 @@
 
 
             </div>
-           {% load simple_numer %}
-            <div class="section section-last">
+
+            <div class="section">
                 <h2>Backlog</h2>
                 <p>Two col. Twitter style "cards" with previews of each article</p>
+                <div class="most-recent">
+                    <div>
+                        <h3>Refactoring By Example</h3>
+                        <img src="{% static 'main/images/place_holder.png' %}" >
+                        <p>I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or paint a fence, or service you sexually?</p>
 
+                    </div>
+                    <a href="#">Read more >></a>
+                </div>
 
+                <hr>
 
-                <div class="comment-box first-comment">
+                <div class="most-recent">
+                    <div>
+                        <h3>Refactoring By Example</h3>
+                        <img src="{% static 'main/images/grumpy.png' %}" >
+                        <p>I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or paint a fence, or service you sexually?</p>
 
-                    {% with comment=comments|next_item %}
-                        <h4>Author: {{ comment.author }}</h4>
-                        <p>{{ comment.body }}</p>
-                    {% endwith %}
+                    </div>
+                    <a href="#">Read more >></a>
+                </div>
 
-
-                    {% set_int curr_level = 0 %}
-                    {% for level, comment in comments %}
-                        <p>curr_level: {{ curr_level }} level: {{ level }}</p>
-                        {% if level == curr_level %}
-                            <p>curr_level is the same as level!!</p>
-                            </div>
-                        {% elif level > curr_level %}
-                            <p>curr_level is > than level</p>
-                            {% increment curr_level %}
-                        {% elif level < curr_level %}
-                            <p>curr_level is < than level</p>
-                            <p>Decrimenting curr_level so it matches level</p>
-                            {% for _ in level|to:curr_level %}
-                                {% decrement curr_level %}
-                                </div>
-                            {% endfor %}
-                            </div>
-                        {% endif %}
-
-                        <div class="comment-box">
-                            <h3>{{ comment.author }}</h3>
-                            <p>comment.body</p>
-                            <p>Comment Level: {{ level }}, Prev Level: {{ prev_level }}</p>
-                    {% endfor %}
-{#                </div>#}
+{#                {% include 'main/comment_section.html' %}#}
             </div>
 
+            <div class="section section-last">
+                <a href="#" style="float: left;">Prev</a>
+                <a href="#" style="float: right;">Next</a>
+            </div>
 		</div>
 	</div>
 </body>

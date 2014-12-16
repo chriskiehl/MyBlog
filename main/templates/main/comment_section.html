@@ -1,0 +1,34 @@
+{% load simple_numer %}
+{% load staticfiles %}
+
+<div class="comments-header">
+    <h4>32 comments</h4>
+
+    <div class="share">
+        <img src="{% static 'main/images/fb_icon.png' %}" >
+        <img src="{% static 'main/images/gp_icon.png' %}" >
+        <img src="{% static 'main/images/twitter_icon.png' %}">
+    </div>
+
+</div>
+
+<div class="root-comment">
+    {% with comment=comments|next_item %}{% endwith %}
+    {% set_int curr_level = 0 %}
+    {% for level, comment in comments %}
+        {% if level == curr_level %} </div>
+        {% elif level > curr_level %} {% increment curr_level %}
+        {% elif level < curr_level %}
+            {% for _ in level|to:curr_level %}
+                {% decrement curr_level %}
+                </div>
+            {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="comment-box">
+            <h3>{{ comment.author }}</h3>
+            <p>comment.body</p>
+            <p>Comment Level: {{ level }}, Prev Level: {{ prev_level }}</p>
+    {% endfor %}
+</div>

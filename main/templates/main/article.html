@@ -1,26 +1,73 @@
-{% if article %}
-	<h1>{{ article.title }}</h1>
-	<h2>{{article.sub_title}}</h2> 
-	<h5>{{article.pub_date}}</h5>
-	<p>{{article.body}}</p> 
-	<hr> 
-	<h3>Comments:</h3> 
+{% load cache %}
+<!DOCTYPE html>
+<html>
+<head>
+	{% load staticfiles %}
+	<link rel="stylesheet" type="text/css" href="{% static 'main/css/reset.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/bootstrap.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/style.css' %}" />
+    <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+	<meta charset="UTF-8">
+	<title>Cool beans</title>
+</head>
 
-	<form action="{% url 'blog:new_comment' article.id %}" method="post"> 
-	{% csrf_token %}
-		<label>Name</label> 
-		<input type="text" name="name">
-		<label>Comment:</label>
-		<textarea name='comment_body' >Your comment</textarea> 
-		<input type="submit">
-	</form>
-	<ul>
-		{% for comment in article.comment_set.all %}
-			<li><em>{{ comment.name }} </em></li>
-			<li> {{ comment.body }}</em>
-		{% endfor %}		
-	</ul>
+<body>
+	<div id="header"></div>
 
-{% else %}
-	<p>Nothin here, mate</p> 
-{% endif %}
+	<div class="blog-container">
+		<div class="sidebar">
+			<div class="sidebar-content">
+				<div class="icon">
+					<img src="{% static 'main/images/circle_avatar.png' %}">
+				</div>
+
+                <div id="menu">
+                    <ul class="list-unstyled">
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Projects</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a target="_blank" href="https://twitter.com/thechriskiehl">Twitter</a></li>
+                        <li><a href="#">RSS Feed</a></li>
+                    </ul>
+                    <ul class="list-unstyled">
+                        <li><input type="text" placeholder="search"></li>
+                    </ul>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Then a tasteful ad</a></li>
+                    </ul>
+                </div>
+
+			</div>
+
+		</div>
+
+
+		<div class="primary">
+            <div class="section">
+                <div class="most-recent">
+                    <h2>Quick and Dirty Computer Vision</h2>
+                    <h3>Teachin dat computer stuff</h3>
+                    <img src="{% static 'main/images/grumpy.png' %}" >
+
+                    <p>I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or paint a fence, or service you sexually?</p>
+                    <p>I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or paint a fence, or service you sexually?
+                    I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or</p>
+                    <p>I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or paint a fence, or service you sexually?</p>
+                    <p>I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or paint a fence, or service you sexually?</p>
+                    <p>I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or paint a fence, or service you sexually?
+                    I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or</p>
+                    <p>I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or paint a fence, or service you sexually?</p>
+                </div>
+            </div>
+{#            <div class="section section-last">#}
+{#                <a href="#" style="float: left;">Prev</a>#}
+{#                <a href="#" style="float: right;">Next</a>#}
+{#            </div>#}
+              <div class="section section-last">
+                    {% include 'main/comment_section.html' %}
+              </div>
+		</div>
+	</div>
+</body>
+
+</html>

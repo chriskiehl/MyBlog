@@ -1,8 +1,11 @@
-
 /*body {*/
-	/*background: white;*/
-    /*font-size: 100%;*/
+/*background: white;*/
+/*font-size: 100%;*/
 /*}*/
+
+body {
+    overflow-y: scroll;
+}
 
 h2 {
     font-family: 'Lato', sans-serif;
@@ -10,7 +13,7 @@ h2 {
 }
 
 #header {
-	height: 50px;
+    height: 50px;
 }
 
 #menu {
@@ -24,46 +27,76 @@ h2 {
     width: 65%;
 }
 
+#menu input {
+    /*border-bottom: 1px solid #a6c6fc;*/
+    width: 100%;
+}
+
 .comment-box {
-    border: 1px solid saddlebrown;
+    border-left: 1px solid saddlebrown;
     margin-left: 15px;
 }
 
+.root-comment {
+    margin-left: 0;
+    border: 1px solid blue;
+}
+
+.comments-header:after {
+    content: "";
+    display: block;
+    clear: both;
+}
+
+.share {
+    float: right;
+}
+
+.share img {
+    display: block;
+    float: right;
+    margin-left: 10px;
+}
+
+.root-comment > .comment-box:nth-of-type(1) {
+    margin-left: 0;
+}
+
 .blog-container {
-	width: 62.5%;
-	height: 100%;
-	margin: 0 auto;
+    width: 62.5%;
+    height: 100%;
+    margin: 0 auto;
 }
 
 .blog-container:after {
-	content: "";
-	display: block;
-	clear: both;
+    content: "";
+    display: block;
+    clear: both;
 }
 
 .sidebar {
-	width: 20%;
-	height: 100%;
-	float: left;
+    width: 20%;
+    height: 100%;
+    float: left;
     box-sizing: border-box;
     /*border: 1px solid #e7f1ff;*/
 }
 
 .sidebar-content {
-	/*margin-top: 60px;*/
-	/*border-right: 1px solid blue;*/
+    /*margin-top: 60px;*/
+    /*border-right: 1px solid blue;*/
 }
 
 .sidebar-content img {
     display: block;
-	margin: 0 auto;
+    margin: 0 auto;
     width: 45%;
     margin-bottom: 30px;
 }
 
 .primary {
-	width: 80%;
-	float: left;
+    width: 80%;
+    float: left;
 }
 
 .section {
@@ -77,6 +110,7 @@ h2 {
 
 .section-last {
     border: 1px solid #e6e6e6;
+    margin-bottom: 80px;
 }
 
 .most-recent {
@@ -93,8 +127,8 @@ h2 {
 
 .pop-section:after {
     content: "";
-	display: block;
-	clear: both;
+    display: block;
+    clear: both;
 }
 
 .pop-prev {
@@ -103,6 +137,7 @@ h2 {
     padding: 0;
     width: 30%;
     float: left;
+
 }
 
 .pop-prev h4 {
@@ -125,7 +160,6 @@ h2 {
     max-width: 100%;
     /*height: 119px;*/
 }
-
 
 
 

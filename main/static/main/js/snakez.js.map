@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "snake.js",
+  "sourceRoot": "",
+  "sources": [
+    "snake.coffee"
+  ],
+  "names": [],
+  "mappings": ";AAAA;AAAA,EAAA,OAAO,CAAC,GAAR,CAAY,cAAZ,CAAA,CAAA;AAAA"
+}
