@@ -8,6 +8,7 @@ class Article(models.Model):
   title_image = models.CharField(max_length=300)
   thumbnail = models.CharField(max_length=300)
   title = models.CharField(max_length=300)
+  slug = models.CharField(max_length=100)
   sub_title = models.CharField(max_length=300)
   body = models.TextField()
   pub_date = models.DateTimeField('date published')
@@ -40,7 +41,6 @@ class Comment(models.Model):
   parent_id = models.ForeignKey('Comment', null=True)
   author = models.CharField(max_length=50)
   body = models.TextField()
-  edited = models.BooleanField(default=False)
   post_date = models.DateField(default=datetime.now())
   deleted = models.BooleanField(default=False)
 
@@ -51,6 +51,15 @@ class Comment(models.Model):
 
   def __repr__(self):
     return self.__unicode__()
+
+  @classmethod
+  def create(cls, article, parent_id, author, body):
+    return cls(
+      article=article,
+      parent_id=parent_id,
+      author=author,
+      body=body,
+    )
 
   class MyQuerySet(QuerySet):
 

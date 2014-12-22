@@ -15,31 +15,7 @@
 	<div id="header"></div>
 
 	<div class="blog-container">
-		<div class="sidebar">
-			<div class="sidebar-content">
-				<div class="icon">
-					<img src="{% static 'main/images/circle_avatar.png' %}">
-				</div>
-
-                <div id="menu">
-                    <ul class="list-unstyled">
-                        <li><a href="#">About</a></li>
-                        <li><a href="#">Projects</a></li>
-                        <li><a href="#">Contact</a></li>
-                        <li><a target="_blank" href="https://twitter.com/thechriskiehl">Twitter</a></li>
-                        <li><a href="#">RSS Feed</a></li>
-                    </ul>
-                    <ul class="list-unstyled">
-                        <li><input type="text" placeholder="search"></li>
-                    </ul>
-                    <ul class="list-unstyled">
-                        <li><a href="#">Then a tasteful ad</a></li>
-                    </ul>
-                </div>
-
-			</div>
-
-		</div>
+        {% include 'main/sidebar.html' %}
 
 
 		<div class="primary">

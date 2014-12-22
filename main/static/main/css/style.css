@@ -33,13 +33,70 @@ h2 {
 }
 
 .comment-box {
-    border-left: 1px solid saddlebrown;
     margin-left: 15px;
+}
+
+.comment-internals {
+    box-sizing: border-box;
+    padding: 10px;
+    border-bottom: 1px solid #ececec;
+
 }
 
 .root-comment {
     margin-left: 0;
-    border: 1px solid blue;
+}
+
+.comments {
+    margin-top: 50px;
+}
+
+#comment-number {
+    display: inline-block;
+    border-bottom: 3px solid #2d68ce;
+}
+
+.comments-header td {
+    white-space: nowrap;
+    border-bottom: 3px solid #cacaca;
+}
+
+.comments-header td:first-child {
+    border-bottom: 3px solid #2d68ce;
+}
+
+.comments-header td:last-child {
+    vertical-align: middle;
+    width: 100%;
+}
+
+.comments-header img, span {
+    display: block;
+    float: right;
+    margin-left: 10px;
+    font-family: 'Lato', sans-serif;
+    font-weight: bold;
+    color: #b0bfc6;
+
+}
+
+.comment-author {
+    color: #438bdf;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.reply {
+    color: #9f5512;
+}
+
+.comment-form {
+}
+
+.comment-form:after {
+    content: "";
+    display: block;
+    clear: both;
 }
 
 .comments-header:after {
@@ -48,15 +105,71 @@ h2 {
     clear: both;
 }
 
-.share {
-    float: right;
+.new-comment {
+    margin-top: 40px;
 }
 
-.share img {
-    display: block;
-    float: right;
-    margin-left: 10px;
+#bait {
+    width: 100%;
+    margin-bottom: 20px;
 }
+
+.comment-field {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.form-item {
+    float: right;
+    margin-left: 15px;
+}
+
+button {
+    padding:5px;
+    border: 2px solid #768086;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    color: #ffffff;
+    background-color: #768086;
+    width: 75px;
+}
+
+/*button:disabled {*/
+    /*padding:5px;*/
+    /*border: 2px solid #768086;*/
+    /*-webkit-border-radius: 5px;*/
+    /*border-radius: 5px;*/
+    /*color: #afbbc1;*/
+    /*background-color: #afbbc1;*/
+    /*width: 75px;*/
+/*}*/
+
+textarea {
+    padding:5px;
+    border:2px solid #ccc;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    height: 40px;
+    min-height: 0px;
+}
+
+textarea:focus {
+    border-color: #aeaeae;
+}
+
+input[type=text] {
+    padding:5px;
+    border:2px solid #ccc;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+}
+
+input[type=text]:focus {
+    border-color: #aeaeae;
+}
+
+
+
 
 .root-comment > .comment-box:nth-of-type(1) {
     margin-left: 0;
@@ -137,7 +250,6 @@ h2 {
     padding: 0;
     width: 30%;
     float: left;
-
 }
 
 .pop-prev h4 {

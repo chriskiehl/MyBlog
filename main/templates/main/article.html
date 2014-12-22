@@ -9,37 +9,18 @@
     <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
 	<meta charset="UTF-8">
 	<title>Cool beans</title>
+
+    <script src="{% static 'main/js/jquery-2.1.1.min.js' %}"></script>
+    <script src="{% static 'main/js/Bacon.js' %}"></script>
+    <script src="{% static 'main/js/snake.js' %}"></script>
 </head>
 
 <body>
 	<div id="header"></div>
 
 	<div class="blog-container">
-		<div class="sidebar">
-			<div class="sidebar-content">
-				<div class="icon">
-					<img src="{% static 'main/images/circle_avatar.png' %}">
-				</div>
 
-                <div id="menu">
-                    <ul class="list-unstyled">
-                        <li><a href="#">About</a></li>
-                        <li><a href="#">Projects</a></li>
-                        <li><a href="#">Contact</a></li>
-                        <li><a target="_blank" href="https://twitter.com/thechriskiehl">Twitter</a></li>
-                        <li><a href="#">RSS Feed</a></li>
-                    </ul>
-                    <ul class="list-unstyled">
-                        <li><input type="text" placeholder="search"></li>
-                    </ul>
-                    <ul class="list-unstyled">
-                        <li><a href="#">Then a tasteful ad</a></li>
-                    </ul>
-                </div>
-
-			</div>
-
-		</div>
+        {% include 'main/sidebar.html' %}
 
 
 		<div class="primary">
@@ -49,23 +30,27 @@
                     <h3>Teachin dat computer stuff</h3>
                     <img src="{% static 'main/images/grumpy.png' %}" >
 
-                    <p>I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or paint a fence, or service you sexually?</p>
-                    <p>I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or paint a fence, or service you sexually?
-                    I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or</p>
-                    <p>I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or paint a fence, or service you sexually?</p>
-                    <p>I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or paint a fence, or service you sexually?</p>
-                    <p>I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or paint a fence, or service you sexually?
-                    I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or</p>
-                    <p>I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or paint a fence, or service you sexually?</p>
+{#                    <p>I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or paint a fence, or service you sexually?</p>#}
+{#                    <p>I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or paint a fence, or service you sexually?#}
+{#                    I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or</p>#}
+{#                    <p>I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or paint a fence, or service you sexually?</p>#}
+{#                    <p>I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or paint a fence, or service you sexually?</p>#}
+{#                    <p>I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or paint a fence, or service you sexually?#}
+{#                    I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or</p>#}
+{#                    <p>I'm a thing. Yep, I remember. They came in last at the Olympics, then retired to promote alcoholic beverages! Kif, I have mated with a woman. Inform the men. I'm just glad my fat, ugly mama isn't alive to see this day. I meant 'physically'. Look, perhaps you could let me work for a little food? I could clean the floors or paint a fence, or service you sexually?</p>#}
+                </div>
+                <div class="related">
+                    <h4>Related Posts</h4>
+                    <ul>
+                        <li>How to do things with stuff</li>
+                        <li>Fixing for people</li>
+                        <li>The role of bottles</li>
+                    </ul>
                 </div>
             </div>
-{#            <div class="section section-last">#}
-{#                <a href="#" style="float: left;">Prev</a>#}
-{#                <a href="#" style="float: right;">Next</a>#}
-{#            </div>#}
-              <div class="section section-last">
-                    {% include 'main/comment_section.html' %}
-              </div>
+            <div class="section section-last">
+                {% include 'main/comment_section.html' %}
+            </div>
 		</div>
 	</div>
 </body>
