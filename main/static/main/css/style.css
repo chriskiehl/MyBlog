@@ -36,6 +36,10 @@ h2 {
     margin-left: 15px;
 }
 
+.comment-box:first-child {
+    margin-left: 0px;
+}
+
 .comment-internals {
     box-sizing: border-box;
     padding: 10px;
@@ -56,6 +60,10 @@ h2 {
     border-bottom: 3px solid #2d68ce;
 }
 
+.comments-header {
+    padding-top: 20px;
+}
+
 .comments-header td {
     white-space: nowrap;
     border-bottom: 3px solid #cacaca;
@@ -69,15 +77,14 @@ h2 {
     vertical-align: middle;
     width: 100%;
 }
-
-.comments-header img, span {
+/*, span */
+.comments-header img, td:last-child p {
     display: block;
     float: right;
     margin-left: 10px;
     font-family: 'Lato', sans-serif;
     font-weight: bold;
     color: #b0bfc6;
-
 }
 
 .comment-author {
@@ -171,7 +178,7 @@ input[type=text]:focus {
 
 
 
-.root-comment > .comment-box:nth-of-type(1) {
+.root-comment > .comment-box {
     margin-left: 0;
 }
 

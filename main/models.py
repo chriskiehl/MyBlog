@@ -14,6 +14,7 @@ class Article(models.Model):
   pub_date = models.DateTimeField('date published')
   last_modified = models.DateTimeField('last modified')
   views = models.IntegerField(default=0)
+  should_display_comments = models.BooleanField(default=True)
 
   def __unicode__(self):
     return "Article titled: {0}".format(self.title)
@@ -64,6 +65,8 @@ class Comment(models.Model):
   class MyQuerySet(QuerySet):
 
     def as_tree(self):
+      if not len(self):
+        return iter([])
       comment_nodes = [Node(comment) for comment in self]
       lookup_table = {node.id: node for node in comment_nodes}
 

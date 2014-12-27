@@ -1,5 +1,6 @@
 import json
 import datetime
+from boto.datapipeline import exceptions
 from django.core.cache import cache
 from django.http.response import HttpResponse
 from django.shortcuts import render, get_object_or_404
@@ -8,15 +9,7 @@ import itertools
 from django.views.decorators.csrf import ensure_csrf_cookie
 from main.models import Article, Comment
 
-
-def reader():
-    """A generator that fakes a read from a file, socket, etc."""
-    for i in range(4):
-        yield '<< %s' % i
-
-def reader_wrapper(g):
-    # Manually iterate over data produced by reader
-    return [1,2]
+JsonResponse = lambda x: HttpResponse(json.dumps(x), content_type="application/json")
 
 def cache_get_or_store(key, action, timeout=5):
   cache_item = cache.get(key)
@@ -25,6 +18,13 @@ def cache_get_or_store(key, action, timeout=5):
     cache.set(key, action(), timeout)
   cache_item = cache.get(key)
   return cache_item
+
+def get_object_or_none(cls, **kwargs):
+  try:
+    return cls.objects.get(**kwargs)
+  except:
+    return None
+
 
 def index(request):
   most_recent = Article.objects.all().order_by('-pub_date')
@@ -36,36 +36,44 @@ def index(request):
 @ensure_csrf_cookie
 def article(request, slug):
   article = get_object_or_404(Article, slug=slug)
-  comments = Comment.objects.select_related('parent_id').filter(article__id=1).as_tree()
+  comments = Comment.objects.select_related('parent_id').filter(article=article)
+  comment_tree = comments.as_tree() if article.should_display_comments else iter([])
   return render(request, 'main/article.html', locals())
 
 
 def store_comment(request, slug):
-  JsonResponse = lambda x: HttpResponse(json.dumps(x), content_type="application/json")
-  if request.method != 'POST':
-    return JsonResponse({'response': 'invalid request'})
+  try:
+    if request.method != 'POST':
+      return JsonResponse({'response': 'invalid request'})
 
-  required = ('parent_id', 'body', 'name')
-  params = [request.POST.get(item, None) for item in required]
-  if not all(params):
-    missing = ', '.join(p for p in required if request.POST.get(p, None) is None)
-    return JsonResponse({'response': 'Missing required param(s): {0}'.format(missing)})
+    required = ('parent_id', 'body', 'name')
+    params = [item in request.POST.keys() for item in required]
+    if not all(params):
+      missing = ', '.join(p for p in required if request.POST.get(p, None) is None)
+      return JsonResponse({'response': 'Missing required param(s): {0}'.format(missing)})
 
-  article = Article.objects.get(slug=slug)
-  parent = Comment.objects.get(id=int(request.POST['parent_id']))
-  comment = Comment.create(
-      article,
-      parent,
-      request.POST['name'],
-      request.POST['body']
-  )
-  print 'saving comment'
-  # comment.save()
-  return JsonResponse(dict(request.POST.items() + [('parent_id', 10)]))
+    article = Article.objects.get(slug=slug)
+    parent_id = int(request.POST['parent_id']) if request.POST['parent_id'] else None
+    parent_comment = get_object_or_none(Comment, id=parent_id)
+    comment = Comment.create(
+        article,
+        parent_comment,
+        request.POST['name'],
+        request.POST['body']
+    )
+    print 'saving comment'
+    comment.save()
+    comment_id = comment.id
+    parent_id = comment.parent_id.id if comment.parent_id else ''
 
+    print comment_id
+    # comment.delete()
+    return JsonResponse(dict(request.POST.items() + [('parent_id', parent_id), ('comment_id', comment_id)]))
+  except Exception as e:
+    print e
 
-
-
+def editor(request):
+  return render(request, 'main/editor.html', locals())
 
 def react(request):
   return render(request, 'main/react.html', locals())

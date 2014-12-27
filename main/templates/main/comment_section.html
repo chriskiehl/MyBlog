@@ -1,61 +1,64 @@
 {% load simple_numer %}
+{% load social %}
 {% load staticfiles %}
 
-<div class="comments-header">
-    <table>
-        <tr>
-            <td>
-                <h4>32 comments</h4>
-            </td>
+{% if not article.should_display_comments %}
+    <div class="comments-header">
+        <table>
+            <tr>
+                <td>
+                    <h4><span id="total-comments">{{ comments.count }}</span> Comments</h4>
+                </td>
 
-            <td>
-                <img src="{% static 'main/images/fb_icon.png' %}" >
-                <img src="{% static 'main/images/gp_icon.png' %}" >
-                <img src="{% static 'main/images/twitter_icon.png' %}">
-                <span>Share</span>
-            </td>
-        </tr>
-    </table>
-</div>
+                <td>
+                    <a href="{{ article|as_twitter_link }}"><img src="{% static 'main/images/fb_icon.png' %}" ></a>
+                    <a href="{{ article|as_twitter_link }}"><img src="{% static 'main/images/gp_icon.png' %}" ></a>
+                    <a href="{{ article|as_twitter_link }}"><img src="{% static 'main/images/twitter_icon.png' %}"></a>
+                    <p>Share</p>
+                </td>
+            </tr>
+        </table>
+    </div>
 
-<div class="new-comment">
-    <div class="comment-form">
-        <p class="alert alert-warning" style="display: none">Something's gone wrong, Jim. Please try again in a bit.</p>
-        <textarea placeholder="Leave a comment" class="comment-field"></textarea>
-        <div class="comment-slider" style="display: none">
-            <button class="save-button form-item">Save</button>
-            <input type="text" placeholder="Name" class="name-field form-item">
+    <div class="new-comment">
+        <div class="comment-form">
+            <p class="alert alert-warning" style="display: none">Something's gone wrong, Jim. Please try again in a bit.</p>
+            <textarea placeholder="Leave a comment" class="comment-field"></textarea>
+            <div class="comment-slider" style="display: none">
+                <button class="save-button form-item">Save</button>
+                <input type="text" placeholder="Name" class="name-field form-item">
+            </div>
         </div>
     </div>
-</div>
 
-<div class="comments">
-    <div class="root-comment">
-        {% with comment=comments|next_item %}{% endwith %}
-        {% set_int curr_level = 0 %}
-        {% for level, comment in comments %}
-            {% if level == curr_level %} </div>
-            {% elif level > curr_level %} {% increment curr_level %}
-            {% elif level < curr_level %}
-                {% for _ in level|to:curr_level %}
-                    {% decrement curr_level %}
+    <div class="comments">
+        <div class="root-comment">
+            {% with comment=comment_tree|next_item %}{% endwith %}
+            {% set_int curr_level = 0 %}
+            {% for level, comment in comment_tree %}
+                {% if level == curr_level %} </div>
+                {% elif level > curr_level %} {% increment curr_level %}
+                {% elif level < curr_level %}
+                    {% for _ in level|to:curr_level %}
+                        {% decrement curr_level %}
+                        </div>
+                    {% endfor %}
                     </div>
-                {% endfor %}
-                </div>
-            {% endif %}
+                {% endif %}
 
-            <div class="comment-box" id="{{ comment.id }}">
-                <div class="comment-internals">
-                    <div>
-                        <p class="comment-author">{{ comment.author }}</p>
-                        <p class="comment-body"> {{ comment.body }}</p>
+                <div class="comment-box" id="{{ comment.id }}">
+                    <div class="comment-internals">
+                        <div>
+                            <p class="comment-author">{{ comment.author }}</p>
+                            <p class="comment-body"> {{ comment.body }}</p>
+                        </div>
+                        <div>
+                            <p style="text-align: right">
+                                <a href="javascript:void(0)" class="reply" data-parent="{{ comment.id }}">Reply</a>
+                            </p>
+                        </div>
                     </div>
-                    <div>
-                        <p style="text-align: right">
-                            <a href="javascript:void(0)" class="reply">Reply</a>
-                        </p>
-                    </div>
-                </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
     </div>
-</div>
+{% endif %}
