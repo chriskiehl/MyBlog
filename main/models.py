@@ -39,7 +39,7 @@ class Node(object):
 
 class Comment(models.Model):
   article = models.ForeignKey('Article')
-  parent_id = models.ForeignKey('Comment', null=True)
+  parent = models.ForeignKey('Comment', null=True)
   author = models.CharField(max_length=50)
   body = models.TextField()
   post_date = models.DateField(default=datetime.now())

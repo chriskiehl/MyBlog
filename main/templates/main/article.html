@@ -3,10 +3,16 @@
 <html>
 <head>
 	{% load staticfiles %}
-	<link rel="stylesheet" type="text/css" href="{% static 'main/css/reset.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'main/css/bootstrap.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'main/css/style.css' %}" />
+{#	<link rel="stylesheet" type="text/css" href="{% static 'main/css/reset.css' %}" />#}
+{#    <link rel="stylesheet" type="text/css" href="{% static 'main/css/bootstrap.css' %}" />#}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/main/main.css' %}" />
     <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+{#    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.css">#}
+{#    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/monokai_sublime.min.css">#}
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/base/code.css' %}" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
 	<meta charset="UTF-8">
 	<title>Cool beans</title>
 
@@ -25,10 +31,13 @@
 		<div class="primary">
             <div class="section">
                 <div class="most-recent">
-                    <h2>Quick and Dirty Computer Vision</h2>
-                    <h3>Teachin dat computer stuff</h3>
+                    <h2>{{ article.title }}</h2>
+                    <h3>{{ article.sub_title }}</h3>
                     <img src="{% static 'main/images/grumpy.png' %}" >
-                    <p>{{ article.body }}</p>
+                    <link href='http://fonts.googleapis.com/css?family=Merriweather' rel='stylesheet' type='text/css'>
+                    <div class="article-body">
+                        {{ article.body|safe }}
+                    </div>
                 </div>
                 <div class="related">
                     <h4>Related Posts</h4>

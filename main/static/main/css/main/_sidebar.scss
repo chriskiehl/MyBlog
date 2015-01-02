@@ -1,0 +1,20 @@
+
+.sidebar {
+    width: 20%;
+    height: 100%;
+    float: left;
+    box-sizing: border-box;
+    /*border: 1px solid #e7f1ff;*/
+}
+
+.sidebar-content {
+    /*margin-top: 60px;*/
+    /*border-right: 1px solid blue;*/
+}
+
+.sidebar-content img {
+    display: block;
+    margin: 0 auto;
+    width: 45%;
+    margin-bottom: 30px;
+}

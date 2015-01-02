@@ -29,7 +29,8 @@ def get_object_or_none(cls, **kwargs):
 def index(request):
   most_recent = Article.objects.all().order_by('-pub_date')
   most_popular = Article.objects.all().order_by('-views')[:3]
-  comments = Comment.objects.select_related('parent_id').filter(article__id=1).as_tree()
+  # comments = Comment.objects.select_related('parent_id').filter(article__id=1).as_tree()
+  comments = iter([])
   return render(request, 'main/index.html', locals())
 
 
@@ -51,7 +52,8 @@ def store_comment(request, slug):
     if not all(params):
       missing = ', '.join(p for p in required if request.POST.get(p, None) is None)
       return JsonResponse({'response': 'Missing required param(s): {0}'.format(missing)})
-
+    from django.core.cache import get_cache
+    c = get_cache()
     article = Article.objects.get(slug=slug)
     parent_id = int(request.POST['parent_id']) if request.POST['parent_id'] else None
     parent_comment = get_object_or_none(Comment, id=parent_id)
@@ -73,9 +75,12 @@ def store_comment(request, slug):
     print e
 
 def editor(request):
+  from django.core.cache.utils import make_template_fragment_key
+  print 'view generated fragment:', make_template_fragment_key('cooltext', [])
   return render(request, 'main/editor.html', locals())
 
 def react(request):
-  return render(request, 'main/react.html', locals())
+  return HttpResponse("Hello world!")
+  # return render(request, 'main/react.html', locals())
 
 # for k,v in lo

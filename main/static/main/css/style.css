@@ -5,6 +5,7 @@
 
 body {
     overflow-y: scroll;
+
 }
 
 h2 {
@@ -12,6 +13,10 @@ h2 {
     font-weight: bold;
 }
 
+p, a {
+    font-family: 'Merriweather', serif;
+    /*font-size: 1.3em;*/
+}
 #header {
     height: 50px;
 }
@@ -85,6 +90,7 @@ h2 {
     font-family: 'Lato', sans-serif;
     font-weight: bold;
     color: #b0bfc6;
+
 }
 
 .comment-author {
@@ -243,6 +249,7 @@ input[type=text]:focus {
 
 .most-recent img {
     max-width: 100%;
+    padding-bottom: 20px;
 }
 
 .pop-section:after {

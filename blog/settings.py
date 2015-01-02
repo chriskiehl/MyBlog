@@ -93,7 +93,7 @@ USE_TZ = True
 
 
 
-
+TEMPLATE_DIRS = tuple(os.path.join(BASE_DIR, app_name, 'templates') for app_name in INSTALLED_APPS)
 
 
 # Static files (CSS, JavaScript, Images)
@@ -107,13 +107,14 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'main/static'),
 )
 
+AWS_ACCESS_KEY_ID = 'AKIAIIYFFFOR2KL2MRUQ'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'awsblogstore'
+AWS_CALLING_FORMAT = 'http://{0}.s3.amazonaws.com/'.format(AWS_STORAGE_BUCKET_NAME)
+
 if not DEBUG:
   DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
   STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-  AWS_ACCESS_KEY_ID = 'AKIAIAFEPKCFEGTKI5LA'
-  AWS_SECRET_ACCESS_KEY = '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'
-  AWS_STORAGE_BUCKET_NAME = 'awsblogstore'
-  AWS_CALLING_FORMAT = 'http://{0}.s3.amazonaws.com/'.format(AWS_STORAGE_BUCKET_NAME)
   STATIC_URL = AWS_CALLING_FORMAT
 
 

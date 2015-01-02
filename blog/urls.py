@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from django.contrib.admin.options import ModelAdmin
 
 urlpatterns = patterns('',
     url(r'^$', 'main.views.index', name='home'),

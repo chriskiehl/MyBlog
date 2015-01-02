@@ -1,0 +1,22 @@
+{% extends 'admin/change_form.html' %}
+{% load staticfiles %}
+{% block extrahead %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/main/main.css' %}" />
+    <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/base/code.css' %}" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="{% static 'main/js/jquery-2.1.1.min.js' %} "></script>
+    <script src="{% static 'main/js/lib/ckeditor/ckeditor.js' %} "></script>
+    <script>
+        $(document).ready(function() {
+            $('[for=id_body]').hide();
+            CKEDITOR.replace('id_body');
+            CKEDITOR.instances.id_body.on('click', function() {
+                console.log("Hello world!");
+            })
+        })
+
+    </script>
+{% endblock %}
