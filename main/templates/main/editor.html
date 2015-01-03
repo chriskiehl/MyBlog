@@ -3,12 +3,13 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <link rel="stylesheet" type="text/css" href="{% static 'main/css/bootstrap.css' %}" />
         <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.4.min.js"></script>
-
         <title>A Simple Page with CKEditor</title>
     </head>
     <body>
-    <p id="saved-msg" style="z-index: 9999999; display: none; color: #438bdf; position: fixed; right: 0; top: 0; margin-right: 20px;">Saved</p>
+        <p id="saved-msg" class="alert alert-success" style="width: 80px; position: absolute; right: 0; margin-right: 30px; display: none;" ></p>
+
         <form>
             <textarea name="editor1" id="id_body" rows="10" cols="80">
                 Sample Text Sample Text Sample Text Sample Text Sample Text Sample Text
@@ -100,6 +101,19 @@
 
                 }
 
+                function getCsrfCookie() {
+                    var cookie, _i, _len, _ref, _results;
+                    _ref = document.cookie.split(';');
+                    _results = [];
+                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                      cookie = _ref[_i];
+                      if (cookie.indexOf('csrftoken') > -1) {
+                        _results.push($.trim(cookie.split('=')[1]));
+                      }
+                    }
+                  return _results;
+                };
+
                 $(document).ready(function() {
                     $('[for=id_body]').hide();
                     CKEDITOR.replace('id_body');
@@ -117,7 +131,7 @@
                         iFrameDoc.ondragover = function(e) { console.log(1); return false; };
                         iFrameDoc.ondrop = dropHandler
 
-                        ckeditor.on('change', debounce(saveArticle, 5000));
+                        ckeditor.on('change', debounce(saveArticle, 500));
                         },
                         1000
                     );

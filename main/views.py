@@ -19,6 +19,7 @@ def cache_get_or_store(key, action, timeout=5):
   cache_item = cache.get(key)
   return cache_item
 
+
 def get_object_or_none(cls, **kwargs):
   try:
     return cls.objects.get(**kwargs)
@@ -27,16 +28,15 @@ def get_object_or_none(cls, **kwargs):
 
 
 def index(request):
-  most_recent = Article.objects.all().order_by('-pub_date')
+  articles = Article.objects.all()
+  most_recent = articles.order_by('-pub_date')[:3]
   most_popular = Article.objects.all().order_by('-views')[:3]
-  # comments = Comment.objects.select_related('parent_id').filter(article__id=1).as_tree()
-  comments = iter([])
   return render(request, 'main/index.html', locals())
 
 
 @ensure_csrf_cookie
 def article(request, slug):
-  article = get_object_or_404(Article, slug=slug)
+  article = get_object_or_404(Article, slug=slug, published=True)
   comments = Comment.objects.select_related('parent_id').filter(article=article)
   comment_tree = comments.as_tree() if article.should_display_comments else iter([])
   return render(request, 'main/article.html', locals())
@@ -53,7 +53,7 @@ def store_comment(request, slug):
       missing = ', '.join(p for p in required if request.POST.get(p, None) is None)
       return JsonResponse({'response': 'Missing required param(s): {0}'.format(missing)})
     from django.core.cache import get_cache
-    c = get_cache()
+
     article = Article.objects.get(slug=slug)
     parent_id = int(request.POST['parent_id']) if request.POST['parent_id'] else None
     parent_comment = get_object_or_none(Comment, id=parent_id)

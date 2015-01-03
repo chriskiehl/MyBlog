@@ -2,7 +2,7 @@
 {% load social %}
 {% load staticfiles %}
 
-{% if not article.should_display_comments %}
+{% if article.should_display_comments %}
     <div class="comments-header">
         <table>
             <tr>

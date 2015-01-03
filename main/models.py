@@ -1,7 +1,12 @@
 from datetime import datetime
 from itertools import chain
+import os
+from django.conf import settings
 from django.db import models
 from django.db.models import QuerySet
+import boto
+from boto.s3.key import Key
+from main import util
 
 
 class Article(models.Model):
@@ -11,23 +16,66 @@ class Article(models.Model):
   slug = models.CharField(max_length=100)
   sub_title = models.CharField(max_length=300)
   body = models.TextField()
-  pub_date = models.DateTimeField('date published')
-  last_modified = models.DateTimeField('last modified')
+  pub_date = models.DateTimeField('date published', null=True)
+  last_modified = models.DateTimeField('last modified', default=datetime.now())
   views = models.IntegerField(default=0)
   should_display_comments = models.BooleanField(default=True)
+  published = models.BooleanField(default=False)
+
+  __original_instance = None
+
+  def __init__(self, *args, **kwargs):
+    super(Article, self).__init__(*args, **kwargs)
+    self.__original_instance = self.__dict__
 
   def __unicode__(self):
     return "Article titled: {0}".format(self.title)
+
+  def save(self, *args, **kwargs):
+    if self.title_image and not self.thumbnail or self.title_image_changed():
+      thumbnail = util.create_thumbnail(self.title_image)
+      thumbnail_name = self.generate_thumbnail_filename(self.title_image)
+
+      s3 = boto.connect_s3(settings.AWS_ACCESS_KEY_ID, settings.AWS_SECRET_ACCESS_KEY)
+      k = Key(s3.get_bucket(settings.AWS_STORAGE_BUCKET_NAME))
+
+      k.key = thumbnail_name
+      k.set_contents_from_file(thumbnail, policy='public-read')
+
+      thumbnail_url = k.generate_url(expires_in=0, query_auth=False)
+      self.thumbnail = thumbnail_url
+
+
+    self.body = self.strip_padding(self.body)
+
+
+
+    super(Article, self).save()
+
+  def strip_padding(self, body):
+    padded_line = '<p>&nbsp;</p>'
+    return '\n'.join(line for line in body.split('\n') if padded_line not in line)
+
+  def generate_thumbnail_filename(self, source_url):
+    filename, ext = os.path.splitext(os.path.split(source_url)[-1])
+    return 'main/images/{0}-thumb{1}'.format(filename, ext)
+
+  def title_image_changed(self):
+    return (self.__original_instance['title_image'] != self.title_image)
+
+
+
 
 class CommentManager(models.Manager):
   def get_queryset(self):
     return self.model.MyQuerySet(self.model)
 
+
 class Node(object):
   def __init__(self, comment):
     self.comment = comment
     self.id = comment.id
-    self.pid = comment.parent_id.id if comment.parent_id else None
+    self.pid = comment.parent.id if comment.parent else None
     self.children = []
 
     def __str__(self):
@@ -65,7 +113,7 @@ class Comment(models.Model):
   class MyQuerySet(QuerySet):
 
     def as_tree(self):
-      if not len(self):
+      if not self.exists():
         return iter([])
       comment_nodes = [Node(comment) for comment in self]
       lookup_table = {node.id: node for node in comment_nodes}

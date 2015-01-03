@@ -1,22 +1,223 @@
 {% extends 'admin/change_form.html' %}
 {% load staticfiles %}
+
 {% block extrahead %}
     {{ block.super }}
+
     <link rel="stylesheet" type="text/css" href="{% static 'main/css/main/main.css' %}" />
     <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="{% static 'main/css/base/code.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/bootstrap.css' %}" />
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.4.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     <script src="{% static 'main/js/jquery-2.1.1.min.js' %} "></script>
     <script src="{% static 'main/js/lib/ckeditor/ckeditor.js' %} "></script>
-    <script>
+
+    <script type="text/javascript">
+        AWS.config.update({accessKeyId: 'AKIAIIYFFFOR2KL2MRUQ', secretAccessKey: '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'});
+        AWS.config.region = 'us-east-1';
+        uploadPath = 'main/images/';
+
+
+        function debounce(func, wait, immediate) {
+            var timeout;
+            return function() {
+                var context = this, args = arguments;
+                var later = function() {
+                    timeout = null;
+                    if (!immediate) func.apply(context, args);
+                };
+                var callNow = immediate && !timeout;
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+                if (callNow) func.apply(context, args);
+            };
+        };
+
+        function editAreaSmallerThanWindow(iframeDoc) {
+            return iframeDoc.getElementsByTagName('html')[0].clientHeight >
+                   iframeDoc.getElementsByTagName('body')[0].clientHeight;
+        }
+
+        function padEditArea(ckeditor, count) {
+            console.log('padding edit area');
+            var padding = Array(40).join('<p>&nbsp;</p>');
+            ckeditor.setData(ckeditor.getData() + padding)
+        }
+
+        function upload(file) {
+            var bucket = new AWS.S3({params: {Bucket: 'awsblogstore'}});
+            console.log("Uploading file: " + file.name);
+            var params = {Key: uploadPath + file.name, ContentType: file.type, Body: file, ACL: "public-read"};
+            return new Promise(function(resolve, reject) {
+                bucket.upload(params, function (err, data) {
+                    if (!err) resolve(data);
+                    else reject(err);
+                });
+            });
+        }
+
+        function insertImage(s3Object) {
+            console.log("Success!");
+            var editor = CKEDITOR.instances.id_body;
+            var elem = editor.document.createElement('img', {
+                attributes: {
+                    src: s3Object.Location
+                }
+            });
+            console.log("Adding image to document");
+            editor.insertElement(elem);
+        }
+
+        function popError(err) {
+            alert(err);
+        }
+
+
+        function dropHandler(e) {
+            e.preventDefault();
+            var file = e.dataTransfer.files[0];
+            console.log("received file from drop: " + file);
+            upload(file).then(insertImage, popError);
+        };
+
+        function saveArticle(ckeditor) {
+            var editor = CKEDITOR.instances.id_body;
+            var saveMsg = $('#saved-msg');
+
+            saveMsg.text("Saving..");
+            saveMsg.show();
+
+            var request = $.ajax({
+                url: './save-article/',
+                data: {
+                    'body': ckeditor.getData(),
+                    'csrfmiddlewaretoken': '{{ csrf_token}}'
+                },
+                type: 'POST',
+            });
+
+            request.done(function(response) {
+                saveMsg.text('Saved')
+                setTimeout(function() {
+                    saveMsg.hide()
+                }, 1500);
+            });
+
+            request.fail(function(response) {
+                ER = response;
+                alert(response);
+            })
+
+            setTimeout(function() {
+
+            }, 1000);
+
+        }
+
+        function getCsrfCookie() {
+            var cookie, _i, _len, _ref, _results;
+            _ref = document.cookie.split(';');
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              cookie = _ref[_i];
+              if (cookie.indexOf('csrftoken') > -1) {
+                _results.push($.trim(cookie.split('=')[1]));
+              }
+            }
+          return _results;
+        };
+
         $(document).ready(function() {
             $('[for=id_body]').hide();
-            CKEDITOR.replace('id_body');
-            CKEDITOR.instances.id_body.on('click', function() {
-                console.log("Hello world!");
-            })
+            CKEDITOR.replace('id_body', {
+                toolbarGroups: [
+                    { name: 'document',	   groups: [ 'mode', 'document' ] },			// Displays document group with its two subgroups.
+                    { name: 'styles' },
+                    { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+                    { name: 'tools' },
+                ]
+            });
+
+            setTimeout(function() {
+                var ckeditor = CKEDITOR.instances.id_body;
+
+                var iframe = document.getElementsByTagName('iframe')[0];
+                var iFrameDoc = iframe.contentDocument || iframe.contentWindow.document;
+                if (editAreaSmallerThanWindow(iFrameDoc)) {
+                    padEditArea(ckeditor)
+                }
+
+                iFrameDoc.ondragover = function(e) { console.log(1); return false; };
+                iFrameDoc.ondrop = dropHandler
+
+                ckeditor.on('change', debounce(function() {saveArticle(ckeditor);}, 500));
+                },
+                1000
+            );
+
+
+
+{#                    setTimeout(function() {#}
+{##}
+{#                        $('iframe:first').contents().find('html').on('dragover', function (evt) {#}
+{#                            evt.stopPropagation();#}
+{#                            evt.preventDefault()#}
+{#                            $(evt).dropEffect = 'copy';#}
+{#                            console.log(3);#}
+{#                        });#}
+{##}
+{##}
+{#                        $('iframe:first').contents().find('html').on('drop', function (evt) {#}
+{#                            evt.stopPropagation();#}
+{#                            evt.preventDefault()#}
+{#                            $(evt).dropEffect = 'copy';#}
+{#                            console.log(6);#}
+{#                            console.log(evt);#}
+{#                        });#}
+{##}
+{#                        $('iframe:first').contents().on('drop', function (evt) {#}
+{#                            evt.stopPropagation();#}
+{#                            evt.preventDefault();#}
+{#                        });#}
+{##}
+{#                    }, 1000);#}
+{##}
+{##}
+{#                    setTimeout(function() {#}
+{#                        var editor = CKEDITOR.instances.id_body;#}
+{#                        console.log(editor.getSelection());#}
+{#                        var elem = editor.document.createElement('img', {#}
+{#                            attributes: {#}
+{#                                src: 'http://i.imgur.com/aJYZ20v.gif',#}
+{#                            }#}
+{#                        });#}
+{##}
+{#                        editor.insertElement(elem);#}
+{#                    }, 1500);#}
+
+{#                    setTimeout(function() {#}
+{#                        console.log("running");#}
+{#                        CKEDITOR.instances.id_body.on('click', function() {#}
+{#                            console.log("Hello world!");#}
+{#                        });#}
+{##}
+{#                        CKEDITOR.on('change', function() {#}
+{#                            console.log("Hello world!");#}
+{#                        });#}
+{#                    }, 500);#}
         })
 
     </script>
+
+
+
+
+{% endblock %}
+
+{% block content %}
+    {{ block.super }}
+    <p id="saved-msg" class="alert alert-success" style="width: 80px; position: absolute; right: 0; margin-right: 30px; display: none;" ></p>
+
 {% endblock %}

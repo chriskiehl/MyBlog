@@ -17,7 +17,8 @@ def save_article(request, article_id):
        article.body = request.POST['body']
        article.save()
        return HttpResponse(json.dumps({'result': 'saved'}), content_type="application/json")
-     except:
+     except Exception as e:
+       print e
        return HttpResponse(json.dumps({'result': 'failed'}), content_type="application/json")
    else:
      raise Http404
@@ -47,11 +48,12 @@ class ArticleAdmin(admin.ModelAdmin):
     'last_modified',
     'views',
     'should_display_comments',
+    'published'
   ]
 
 
   def get_readonly_fields(self, request, obj=None):
-    return self.readonly_fields + ('views', 'last_modified', 'pub_date')
+    return self.readonly_fields + ('views', 'last_modified',) # 'pub_date')
 
 
 admin.site.register(Article, ArticleAdmin)
