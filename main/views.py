@@ -1,6 +1,4 @@
 import json
-import datetime
-from boto.datapipeline import exceptions
 from django.core.cache import cache
 from django.http.response import HttpResponse
 from django.shortcuts import render, get_object_or_404
@@ -27,8 +25,9 @@ def get_object_or_none(cls, **kwargs):
     return None
 
 
+# @cache_page(30)
 def index(request):
-  articles = Article.objects.all()
+  articles = Article.objects.filter(published=True)
   most_recent = articles.order_by('-pub_date')[:3]
   most_popular = Article.objects.all().order_by('-views')[:3]
   return render(request, 'main/index.html', locals())

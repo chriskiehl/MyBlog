@@ -69,12 +69,35 @@ DATABASES = {
     }
 }
 
+if not DEBUG:
+  DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'blogdb',
+        'USER': 'django',
+        'PASSWORD': 'l6O8Pnnn58',
+        'HOST': ''
+    }
+  }
+
+
 
 CACHES = {
   'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
   }
 }
+
+# running against memcached in virtual box
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+#         'LOCATION': '192.168.1.12:11211',
+#         'KEY_PREFIX': "HelloWorld"
+#     }
+# }
+
+
 
 
 

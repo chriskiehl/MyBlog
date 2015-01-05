@@ -5370,16 +5370,11 @@ button.close {
     display: none !important; } }
 body {
   background: white;
-  font-size: 100%;
   overflow-y: scroll; }
 
 h2 {
   font-family: 'Lato', sans-serif;
   font-weight: bold; }
-
-p, a {
-  font-family: 'Merriweather', 'Georgia', serif;
-  font-size: 1.3em; }
 
 button {
   padding: 5px;
