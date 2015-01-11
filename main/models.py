@@ -10,12 +10,12 @@ from main import util
 
 
 class Article(models.Model):
-  title_image = models.CharField(max_length=300)
-  thumbnail = models.CharField(max_length=300)
+  title_image = models.CharField(max_length=300, null=True)
+  thumbnail = models.CharField(max_length=300, null=True)
   title = models.CharField(max_length=300)
   slug = models.CharField(max_length=100)
-  sub_title = models.CharField(max_length=300)
-  body = models.TextField()
+  sub_title = models.CharField(max_length=300, null=True)
+  body = models.TextField(null=True)
   pub_date = models.DateTimeField('date published', null=True)
   last_modified = models.DateTimeField('last modified', default=datetime.now())
   views = models.IntegerField(default=0)
@@ -23,6 +23,17 @@ class Article(models.Model):
   published = models.BooleanField(default=False)
 
   __original_instance = None
+
+  @classmethod
+  def create(cls, title, **kwargs):
+    return cls(
+      title_image=kwargs.get('title_image', ''),
+      thumbnail=kwargs.get('thumbnail', ''),
+      title=title,
+      sub_title=kwargs.get('sub_title', ''),
+      slug=kwargs.get('slug', ''),
+      body=kwargs.get('body', ''),
+    )
 
   def __init__(self, *args, **kwargs):
     super(Article, self).__init__(*args, **kwargs)
@@ -37,7 +48,7 @@ class Article(models.Model):
       thumbnail_name = self.generate_thumbnail_filename(self.title_image)
 
       s3 = boto.connect_s3(settings.AWS_ACCESS_KEY_ID, settings.AWS_SECRET_ACCESS_KEY)
-      k = Key(s3.get_bucket(settings.AWS_STORAGE_BUCKET_NAME))
+      k = Key(s3.get_bucket(settings.AWS_STORAGE_BUCKET_NAME, validate=False))
 
       k.key = thumbnail_name
       k.set_contents_from_file(thumbnail, policy='public-read')
@@ -53,8 +64,10 @@ class Article(models.Model):
     super(Article, self).save()
 
   def strip_padding(self, body):
-    padded_line = '<p>&nbsp;</p>'
-    return '\n'.join(line for line in body.split('\n') if padded_line not in line)
+    if body:
+      padded_line = '<p>&nbsp;</p>'
+      return '\n'.join(line for line in body.split('\n') if padded_line not in line)
+    return ''
 
   def generate_thumbnail_filename(self, source_url):
     filename, ext = os.path.splitext(os.path.split(source_url)[-1])
@@ -102,10 +115,10 @@ class Comment(models.Model):
     return self.__unicode__()
 
   @classmethod
-  def create(cls, article, parent_id, author, body):
+  def create(cls, article, parent, author, body):
     return cls(
       article=article,
-      parent_id=parent_id,
+      parent=parent,
       author=author,
       body=body,
     )

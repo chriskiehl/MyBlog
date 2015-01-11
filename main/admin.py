@@ -6,36 +6,29 @@ from django.http.response import Http404
 
 from main.models import Article, Comment
 
-# Register your models here.
+JsonResponse = lambda d: HttpResponse(json.dumps(d), content_type="application/json")
 
 def save_article(request, article_id):
-   if request.method == 'POST':
-     if not request.POST.get('body', None):
-       return HttpResponse(json.dumps({'result': 'failed'}), content_type="application/json")
-     try:
-       article = Article.objects.get(id=article_id)
-       article.body = request.POST['body']
-       article.save()
-       return HttpResponse(json.dumps({'result': 'saved'}), content_type="application/json")
-     except Exception as e:
-       print e
-       return HttpResponse(json.dumps({'result': 'failed'}), content_type="application/json")
-   else:
-     raise Http404
+  body = request.POST.get('body', None)
+  if body:
+    try:
+      article = Article.objects.get(id=article_id)
+      article.body = body
+      article.save()
+      return JsonResponse({'success': 'Saved!'})
+    except Article.DoesNotExist:
+      pass
+  return JsonResponse({'error': 'Invalid Request'})
 
 def get_admin_urls(urls):
     def get_urls():
-        my_urls = patterns('',
-            (r'^main/article/(?P<article_id>\d+)/save-article/$', admin.site.admin_view(save_article))
-        )
+        my_urls = patterns('', (r'^main/article/(?P<article_id>\d+)/save-article/$', admin.site.admin_view(save_article)))
         return my_urls + urls
     return get_urls
 
 
-
 class CommentAdmin(admin.TabularInline):
   model = Comment
-
 
 class ArticleAdmin(admin.ModelAdmin):
   fields = [

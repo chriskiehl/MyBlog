@@ -45,6 +45,7 @@ displayError = (element) ->
   rumble(element, 4)
 
 buildComment = (data) ->
+
   commentBox = $(commentTemplate)
   commentBox.attr('id', data.comment_id)
   commentBox.find('p.comment-author').text(data.name)
@@ -137,6 +138,7 @@ jQuery ($) ->
     if (not empty(comment) and not empty(name))
       saveComment($(this)).then(
         ((res) ->
+          console.log(res)
           insertComment($(evt.target), res)
           updateCommentCount()
           setTimeout((()->

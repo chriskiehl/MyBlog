@@ -5,6 +5,5 @@ from django.contrib.admin.options import ModelAdmin
 urlpatterns = patterns('',
     url(r'^$', 'main.views.index', name='home'),
     url(r'^article/', include('main.urls')),
-    url(r'^editor/', 'main.views.editor'),
     url(r'^admin/', include(admin.site.urls)),
 )

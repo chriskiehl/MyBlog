@@ -135,6 +135,7 @@
       }
       if (!empty(comment) && !empty(name)) {
         return saveComment($(this)).then((function(res) {
+          console.log(res);
           insertComment($(evt.target), res);
           updateCommentCount();
           return setTimeout((function() {

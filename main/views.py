@@ -7,29 +7,16 @@ import itertools
 from django.views.decorators.csrf import ensure_csrf_cookie
 from main.models import Article, Comment
 
-JsonResponse = lambda x: HttpResponse(json.dumps(x), content_type="application/json")
+JsonResponse = lambda x, **kwargs: HttpResponse(json.dumps(x), content_type="application/json", **kwargs)
+JsonErrorResponse = lambda x: HttpResponse(json.dumps({'error': x}), content_type="application/json", status=400)
 
-def cache_get_or_store(key, action, timeout=5):
-  cache_item = cache.get(key)
-  if not cache_item:
-    print 'Cache miss for', key
-    cache.set(key, action(), timeout)
-  cache_item = cache.get(key)
-  return cache_item
+REQUIRED_PARAMS = ('parent_id', 'body', 'name')
 
 
-def get_object_or_none(cls, **kwargs):
-  try:
-    return cls.objects.get(**kwargs)
-  except:
-    return None
-
-
-# @cache_page(30)
 def index(request):
   articles = Article.objects.filter(published=True)
   most_recent = articles.order_by('-pub_date')[:3]
-  most_popular = Article.objects.all().order_by('-views')[:3]
+  most_popular = articles.order_by('-views')[:3]
   return render(request, 'main/index.html', locals())
 
 
@@ -41,45 +28,39 @@ def article(request, slug):
   return render(request, 'main/article.html', locals())
 
 
-def store_comment(request, slug):
+def get_object_or_none(cls, **kwargs):
   try:
-    if request.method != 'POST':
-      return JsonResponse({'response': 'invalid request'})
+    return cls.objects.get(**kwargs)
+  except:
+    return None
 
-    required = ('parent_id', 'body', 'name')
-    params = [item in request.POST.keys() for item in required]
-    if not all(params):
-      missing = ', '.join(p for p in required if request.POST.get(p, None) is None)
-      return JsonResponse({'response': 'Missing required param(s): {0}'.format(missing)})
-    from django.core.cache import get_cache
 
+def store_comment(request, slug):
+  if not request.is_ajax() or not request.method == 'POST':
+    return JsonErrorResponse('Invalid Request')
+
+  if not has_required_params(request):
+    return JsonErrorResponse('Missing required param(s): {0}'.format(get_missing(request)))
+  try:
     article = Article.objects.get(slug=slug)
+  except Article.DoesNotExist:
+    return JsonErrorResponse('No matching article found')
+  else:
     parent_id = int(request.POST['parent_id']) if request.POST['parent_id'] else None
     parent_comment = get_object_or_none(Comment, id=parent_id)
-    comment = Comment.create(
-        article,
-        parent_comment,
-        request.POST['name'],
-        request.POST['body']
-    )
+    comment = Comment.create(article, parent_comment, request.POST['name'], request.POST['body'])
     print 'saving comment'
     comment.save()
-    comment_id = comment.id
-    parent_id = comment.parent_id.id if comment.parent_id else ''
+    comment_info = [
+      ('comment_id', comment.id),
+      ('parent_id',  comment.parent.id if comment.parent else '')
+    ]
+    response_content = dict(request.POST.items() + comment_info)
+    return JsonResponse(response_content)
 
-    print comment_id
-    # comment.delete()
-    return JsonResponse(dict(request.POST.items() + [('parent_id', parent_id), ('comment_id', comment_id)]))
-  except Exception as e:
-    print e
 
-def editor(request):
-  from django.core.cache.utils import make_template_fragment_key
-  print 'view generated fragment:', make_template_fragment_key('cooltext', [])
-  return render(request, 'main/editor.html', locals())
+def has_required_params(request):
+  return all(item in request.POST.keys() for item in REQUIRED_PARAMS)
 
-def react(request):
-  return HttpResponse("Hello world!")
-  # return render(request, 'main/react.html', locals())
-
-# for k,v in lo
+def get_missing(request):
+  return ', '.join(p for p in REQUIRED_PARAMS if request.POST.get(p, None) is None)

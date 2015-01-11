@@ -69,6 +69,13 @@ DATABASES = {
     }
 }
 
+import sys
+if 'test' in sys.argv:
+  DATABASES['default'] = {
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': 'mytestdatabase'
+  }
+
 if not DEBUG:
   DATABASES = {
     'default': {
