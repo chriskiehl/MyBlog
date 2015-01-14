@@ -5,6 +5,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.decorators.cache import cache_page
 import itertools
 from django.views.decorators.csrf import ensure_csrf_cookie
+import operator
 from main.models import Article, Comment
 
 JsonResponse = lambda x, **kwargs: HttpResponse(json.dumps(x), content_type="application/json", **kwargs)
@@ -23,6 +24,8 @@ def index(request):
 @ensure_csrf_cookie
 def article(request, slug):
   article = get_object_or_404(Article, slug=slug, published=True)
+  related_posts = article.related.all()
+  similarly_tagged = Article.objects.filter(tags__in=article.tags.all()).distinct()
   comments = Comment.objects.select_related('parent_id').filter(article=article)
   comment_tree = comments.as_tree() if article.should_display_comments else iter([])
   return render(request, 'main/article.html', locals())
@@ -39,8 +42,8 @@ def store_comment(request, slug):
   if not request.is_ajax() or not request.method == 'POST':
     return JsonErrorResponse('Invalid Request')
 
-  if not has_required_params(request):
-    return JsonErrorResponse('Missing required param(s): {0}'.format(get_missing(request)))
+  if not _has_required_params(request):
+    return JsonErrorResponse('Missing required param(s): {0}'.format(_get_missing(request)))
   try:
     article = Article.objects.get(slug=slug)
   except Article.DoesNotExist:
@@ -58,9 +61,9 @@ def store_comment(request, slug):
     response_content = dict(request.POST.items() + comment_info)
     return JsonResponse(response_content)
 
-
-def has_required_params(request):
+def _has_required_params(request):
   return all(item in request.POST.keys() for item in REQUIRED_PARAMS)
 
-def get_missing(request):
+def _get_missing(request):
   return ', '.join(p for p in REQUIRED_PARAMS if request.POST.get(p, None) is None)
+

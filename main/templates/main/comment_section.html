@@ -11,9 +11,9 @@
                 </td>
 
                 <td>
-                    <a href="{{ article|as_twitter_link }}"><img src="{% static 'main/images/fb_icon.png' %}" ></a>
-                    <a href="{{ article|as_twitter_link }}"><img src="{% static 'main/images/gp_icon.png' %}" ></a>
-                    <a href="{{ article|as_twitter_link }}"><img src="{% static 'main/images/twitter_icon.png' %}"></a>
+                    <a href="{% facebook_share %}" target="_blank"><img src="{% static 'main/images/fb_icon.png' %}" onclick="window.open('{% facebook_share %}','twitter','width=600,height=400')"></a>
+                    <a href="{% google_share %}" target="_blank"><img src="{% static 'main/images/gp_icon.png' %}" onclick="window.open('{% google_share %}','twitter','width=600,height=400')"></a>
+                    <a href="{% twitter_share %}" target="_blank"><img src="{% static 'main/images/twitter_icon.png' %}" onclick="window.open('{% twitter_share %}','twitter','width=600,height=400')"></a>
                     <p>Share</p>
                 </td>
             </tr>

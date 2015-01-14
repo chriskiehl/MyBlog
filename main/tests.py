@@ -1,9 +1,10 @@
 import json
+from random import randint
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 # Create your tests here.
-from main.models import Article, Comment
+from main.models import Article, Comment, Tag
 
 
 class TestAdminAjaxSave(TestCase):
@@ -62,3 +63,44 @@ class TestAdminAjaxSave(TestCase):
     self.assertFalse(Comment.objects.filter(body='hello!').exists())
     self.ajax_post(self.url, data=self.data)
     self.assertTrue(Comment.objects.filter(body='hello!').exists())
+
+
+class TestArticle(TestCase):
+
+  def setUp(self):
+    pass
+
+  def test_related_articles_filters_by_closest_tags_match(self):
+
+    def create_article_with_tags(*tags):
+      a = Article.objects.create(title='article' + str(randint(0, 1000)), body='')
+      a.tags.add(*tags)
+      a.save()
+      return a
+
+    scala_tag  = Tag.objects.create(name='Scala')
+    css_tag    = Tag.objects.create(name='css')
+    refact_tag = Tag.objects.create(name='refactoring')
+    python_tag = Tag.objects.create(name='python')
+    django_tag = Tag.objects.create(name='django')
+    coding_tag = Tag.objects.create(name='coding')
+    cool_tag   = Tag.objects.create(name='cool stuff')
+
+    a = create_article_with_tags(scala_tag, css_tag, refact_tag)
+    b = create_article_with_tags(python_tag, css_tag, django_tag)
+    c = create_article_with_tags(scala_tag, css_tag, refact_tag)
+    d = create_article_with_tags(coding_tag, refact_tag, cool_tag, python_tag, css_tag)
+    e = create_article_with_tags(scala_tag)
+
+    related_articles = a._build_related_list()
+    self.assertEqual(c, related_articles[0]) # Exact tag match
+    self.assertEqual(d, related_articles[1]) # next closes match
+
+
+
+
+
+
+
+
+

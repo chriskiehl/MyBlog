@@ -1,10 +1,11 @@
 import json
 from django.conf.urls import patterns
 from django.contrib import admin
+from django import forms
 from django.http import HttpResponse
 from django.http.response import Http404
 
-from main.models import Article, Comment
+from main.models import Article, Comment, Tag
 
 JsonResponse = lambda d: HttpResponse(json.dumps(d), content_type="application/json")
 
@@ -26,9 +27,21 @@ def get_admin_urls(urls):
         return my_urls + urls
     return get_urls
 
+class TagAdmin(admin.TabularInline):
+  model = Article.tags.through
 
-class CommentAdmin(admin.TabularInline):
+class CommentAdmin(admin.StackedInline):
   model = Comment
+
+
+class RelatedAdminForm(forms.ModelForm):
+  class Meta:
+    model = Article
+
+  def __init__(self, *args, **kwargs):
+    super(RelatedAdminForm, self).__init__(*args, **kwargs)
+    self.fields['related'].queryset = Article.objects.filter(tags__in=self.instance.tags.all()).distinct()
+
 
 class ArticleAdmin(admin.ModelAdmin):
   fields = [
@@ -41,14 +54,20 @@ class ArticleAdmin(admin.ModelAdmin):
     'last_modified',
     'views',
     'should_display_comments',
-    'published'
+    'published',
+    'tags',
+    'related'
   ]
+  inlines = [TagAdmin]
 
+  form = RelatedAdminForm
 
   def get_readonly_fields(self, request, obj=None):
-    return self.readonly_fields + ('views', 'last_modified',) # 'pub_date')
+    return self.readonly_fields + ('views', 'last_modified',)
 
 
 admin.site.register(Article, ArticleAdmin)
+admin.site.register(Tag)
+admin.site.register(Comment)
 admin_urls = get_admin_urls(admin.site.get_urls())
 admin.site.get_urls = admin_urls
