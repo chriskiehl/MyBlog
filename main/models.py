@@ -22,7 +22,7 @@ class Tag(models.Model):
 class Article(models.Model):
   title_image = models.CharField(max_length=300, null=True, blank=True)
   thumbnail = models.CharField(max_length=300, null=True)
-  slug = models.CharField(max_length=100, blank=True)
+  slug = models.CharField(max_length=100)
   title = models.CharField(max_length=300)
   sub_title = models.CharField(max_length=300, null=True, blank=True)
   body = models.TextField(null=True)
@@ -66,7 +66,6 @@ class Article(models.Model):
       self.pub_date = datetime.now()
 
     self.body = self.strip_padding(self.body)
-    print self.tags.all()
     super(Article, self).save()
 
   def _build_related_list(self):

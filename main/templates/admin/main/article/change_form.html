@@ -129,6 +129,10 @@
           return _results;
         };
 
+        function updateSlugText(text) {
+            $('#id_slug').val(text.replace(/\W+/g, '-').toLowerCase());
+        }
+
         $(document).ready(function() {
             $('[for=id_body]').hide();
             CKEDITOR.replace('id_body');
@@ -149,6 +153,11 @@
                 },
                 1000
             );
+
+            $('#id_title').on('keyup', function(event) {
+                var text = $(this).val()
+                updateSlugText(text);
+            });
         })
 
     </script>
