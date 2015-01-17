@@ -11,7 +11,7 @@ CKEDITOR.editorConfig = function( config ) {
     config.allowedContent = true;
 
     config.toolbar = [
-	{ name: 'document', groups: [ 'mode', 'document']},
+	{ name: 'document', groups: [ 'mode', 'document', 'doctools'], items: [ 'Source']},
 	{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat' ] },
 	{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'] },
 	{ name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
