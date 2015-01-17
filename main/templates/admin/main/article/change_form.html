@@ -149,57 +149,6 @@
                 },
                 1000
             );
-
-
-
-{#                    setTimeout(function() {#}
-{##}
-{#                        $('iframe:first').contents().find('html').on('dragover', function (evt) {#}
-{#                            evt.stopPropagation();#}
-{#                            evt.preventDefault()#}
-{#                            $(evt).dropEffect = 'copy';#}
-{#                            console.log(3);#}
-{#                        });#}
-{##}
-{##}
-{#                        $('iframe:first').contents().find('html').on('drop', function (evt) {#}
-{#                            evt.stopPropagation();#}
-{#                            evt.preventDefault()#}
-{#                            $(evt).dropEffect = 'copy';#}
-{#                            console.log(6);#}
-{#                            console.log(evt);#}
-{#                        });#}
-{##}
-{#                        $('iframe:first').contents().on('drop', function (evt) {#}
-{#                            evt.stopPropagation();#}
-{#                            evt.preventDefault();#}
-{#                        });#}
-{##}
-{#                    }, 1000);#}
-{##}
-{##}
-{#                    setTimeout(function() {#}
-{#                        var editor = CKEDITOR.instances.id_body;#}
-{#                        console.log(editor.getSelection());#}
-{#                        var elem = editor.document.createElement('img', {#}
-{#                            attributes: {#}
-{#                                src: 'http://i.imgur.com/aJYZ20v.gif',#}
-{#                            }#}
-{#                        });#}
-{##}
-{#                        editor.insertElement(elem);#}
-{#                    }, 1500);#}
-
-{#                    setTimeout(function() {#}
-{#                        console.log("running");#}
-{#                        CKEDITOR.instances.id_body.on('click', function() {#}
-{#                            console.log("Hello world!");#}
-{#                        });#}
-{##}
-{#                        CKEDITOR.on('change', function() {#}
-{#                            console.log("Hello world!");#}
-{#                        });#}
-{#                    }, 500);#}
         })
 
     </script>

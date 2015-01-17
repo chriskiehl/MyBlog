@@ -10,6 +10,8 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import sys
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 # Quick-start development settings - unsuitable for production
@@ -23,7 +25,7 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = ['54.148.72.44', '127.0.0.1']
+ALLOWED_HOSTS = ['54.148.72.44', '127.0.0.1', '104.236.70.78']
 
 
 # Application definition
@@ -56,37 +58,32 @@ ROOT_URLCONF = 'blog.urls'
 WSGI_APPLICATION = 'blog.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/1.7/ref/settings/#databases
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'blogdb', 
-        'USER': 'myuser',
-        'PASSWORD': 'password',
-        'HOST': ''
-    }
+  'default': {
+      'ENGINE': 'django.db.backends.postgresql_psycopg2',
+      'NAME': 'blogdb',
+      'USER': 'django',
+      'PASSWORD': 'l6O8Pnnn58',
+      'HOST': ''
+  }
 }
 
-import sys
-if 'test' in sys.argv:
-  DATABASES['default'] = {
-    'ENGINE': 'django.db.backends.sqlite3',
-    'NAME': 'mytestdatabase'
-  }
-
-if not DEBUG:
+if DEBUG:
   DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'blogdb',
-        'USER': 'django',
-        'PASSWORD': 'l6O8Pnnn58',
-        'HOST': ''
-    }
+      'default': {
+          'ENGINE': 'django.db.backends.postgresql_psycopg2',
+          'NAME': 'blogdb',
+          'USER': 'myuser',
+          'PASSWORD': 'password',
+          'HOST': ''
+      }
   }
 
+  if 'test' in sys.argv:
+    DATABASES['default'] = {
+      'ENGINE': 'django.db.backends.sqlite3',
+      'NAME': 'mytestdatabase'
+    }
 
 
 CACHES = {
@@ -103,9 +100,6 @@ CACHES = {
 #         'KEY_PREFIX': "HelloWorld"
 #     }
 # }
-
-
-
 
 
 # Internationalization
