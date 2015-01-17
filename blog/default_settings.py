@@ -64,7 +64,7 @@ DATABASES = {
       'NAME': 'blogdb',
       'USER': 'django',
       'PASSWORD': 'l6O8Pnnn58',
-      'HOST': ''
+      'HOST': '127.0.0.1'
   }
 }
 
