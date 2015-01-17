@@ -22,7 +22,7 @@ CKEDITOR.editorConfig = function( config ) {
 
     // Toolbar groups configuration.
     config.toolbarGroups = [
-        { name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
+        { name: 'document', groups: [ 'mode', 'document', 'doctools' ], items: [ 'Source'] },
         { name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
         { name: 'editing', groups: [ 'find', 'selection', 'spellchecker' ] },
         { name: 'forms' },
