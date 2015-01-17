@@ -7,8 +7,8 @@ from django.db import models
 from django.db.models import QuerySet
 import boto
 from boto.s3.key import Key
-from django.db.models.signals import post_save
-from django.dispatch.dispatcher import receiver
+from django.db.models.signals import post_save, m2m_changed
+from django.dispatch.dispatcher import receiver, Signal
 from main import util
 
 
@@ -18,20 +18,22 @@ class Tag(models.Model):
   def __unicode__(self):
     return self.name
 
+
 class Article(models.Model):
   title_image = models.CharField(max_length=300, null=True)
   thumbnail = models.CharField(max_length=300, null=True)
   title = models.CharField(max_length=300)
-  slug = models.CharField(max_length=100)
-  sub_title = models.CharField(max_length=300, null=True)
+  slug = models.CharField(max_length=100, blank=True)
+  sub_title = models.CharField(max_length=300, null=True, blank=True)
   body = models.TextField(null=True)
-  pub_date = models.DateTimeField('date published', null=True)
+  pub_date = models.DateTimeField('date published', null=True, blank=True)
   last_modified = models.DateTimeField('last modified', default=datetime.now())
   views = models.IntegerField(default=0)
   should_display_comments = models.BooleanField(default=True)
   published = models.BooleanField(default=False)
   tags = models.ManyToManyField(Tag, null=True, blank=True)
   related = models.ManyToManyField('self', null=True, blank=True)
+  generate_related = models.BooleanField(default=True)
 
   __original_instance = None
 
@@ -60,24 +62,19 @@ class Article(models.Model):
     if not self.slug:
       self.slug = self.title.replace(' ', '-')
 
+    if self.published:
+      self.pub_date = datetime.now()
+
     self.body = self.strip_padding(self.body)
-
+    print self.tags.all()
     super(Article, self).save()
-
-    if self.tags_changed() or not self.related.all():
-      self.related.add = self._build_related_list()
-      super(Article, self).save()
-
-
-  def tags_changed(self):
-    a = self.__original_instance
-    return self.__original_instance['tags'] != self.tags
 
   def _build_related_list(self):
     tags = set(self.tags.all())
     semi_related = Article.objects.filter(tags__in=self.tags.all()).exclude(id=self.id).distinct()
     with_match_level = [(self.count_similar_tags(article, tags), article) for article in semi_related]
     closest_related = sorted(with_match_level, key=itemgetter(0), reverse=True)
+    print [article for (rating, article) in closest_related[:3]]
     return [article for (rating, article) in closest_related[:3]]
 
   def count_similar_tags(self, article, tags):
@@ -110,15 +107,6 @@ class Article(models.Model):
   def title_image_changed(self):
     return (self.__original_instance['title_image'] != self.title_image)
 
-#
-# @receiver(post_save, sender=Article)
-# def article_post_save(sender, instance, **kwargs):
-#   if not instance.related.all():
-#     self
-
-
-
-
 
 
 
@@ -145,12 +133,12 @@ class Node(object):
 
 class Comment(models.Model):
   article = models.ForeignKey('Article')
-  parent = models.ForeignKey('Comment', null=True)
+  parent = models.ForeignKey('Comment', null=True, blank=True)
   author = models.CharField(max_length=50)
   body = models.TextField()
   post_date = models.DateField(default=datetime.now())
   deleted = models.BooleanField(default=False)
-
+  admin_comment = models.BooleanField(default=False)
   objects = CommentManager()
 
   def __unicode__(self):

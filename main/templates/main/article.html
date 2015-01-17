@@ -31,20 +31,19 @@
                     <h3>{{ article.sub_title }}</h3>
                     <img src="{% static 'main/images/grumpy.png' %}" >
                     <link href='http://fonts.googleapis.com/css?family=Merriweather' rel='stylesheet' type='text/css'>
-                    <div class="article-body">
+                    <article>
                         {{ article.body|safe }}
-                    </div>
+                    </article>
                 </div>
                 {% if related_posts %}
-                <div class="related">
-
-                    <h4>Related Posts</h4>
-                    <ul>
-                        {% for related in related_posts %}
-                            <li><a href="{{related.slug}}">{{ related.title }}</a></li>
-                        {% endfor %}
-                    </ul>
-                </div>
+                    <div class="related">
+                        <h4>Related Posts</h4>
+                        <ul>
+                            {% for related in related_posts %}
+                                <li><a href="{% url 'view_article' slug=related.slug %}">{{ related.title }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 {% endif %}
             </div>
             <div class="section section-last">

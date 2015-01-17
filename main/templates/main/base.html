@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	{% load staticfiles %}
+    <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Merriweather' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/main/main.css' %}" />
+
+	<meta charset="UTF-8">
+	<title>Cool beans</title>
+
+    {% block head_additions %}{% endblock %}
+</head>
+
+<body>
+	<div id="header"></div>
+
+	<div class="blog-container">
+        {% include 'main/sidebar.html' %}
+
+
+		<div class="primary">
+            {% block primary_content %}{% endblock %}
+		</div>
+	</div>
+
+
+</body>
+
+</html>

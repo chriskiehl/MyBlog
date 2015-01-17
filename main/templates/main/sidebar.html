@@ -1,12 +1,12 @@
 {% load staticfiles %}
 
 <div class="sidebar">
-    <div class="sidebar-content">
+    <header>
         <div class="icon">
             <a href="{% url 'home' %}"><img src="{% static 'main/images/circle_avatar.png' %}"></a>
         </div>
 
-        <div id="menu">
+        <nav>
             <ul class="list-unstyled">
                 <li><a href="/article/about">About</a></li>
                 <li><a href="https://github.com/chriskiehl">Projects</a></li>
@@ -20,8 +20,8 @@
             <ul class="list-unstyled">
                 <li><a href="#">Then a tasteful ad</a></li>
             </ul>
-        </div>
+        </nav>
 
-    </div>
+    </header>
 
 </div>

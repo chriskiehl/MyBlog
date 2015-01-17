@@ -1,81 +1,61 @@
-<!DOCTYPE html>
-<html>
-<head>
-	{% load staticfiles %}
-    <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-    <link href='http://fonts.googleapis.com/css?family=Merriweather' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="{% static 'main/css/main/main.css' %}" />
+{% extends 'main/base.html' %}
 
-	<meta charset="UTF-8">
-	<title>Cool beans</title>
-</head>
+{% block primary_content %}
 
-<body>
-	<div id="header"></div>
-
-	<div class="blog-container">
-        {% include 'main/sidebar.html' %}
-
-
-		<div class="primary">
-            <div class="section">
-			    <h2>Most Recent</h2>
-                <div class="most-recent">
-                    <div>
-                        <h3>{{ most_recent.0.title }}</h3>
-                        <img src="{{ most_recent.0.title_image }}" >
-                        {{ most_recent.0.body|safe|truncatechars_html:370 }}
-                    </div>
+    <div class="section">
+        <h2>Most Recent</h2>
+        <div class="most-recent">
+            <div>
+                <h3>{{ most_recent.0.title }}</h3>
+                <img src="{{ most_recent.0.title_image }}" >
+                {{ most_recent.0.body|safe|truncatechars_html:370 }}
+            </div>
 {#                    <div style="float: right;">#}
 {#                        <p>9h ago</p>#}
 {#                        <p>24 comments</p>#}
 {#                    </div>#}
-                    <a href="article/{{ most_recent.0.slug }}">Read more >></a>
-                </div>
-            </div>
+            <a href="article/{{ most_recent.0.slug }}">Read more >></a>
+        </div>
+    </div>
 
-            <div class="section">
-                <h2>Most Popular</h2>
-                    <div class="pop-section">
-                        {% for article in most_popular %}
-                            <div class="pop-prev">
-                                <img src="{{ article.thumbnail }}">
-                                <h4>{{ article.title }}</h4>
-                                <div class="sub-title">
-                                    <h5>{{ article.sub_title }}</h5>
-                                </div>
-                                <a href="article/{{ article.slug }}">Read >></a>
-                            </div>
-                        {% endfor %}
-                    </div>
-
-
-            </div>
-
-            <div class="section">
-                <h2>Backlog</h2>
-                {% for prev_article in most_recent|slice:"1:" %}
-                    <div class="most-recent">
-                        <div>
-                            <h3>{{ prev_article.title }}</h3>
-                            <div class="image-cropper">
-                                <img src="{{ prev_article.title_image }}" >
-                            </div>
-                            {{ prev_article.body|safe|truncatechars_html:370 }}
+    <div class="section">
+        <h2>Most Popular</h2>
+            <div class="pop-section">
+                {% for article in most_popular %}
+                    <div class="pop-prev">
+                        <img src="{{ article.thumbnail }}">
+                        <h4>{{ article.title }}</h4>
+                        <div class="sub-title">
+                            <h5>{{ article.sub_title }}</h5>
                         </div>
-                        <a href="article/{{ prev_article.slug }}">Read more >></a>
+                        <a href="article/{{ article.slug }}">Read >></a>
                     </div>
-
-                    <hr>
                 {% endfor %}
             </div>
 
-            <div class="section section-last">
-                <a href="#" style="float: left;" class="nav">Prev</a>
-                <a href="#" style="float: right;" class="nav">Next</a>
-            </div>
-		</div>
-	</div>
-</body>
 
-</html>
+    </div>
+
+    <div class="section">
+        <h2>Backlog</h2>
+        {% for prev_article in most_recent|slice:"1:" %}
+            <div class="most-recent">
+                <div>
+                    <h3>{{ prev_article.title }}</h3>
+                    <div class="image-cropper">
+                        <img src="{{ prev_article.title_image }}" >
+                    </div>
+                    {{ prev_article.body|safe|truncatechars_html:370 }}
+                </div>
+                <a href="{% url 'view_article' slug=prev_article.slug %}">Read more >></a>
+            </div>
+
+            <hr>
+        {% endfor %}
+    </div>
+
+    <div class="section section-last">
+        <a href="{% url 'backlog-paginator' page=1 %}" style="float: left;" class="page-ctrl">Prev</a>
+    </div>
+
+{% endblock %}

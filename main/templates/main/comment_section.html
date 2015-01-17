@@ -49,7 +49,9 @@
                 <div class="comment-box" id="{{ comment.id }}">
                     <div class="comment-internals">
                         <div>
-                            <p class="comment-author">{{ comment.author }}</p>
+                            <p class="comment-author">{{ comment.author }}{% if comment.admin_comment %}<span style="color: #9f5512; font-size: 12px;"> (Author Comment)</span>
+                                {% endif %}
+                            </p>
                             <p class="comment-body"> {{ comment.body }}</p>
                         </div>
                         <div>

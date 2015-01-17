@@ -1,5 +1,6 @@
 import json
 from django.core.cache import cache
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http.response import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.cache import cache_page
@@ -25,10 +26,35 @@ def index(request):
 def article(request, slug):
   article = get_object_or_404(Article, slug=slug, published=True)
   related_posts = article.related.all()
+
   similarly_tagged = Article.objects.filter(tags__in=article.tags.all()).distinct()
   comments = Comment.objects.select_related('parent_id').filter(article=article)
   comment_tree = comments.as_tree() if article.should_display_comments else iter([])
   return render(request, 'main/article.html', locals())
+
+
+def backlog(request, page):
+  article_set = Article.objects.filter(published=True).order_by('-pub_date')
+  if int(page) == 1:
+    # Shave off the first 3 results. They were already shown on the home page
+    article_set = article_set[3:]
+
+  paginator = Paginator(article_set, 2)
+  next_page = int(page) + 1
+  prev_page = int(page) - 1
+
+  try:
+    articles = paginator.page(page)
+  except PageNotAnInteger:
+    articles = paginator.page(1)
+  except EmptyPage:
+    articles = paginator.page(paginator.num_pages)
+
+  return render(request, 'main/backlog.html', locals())
+
+
+
+
 
 
 def get_object_or_none(cls, **kwargs):

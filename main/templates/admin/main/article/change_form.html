@@ -131,14 +131,7 @@
 
         $(document).ready(function() {
             $('[for=id_body]').hide();
-            CKEDITOR.replace('id_body', {
-                toolbarGroups: [
-                    { name: 'document',	   groups: [ 'mode', 'document' ] },			// Displays document group with its two subgroups.
-                    { name: 'styles' },
-                    { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-                    { name: 'tools' },
-                ]
-            });
+            CKEDITOR.replace('id_body');
 
             setTimeout(function() {
                 var ckeditor = CKEDITOR.instances.id_body;
@@ -211,13 +204,18 @@
 
     </script>
 
-
+<style>
+    select {
+        width: 300px;
+        min-height: 100px;
+    }
+</style>
 
 
 {% endblock %}
 
 {% block content %}
     {{ block.super }}
-    <p id="saved-msg" class="alert alert-success" style="width: 80px; position: absolute; right: 0; margin-right: 30px; display: none;" ></p>
 
+    <p id="saved-msg" class="alert alert-success" style="width: 80px; position: absolute; right: 0; margin-right: 30px; display: none;" ></p>
 {% endblock %}

@@ -21,18 +21,21 @@ def save_article(request, article_id):
       pass
   return JsonResponse({'error': 'Invalid Request'})
 
+
 def get_admin_urls(urls):
     def get_urls():
         my_urls = patterns('', (r'^main/article/(?P<article_id>\d+)/save-article/$', admin.site.admin_view(save_article)))
         return my_urls + urls
     return get_urls
 
-class TagAdmin(admin.TabularInline):
+
+class TagAdmin(forms.ModelForm):
   model = Article.tags.through
 
-class CommentAdmin(admin.StackedInline):
-  model = Comment
 
+class CommentAdmin(admin.TabularInline):
+  model = Comment
+  extra = 0
 
 class RelatedAdminForm(forms.ModelForm):
   class Meta:
@@ -40,7 +43,8 @@ class RelatedAdminForm(forms.ModelForm):
 
   def __init__(self, *args, **kwargs):
     super(RelatedAdminForm, self).__init__(*args, **kwargs)
-    self.fields['related'].queryset = Article.objects.filter(tags__in=self.instance.tags.all()).distinct()
+    if self.instance.id:
+      self.fields['related'].queryset = Article.objects.filter(tags__in=self.instance.tags.all()).distinct()
 
 
 class ArticleAdmin(admin.ModelAdmin):
@@ -56,14 +60,35 @@ class ArticleAdmin(admin.ModelAdmin):
     'should_display_comments',
     'published',
     'tags',
+    'generate_related',
     'related'
   ]
-  inlines = [TagAdmin]
+
+  inlines = [CommentAdmin]
 
   form = RelatedAdminForm
 
   def get_readonly_fields(self, request, obj=None):
     return self.readonly_fields + ('views', 'last_modified',)
+
+  def save_related(self, request, form, formsets, change):
+    article = Article.objects.get(slug=form.cleaned_data.get('slug'))
+    generate_related = form.cleaned_data.get('generate_related')
+    old_tags = list(article.tags.all())
+    new_tags = list(form.cleaned_data.get('tags'))
+    has_related = form.cleaned_data.get('related')
+
+    if generate_related and (old_tags != new_tags or not has_related):
+      article.related = article._build_related_list()
+      article.save()
+
+    form.save_m2m()
+    for formset in formsets:
+        self.save_formset(request, form, formset, change=change)
+
+
+
+
 
 
 admin.site.register(Article, ArticleAdmin)
