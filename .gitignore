@@ -5,7 +5,7 @@ __pycache__/
 
 .idea/
 
-settings.py
+blog/settings.py
 
 # C extensions
 *.so
