@@ -1,11 +1,11 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-
+settings.py[cod]
 
 .idea/
 
-blog/settings.py
+
 
 # C extensions
 *.so
