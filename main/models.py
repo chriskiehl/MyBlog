@@ -20,10 +20,10 @@ class Tag(models.Model):
 
 
 class Article(models.Model):
-  title_image = models.CharField(max_length=300, null=True)
+  title_image = models.CharField(max_length=300, null=True, blank=True)
   thumbnail = models.CharField(max_length=300, null=True)
-  title = models.CharField(max_length=300)
   slug = models.CharField(max_length=100, blank=True)
+  title = models.CharField(max_length=300)
   sub_title = models.CharField(max_length=300, null=True, blank=True)
   body = models.TextField(null=True)
   pub_date = models.DateTimeField('date published', null=True, blank=True)
