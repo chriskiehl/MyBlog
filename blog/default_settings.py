@@ -25,7 +25,7 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = ['54.148.72.44', '127.0.0.1', '104.236.70.78']
+ALLOWED_HOSTS = ['54.148.72.44', '127.0.0.1', '104.236.70.78', 'chriskiehl.com', 'www.chriskiehl.com']
 
 
 # Application definition
