@@ -56,10 +56,13 @@ class Article(models.Model):
     return "Article titled: {0}".format(self.title)
 
   def save(self, *args, **kwargs):
+    if self.title_image and not self.thumbnail:
+        self.thumbnail = self.create_thumbnail()
+
     if self.pk:
       instance = Article.objects.get(pk=self.pk)
 
-      if self.title_image and not self.thumbnail or self.title_image_changed(instance):
+      if self.title_image_changed(instance):
         self.thumbnail = self.create_thumbnail()
 
       if self.published_state_changed(instance):
