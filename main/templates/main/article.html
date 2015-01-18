@@ -29,7 +29,7 @@
                 <div class="most-recent">
                     <h2>{{ article.title }}</h2>
                     <h3>{{ article.sub_title }}</h3>
-                    <img src="{% static 'main/images/grumpy.png' %}" >
+                    <img src="{{ article.title_image }}" >
                     <link href='http://fonts.googleapis.com/css?family=Merriweather' rel='stylesheet' type='text/css'>
                     <article>
                         {{ article.body|safe }}

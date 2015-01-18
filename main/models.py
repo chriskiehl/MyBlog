@@ -65,7 +65,11 @@ class Article(models.Model):
       if self.title_image_changed(instance):
         self.thumbnail = self.create_thumbnail()
 
-      if self.published_state_changed(instance):
+      if self.publishing(instance):
+        self.pub_date = datetime.now()
+
+    else:
+      if self.published:
         self.pub_date = datetime.now()
 
     if not self.slug:
@@ -112,8 +116,11 @@ class Article(models.Model):
   def title_image_changed(self, instance):
     return instance.title_image != self.title_image
 
-  def published_state_changed(self, instance):
-    return instance.published == self.published
+  def publishing(self, instance):
+    not_previously_published = instance.published == False
+    # if we're checking the published box to ON
+    return not_previously_published and self.published
+
 
 
 
