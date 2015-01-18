@@ -154,9 +154,10 @@
                 1000
             );
 
-            $('#id_title').on('keyup', function(event) {
-                var text = $(this).val()
-                updateSlugText(text);
+            $('[type=submit]').on('click', function() {
+                if ($('#id_slug').val().length === 0) {
+                    updateSlugText($('#id_title').val())
+                }
             });
         })
 

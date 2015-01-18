@@ -8,9 +8,9 @@
 
         <nav>
             <ul class="list-unstyled">
-                <li><a href="/article/about">About</a></li>
-                <li><a href="https://github.com/chriskiehl">Projects</a></li>
-                <li><a href="#">Contact</a></li>
+                <li><a href="{% url 'view_article' slug='about' %}">About</a></li>
+                <li><a target="_blank" href="https://github.com/chriskiehl">Projects</a></li>
+                <li><a href="{% url 'view_article' slug='contact-page' %}">Contact</a></li>
                 <li><a target="_blank" href="https://twitter.com/thechriskiehl">Twitter</a></li>
                 <li><a href="#">RSS Feed</a></li>
             </ul>
