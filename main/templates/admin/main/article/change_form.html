@@ -153,21 +153,17 @@
                 },
                 1000
             );
-
-            $('[type=submit]').on('click', function() {
-                if ($('#id_slug').val().length === 0) {
-                    updateSlugText($('#id_title').val())
-                }
-            });
         })
 
     </script>
 
 <style>
-    select {
+    #id_related, #id_tags {
         width: 300px;
         min-height: 100px;
     }
+
+
 </style>
 
 

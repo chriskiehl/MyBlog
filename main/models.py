@@ -22,7 +22,7 @@ class Tag(models.Model):
 class Article(models.Model):
   title_image = models.CharField(max_length=300, null=True, blank=True)
   thumbnail = models.CharField(max_length=300, null=True)
-  slug = models.CharField(max_length=100)
+  slug = models.CharField(max_length=100, blank=True)
   title = models.CharField(max_length=300)
   sub_title = models.CharField(max_length=300, null=True, blank=True)
   body = models.TextField(null=True)
@@ -56,14 +56,17 @@ class Article(models.Model):
     return "Article titled: {0}".format(self.title)
 
   def save(self, *args, **kwargs):
-    if self.title_image and not self.thumbnail or self.title_image_changed():
-      self.thumbnail = self.create_thumbnail()
+    if self.pk:
+      instance = Article.objects.get(pk=self.pk)
+
+      if self.title_image and not self.thumbnail or self.title_image_changed(instance):
+        self.thumbnail = self.create_thumbnail()
+
+      if self.published_state_changed(instance):
+        self.pub_date = datetime.now()
 
     if not self.slug:
       self.slug = self.title.replace(' ', '-')
-
-    if self.published:
-      self.pub_date = datetime.now()
 
     self.body = self.strip_padding(self.body)
     super(Article, self).save()
@@ -73,8 +76,8 @@ class Article(models.Model):
     semi_related = Article.objects.filter(tags__in=self.tags.all()).exclude(id=self.id).distinct()
     with_match_level = [(self.count_similar_tags(article, tags), article) for article in semi_related]
     closest_related = sorted(with_match_level, key=itemgetter(0), reverse=True)
-    print [article for (rating, article) in closest_related[:3]]
     return [article for (rating, article) in closest_related[:3]]
+
 
   def count_similar_tags(self, article, tags):
     return len(set(article.tags.all()).intersection(tags))
@@ -103,8 +106,11 @@ class Article(models.Model):
     filename, ext = os.path.splitext(os.path.split(source_url)[-1])
     return 'main/images/{0}-thumb{1}'.format(filename, ext)
 
-  def title_image_changed(self):
-    return (self.__original_instance['title_image'] != self.title_image)
+  def title_image_changed(self, instance):
+    return instance.title_image != self.title_image
+
+  def published_state_changed(self, instance):
+    return instance.published == self.published
 
 
 

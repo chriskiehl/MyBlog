@@ -40,6 +40,21 @@ class CommentAdmin(admin.TabularInline):
 class RelatedAdminForm(forms.ModelForm):
   class Meta:
     model = Article
+    fields = [
+      'body',
+      'title_image',
+      'title',
+      'sub_title',
+      'slug',
+      'pub_date',
+      'last_modified',
+      'views',
+      'should_display_comments',
+      'published',
+      'tags',
+      'generate_related',
+      'related'
+    ]
 
   def __init__(self, *args, **kwargs):
     super(RelatedAdminForm, self).__init__(*args, **kwargs)
@@ -47,44 +62,38 @@ class RelatedAdminForm(forms.ModelForm):
       self.fields['related'].queryset = Article.objects.filter(tags__in=self.instance.tags.all()).distinct()
 
 
+  def clean(self):
+    super(RelatedAdminForm, self).clean()
+
+class ArticleForm(forms.ModelForm):
+  class Meta:
+    model = Article
+
 class ArticleAdmin(admin.ModelAdmin):
-  fields = [
-    'body',
-    'title_image',
-    'title',
-    'sub_title',
-    'slug',
-    'pub_date',
-    'last_modified',
-    'views',
-    'should_display_comments',
-    'published',
-    'tags',
-    'generate_related',
-    'related'
-  ]
-
   inlines = [CommentAdmin]
-
   form = RelatedAdminForm
 
   def get_readonly_fields(self, request, obj=None):
     return self.readonly_fields + ('views', 'last_modified',)
 
   def save_related(self, request, form, formsets, change):
-    article = Article.objects.get(slug=form.cleaned_data.get('slug'))
+    article = form.instance
     generate_related = form.cleaned_data.get('generate_related')
-    old_tags = list(article.tags.all())
-    new_tags = list(form.cleaned_data.get('tags'))
     has_related = form.cleaned_data.get('related')
 
-    if generate_related and (old_tags != new_tags or not has_related):
+    if generate_related and (self.tags_changed(article, form) or not has_related):
       article.related = article._build_related_list()
       article.save()
 
     form.save_m2m()
     for formset in formsets:
         self.save_formset(request, form, formset, change=change)
+
+  def tags_changed(self, instance, form):
+    old_tags = list(instance.tags.all())
+    new_tags = list(form.cleaned_data.get('tags'))
+    return old_tags != new_tags
+
 
 
 
