@@ -10,10 +10,10 @@
                 <img src="{{ most_recent.0.title_image }}" >
                 {{ most_recent.0.body|safe|truncatechars_html:370 }}
             </div>
-{#                    <div style="float: right;">#}
-{#                        <p>9h ago</p>#}
-{#                        <p>24 comments</p>#}
-{#                    </div>#}
+                    <div style="float: right;">
+                        <p>9h ago</p>
+                        <p> {{most_recent.0.comments.all.count}} </p>
+                    </div>
             <a href="article/{{ most_recent.0.slug }}">Read more >></a>
         </div>
     </div>
@@ -23,7 +23,7 @@
             <div class="pop-section">
                 {% for article in most_popular %}
                     <div class="pop-prev">
-                        <img src="{{ article.thumbnail }}">
+                        <img src="{{ article.thumbnail }}" width="210" height="118">
                         <h4>{{ article.title }}</h4>
                         <div class="sub-title">
                             <h5>{{ article.sub_title }}</h5>

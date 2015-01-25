@@ -46,7 +46,7 @@ INSTALLED_APPS = (
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -89,17 +89,30 @@ if DEBUG:
 CACHES = {
   'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake'
   }
 }
 
 # running against memcached in virtual box
-# CACHES = {
-#     'default': {
-#         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-#         'LOCATION': '192.168.1.12:11211',
-#         'KEY_PREFIX': "HelloWorld"
-#     }
-# }
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '192.168.1.9:11211',
+        'KEY_PREFIX': "HelloWorld"
+    }
+}
+
+if not DEBUG:
+  CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+        'KEY_PREFIX': "blogomatono"
+    }
+  }
+
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 
 
 # Internationalization
@@ -140,7 +153,6 @@ if not DEBUG:
   DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
   STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
   STATIC_URL = AWS_CALLING_FORMAT
-
 
 
 

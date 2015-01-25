@@ -1,14 +1,16 @@
+import os
+import boto
 from datetime import datetime
 from itertools import chain
 from operator import itemgetter
-import os
+
 from django.conf import settings
 from django.db import models
 from django.db.models import QuerySet
-import boto
 from boto.s3.key import Key
-from django.db.models.signals import post_save, m2m_changed
-from django.dispatch.dispatcher import receiver, Signal
+from django.db.models.signals import post_save
+from django.dispatch.dispatcher import receiver
+
 from main import util
 
 
@@ -34,6 +36,11 @@ class Article(models.Model):
   tags = models.ManyToManyField(Tag, null=True, blank=True)
   related = models.ManyToManyField('self', null=True, blank=True)
   generate_related = models.BooleanField(default=True)
+
+  stale = models.BooleanField(default=False)
+
+  content_out_of_date = False
+
 
   __original_instance = None
 
@@ -76,6 +83,8 @@ class Article(models.Model):
       self.slug = self.title.replace(' ', '-')
 
     self.body = self.strip_padding(self.body)
+    self.stale = True
+    Article.content_out_of_date = True
     super(Article, self).save()
 
   def _build_related_list(self):
@@ -123,10 +132,6 @@ class Article(models.Model):
 
 
 
-
-
-
-
 class CommentManager(models.Manager):
   def get_queryset(self):
     return self.model.MyQuerySet(self.model)
@@ -147,7 +152,7 @@ class Node(object):
 
 
 class Comment(models.Model):
-  article = models.ForeignKey('Article')
+  article = models.ForeignKey('Article', related_name='comments')
   parent = models.ForeignKey('Comment', null=True, blank=True)
   author = models.CharField(max_length=50)
   body = models.TextField()
@@ -161,6 +166,8 @@ class Comment(models.Model):
 
   def __repr__(self):
     return self.__unicode__()
+
+
 
   @classmethod
   def create(cls, article, parent, author, body):
@@ -209,7 +216,13 @@ class Comment(models.Model):
 
 
 
-
+@receiver(post_save, sender=Comment)
+def comment_post_save(sender, instance, *args, **kwargs):
+  # mark the article for updates
+  article = instance.article
+  article.stale = True
+  Article.content_out_of_date = True
+  article.save()
 
 
 

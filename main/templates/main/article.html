@@ -1,56 +1,40 @@
-{% load cache %}
-<!DOCTYPE html>
-<html>
-<head>
-	{% load staticfiles %}
-    <link rel="stylesheet" type="text/css" href="{% static 'main/css/main/main.css' %}" />
-    <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="{% static 'main/css/base/code.css' %}" />
+{% extends 'main/base.html' %}
+{% load staticfiles %}
 
-	<meta charset="UTF-8">
-	<title>Cool beans</title>
+{% block title %}{{ article.title }} - {{ block.super }}{% endblock %}
+
+
+{% block primary_content %}
+
+    <div class="section">
+        <div class="most-recent">
+            <h2>{{ article.title }}</h2>
+            <h3>{{ article.sub_title }}</h3>
+            <img src="{{ article.title_image }}" >
+            <link href='http://fonts.googleapis.com/css?family=Merriweather' rel='stylesheet' type='text/css'>
+            <article>
+                {{ article.body|safe }}
+            </article>
+        </div>
+        {% if related_posts %}
+            <div class="related">
+                <h4>Related Posts</h4>
+                <ul>
+                    {% for related in related_posts %}
+                        <li><a href="{% url 'view_article' slug=related.slug %}">{{ related.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    </div>
+    <div class="section section-last">
+        {% include 'main/comment_section.html' %}
+    </div>
+
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
     <script src="{% static 'main/js/lib/jquery/jquery-2.1.1.min.js' %}"></script>
-    <script src="{% static 'main/js/Bacon.js' %}"></script>
     <script src="{% static 'main/js/snake.js' %}"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-</head>
 
-<body>
-	<div id="header"></div>
-
-	<div class="blog-container">
-
-        {% include 'main/sidebar.html' %}
-
-		<div class="primary">
-            <div class="section">
-                <div class="most-recent">
-                    <h2>{{ article.title }}</h2>
-                    <h3>{{ article.sub_title }}</h3>
-                    <img src="{{ article.title_image }}" >
-                    <link href='http://fonts.googleapis.com/css?family=Merriweather' rel='stylesheet' type='text/css'>
-                    <article>
-                        {{ article.body|safe }}
-                    </article>
-                </div>
-                {% if related_posts %}
-                    <div class="related">
-                        <h4>Related Posts</h4>
-                        <ul>
-                            {% for related in related_posts %}
-                                <li><a href="{% url 'view_article' slug=related.slug %}">{{ related.title }}</a></li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                {% endif %}
-            </div>
-            <div class="section section-last">
-                {% include 'main/comment_section.html' %}
-            </div>
-		</div>
-	</div>
-</body>
-
-</html>
+{% endblock %}

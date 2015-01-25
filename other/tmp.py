@@ -15,7 +15,7 @@ if __name__ == "__main__":
   os.environ.setdefault("DJANGO_SETTINGS_MODULE", "blog.settings")
   # for i in Comment.objects.all():
   #   print i.id, i.parent_id.id if i.parent_id is not None else "None", i.author
-  with open('MOCK_DATA.csv') as f:
+  with open('../other/MOCK_DATA.csv') as f:
     csvreader = csv.reader(f, delimiter=",")
     data = [line for line in csvreader]
 

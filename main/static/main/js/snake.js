@@ -79,10 +79,14 @@
         data: {
           'parent_id': parentId,
           'body': element.parent().prev('textarea').val(),
-          'name': element.next('.name-field').val()
+          'name': element.next('.name-field').val(),
+          'csrfmiddlewaretoken': getCsrfCookie()
         },
         xhrFields: {
           withCredentials: true
+        },
+        beforeSend: function(xhr) {
+          return xhr.setRequestHeader("X-CSRFToken", getCsrfCookie());
         }
       }).done(function(data) {
         console.log("success!");
