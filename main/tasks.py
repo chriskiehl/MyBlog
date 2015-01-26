@@ -1,7 +1,6 @@
 from __future__ import absolute_import
-import multiprocessing
 
-from blog.celery import app
+from blog.celery_stuff import app
 
 from django.conf import settings
 from django.core import urlresolvers
