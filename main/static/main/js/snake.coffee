@@ -91,7 +91,7 @@ saveComment = (element) ->
         type: 'POST'
         data: {
           'parent_id': parentId,
-          'body': element.parent().prev('textarea').val(),
+          'body': element.parent().prev('textarea').val() ,
           'name': element.next('.name-field').val(),
           'csrfmiddlewaretoken': getCsrfCookie()
         },
