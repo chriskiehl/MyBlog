@@ -88,29 +88,28 @@ if DEBUG:
 
 CACHES = {
   'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'unique-snowflake'
+      'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+      'LOCATION': '127.0.0.1:11211',
+      'KEY_PREFIX': "blogomatono"
   }
 }
 
-# running against memcached in virtual box
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '192.168.1.9:11211',
-        'KEY_PREFIX': "HelloWorld"
-    }
-}
-
-if not DEBUG:
+if DEBUG:
   CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211',
-        'KEY_PREFIX': "blogomatono"
+          'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+          'LOCATION': 'unique-snowflake'
     }
   }
 
+  # running against memcached in virtual box
+  CACHES = {
+      'default': {
+          'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+          'LOCATION': '192.168.1.9:11211',
+          'KEY_PREFIX': "HelloWorld"
+      }
+  }
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 
