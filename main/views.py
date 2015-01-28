@@ -125,7 +125,7 @@ def store_comment(request, slug):
     article_slugs = Article.objects.filter(stale=True, published=True).values_list('slug', flat=True)
     print 'Stale slugs:', article_slugs
     try:
-      update_cache.delay()
+      update_cache.delay(pickle_request(request))
     except Exception as e:
       print e
 
