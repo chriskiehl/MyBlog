@@ -148,6 +148,14 @@ AWS_SECRET_ACCESS_KEY = 'k3xKdMDZxzWK3OnsoM0E8VTt85EmQ4rgK6ScEDQ3'
 AWS_STORAGE_BUCKET_NAME = 'awsblogstore'
 AWS_CALLING_FORMAT = 'http://{0}.s3.amazonaws.com/'.format(AWS_STORAGE_BUCKET_NAME)
 
+AWS_QUERYSTRING_AUTH = False
+
+AWS_HEADERS = {
+  'Cache-Control': 'max-age=31556926',
+}
+
+AWS_IS_GZIPPED = True
+
 if not DEBUG:
   DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
   STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
