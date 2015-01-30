@@ -11,7 +11,7 @@
                 <div>
                     <h3>{{ prev_article.title }}</h3>
                     <div class="image-cropper">
-                        <img src="{{ prev_article.title_image }}" >
+                        <img src="{{ prev_article.title_image }}" alt="Title Image for article: {{ prev_article.title }}">
                     </div>
                     {{ prev_article.body|safe|truncatechars_html:370 }}
                 </div>

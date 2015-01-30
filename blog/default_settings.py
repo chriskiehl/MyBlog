@@ -102,14 +102,14 @@ if DEBUG:
     }
   }
 
-  # running against memcached in virtual box
-  CACHES = {
-      'default': {
-          'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-          'LOCATION': '192.168.1.9:11211',
-          'KEY_PREFIX': "HelloWorld"
-      }
-  }
+  # # running against memcached in virtual box
+  # CACHES = {
+  #     'default': {
+  #         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+  #         'LOCATION': '192.168.1.9:11211',
+  #         'KEY_PREFIX': "HelloWorld"
+  #     }
+  # }
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 
@@ -149,6 +149,8 @@ AWS_STORAGE_BUCKET_NAME = 'awsblogstore'
 AWS_CALLING_FORMAT = 'http://{0}.s3.amazonaws.com/'.format(AWS_STORAGE_BUCKET_NAME)
 
 AWS_QUERYSTRING_AUTH = False
+
+AWS_REDUCED_REDUNDANCY = True 
 
 AWS_HEADERS = {
   'Cache-Control': 'max-age=31556926',
