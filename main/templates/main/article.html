@@ -3,6 +3,9 @@
 
 {% block title %}{{ article.title }} - {{ block.super }}{% endblock %}
 
+{% block head_additions %}
+    <link rel="stylesheet" href="{% static 'main/css/lib/highlight/darkula.min.css' %}">
+{% endblock %}
 
 {% block primary_content %}
 

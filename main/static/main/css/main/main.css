@@ -113,7 +113,7 @@ textarea {
   margin: 0; }
 
 button {
-  overflow: visible;}
+  overflow: visible; }
 
 button,
 select {
@@ -5413,6 +5413,9 @@ input[type=text] {
 
 input[type=text]:focus {
   border-color: #aeaeae; }
+
+pre {
+  margin-bottom: 30px; }
 
 #header {
   height: 50px; }
