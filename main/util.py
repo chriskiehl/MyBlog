@@ -19,10 +19,10 @@ def create_thumbnail(source_image):
 
   cropped_im = resized_im.crop((crop_loc_left, 0, crop_loc_right, target_height))
   print cropped_im.size
-  shapened_img = cropped_im.filter(ImageFilter.UnsharpMask(percent=120))
+  shapened_img = cropped_im.filter(ImageFilter.UnsharpMask(percent=100))
 
   output = cStringIO.StringIO()
-  shapened_img.save(output, 'png')
+  shapened_img.save(output, 'jpeg')
   output.seek(0)
   return output
 

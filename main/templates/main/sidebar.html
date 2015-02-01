@@ -3,11 +3,11 @@
 <div class="sidebar">
     <header>
         <div class="icon">
-            <a href="{% url 'home' %}"><img src="{% static 'main/images/circle_avatar.png' %}" width="108" height="107"></a>
+            <a href="{% url 'home' %}"><img src="{% static 'main/images/circle_avatar.png' %}"></a>
         </div>
 
         <nav>
-            <ul class="list-unstyled">
+            <ul class="list-unstyled primary-nav">
                 <li><a href="{% url 'view_article' slug='about' %}">About</a></li>
                 <li><a target="_blank" href="https://github.com/chriskiehl">Projects</a></li>
                 <li><a href="{% url 'view_article' slug='contact-page' %}">Contact</a></li>
@@ -17,9 +17,9 @@
             <ul class="list-unstyled">
                 <li><input type="text" placeholder="search"></li>
             </ul>
-            <ul class="list-unstyled">
-                <li><a href="#">Then a tasteful ad</a></li>
-            </ul>
+{#            <ul class="list-unstyled">#}
+{#                <li><a href="#">Then a tasteful ad</a></li>#}
+{#            </ul>#}
         </nav>
 
     </header>

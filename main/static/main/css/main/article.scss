@@ -1,14 +1,9 @@
+@import '../base/base';
+@import 'other';
+@import 'previews';
+@import 'sidebar';
+@import 'comments';
+@import 'article_body';
+@import "small";
+@import "main_small";
 
-article {
-  font-family: 'Merriweather', 'Georgia', serif;
-  font-size: 1.3em;
-}
-
-article p {
-  margin-bottom: 20px;
-}
-
-article div {
-  margin: 0;
-  padding: 0;
-}

@@ -104,10 +104,14 @@ class Article(models.Model):
     thumbnail_name = self.generate_thumbnail_filename(self.title_image)
 
     s3 = boto.connect_s3(settings.AWS_ACCESS_KEY_ID, settings.AWS_SECRET_ACCESS_KEY)
-    k = Key(s3.get_bucket(settings.AWS_STORAGE_BUCKET_NAME, validate=False))
+    k = Key(s3.get_bucket(settings.AWS_STORAGE_BUCKET_NAME, validate=False, content_type='image/jpeg'))
 
     k.key = thumbnail_name
-    k.set_contents_from_file(thumbnail, policy='public-read')
+
+    headers = {
+      'Cache-Control': 'max-age=31556926',
+    }
+    k.set_contents_from_file(thumbnail, policy='public-read', reduced_redundancy=True)
 
     thumbnail_url = k.generate_url(expires_in=0, query_auth=False)
     return thumbnail_url

@@ -5608,6 +5608,73 @@ nav input {
 .root-comment > .comment-box {
   margin-left: 0; }
 
+@media (max-width: 800px) {
+  .blog-container {
+    width: 100%; }
+
+  .sidebar {
+    width: 100%;
+    height: 100%;
+    float: none; }
+    .sidebar ul li {
+      width: 100%; }
+    .sidebar ul:after {
+      content: " ";
+      clear: both;
+      overflow: auto; }
+    .sidebar img {
+      display: block;
+      width: 125px;
+      height: 125px;
+      margin: 0 auto; }
+    .sidebar nav {
+      width: 90%;
+      text-align: left;
+      padding-left: 0;
+      margin: 0 auto;
+      margin-top: 20px;
+      margin-bottom: 20px; }
+    .sidebar .primary-nav li {
+      white-space: nowrap;
+      text-align: right;
+      float: left;
+      margin-left: 6.25%;
+      width: 15%; }
+    .sidebar .primary-nav li:first-child {
+      text-align: left;
+      float: left;
+      width: 15%;
+      margin-left: 0; }
+    .sidebar .primary-nav:after {
+      content: ".";
+      display: block;
+      height: 0;
+      clear: both;
+      visibility: hidden; }
+      .sidebar .primary-nav:after a {
+        box-sizing: border-box;
+        padding-left: 4px; }
+
+  .primary {
+    width: 100%;
+    float: none; }
+
+  .section {
+    box-sizing: border-box;
+    padding: 15px;
+    padding-top: 0;
+    width: 98%;
+    border: 1px solid #e6e6e6;
+    border-bottom: none;
+    margin: 0 auto; }
+
+  .most-popular img {
+    max-width: 100%;
+    height: 100%; }
+
+  .image-cropper {
+    max-width: 100%;
+    height: 100%; } }
 article {
   font-family: 'Merriweather', 'Georgia', serif;
   font-size: 1.3em; }
@@ -5619,4 +5686,4 @@ article div {
   margin: 0;
   padding: 0; }
 
-/*# sourceMappingURL=main.css.map */
+/*# sourceMappingURL=styles.css.map */
