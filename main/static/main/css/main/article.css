@@ -5640,7 +5640,9 @@ article div {
     width: 98%;
     border: 1px solid #e6e6e6;
     border-bottom: none;
-    margin: 0 auto; } }
+    margin: 0 auto; }
+    .section img {
+      max-width: 100%; } }
 @media (max-width: 1030px) {
   .blog-container {
     width: 100%; }

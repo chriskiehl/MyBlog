@@ -19,15 +19,15 @@ class TwitterNode(template.Node):
 @register.simple_tag(takes_context=True, name="twitter_share")
 def as_twitter_link(context):
   request = context['request']
-  return 'https://twitter.com/intent/tweet?' + urllib.urlencode({'url': request.build_absolute_uri()})
+  return 'https://twitter.com/intent/tweet?' + urllib.urlencode({'url': request.build_absolute_uri()}).split('?')[0]
 
 @register.simple_tag(takes_context=True, name="google_share")
 def google(context):
   request = context['request']
-  return 'https://plus.google.com/share?' + urllib.urlencode({'url': request.build_absolute_uri()})
+  return 'https://plus.google.com/share?' + urllib.urlencode({'url': request.build_absolute_uri()}).split('?')[0]
 
 
 @register.simple_tag(takes_context=True, name="facebook_share")
 def book_of_face(context):
   request = context['request']
-  return 'https://www.facebook.com/sharer/sharer.php?' + urllib.urlencode({'u': request.build_absolute_uri()})
+  return 'https://www.facebook.com/sharer/sharer.php?' + urllib.urlencode({'u': request.build_absolute_uri()}).split('?')[0]

@@ -49,10 +49,6 @@ def cache_view(view_func):
   return _decorate
 
 
-
-
-
-
 @cache_view
 def index(request):
   articles = Article.objects.filter(published=True)
@@ -136,4 +132,31 @@ def _has_required_params(request):
 
 def _get_missing(request):
   return ', '.join(p for p in REQUIRED_PARAMS if request.POST.get(p, None) is None)
+
+
+
+def sitemap(request):
+  xml_template = '''<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  {body}
+</urlset>
+'''
+  wrap_url = lambda loc: '<url><loc>{loc}</loc></url>'.format(loc=loc)
+
+  static_urls = [
+    'http://chriskiehl.com',
+    'http://chriskiehl.com/backlog/page/1'
+  ]
+
+  dynamic_urls = [
+    'http://chriskiehl.com' + reverse('view_article', kwargs={'slug':a.slug})
+    for a in Article.objects.filter(published=True)
+  ]
+
+  body = '\n'.join(wrap_url(url) for url in static_urls + dynamic_urls)
+  xml = xml_template.format(body=body)
+  return HttpResponse(xml, content_type="application/xml")
+
+
+
 
