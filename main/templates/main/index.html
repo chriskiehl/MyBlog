@@ -10,10 +10,10 @@
                 <img src="{{ most_recent.0.title_image }}" alt="Title Image for article: {{ most_recent.0.title }}">
                 {{ most_recent.0.body|safe|truncatechars_html:370 }}
             </div>
-                    <div style="float: right;">
-                        <p>9h ago</p>
-                        <p> {{most_recent.0.comments.all.count}} </p>
-                    </div>
+{#                    <div style="float: right;">#}
+{#                        <p>9h ago</p>#}
+{#                        <p> {{most_recent.0.comments.all.count}} </p>#}
+{#                    </div>#}
             <a href="article/{{ most_recent.0.slug }}">Read more >></a>
         </div>
     </div>
