@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 from django.core.handlers.base import BaseHandler
+from django.core.mail import send_mail
 from django.http import HttpRequest
 
 from blog.celery_stuff import app
@@ -32,9 +33,15 @@ meta_params = [
 
 
 
-def request_factory(request_meta):
-  environ = {param: request_meta.META[param] for param in meta_params}
-  return RequestFactory(**environ)
+@app.task
+def send_email(subject, body):
+  send_mail(
+    subject,
+    body,
+    settings.EMAIL_HOST_USER,
+    [settings.EMAIL_HOST_USER]
+  )
+
 
 
 @app.task
@@ -44,8 +51,9 @@ def update_cache(request_meta, *args, **kwargs):
   update_homepage(request)
 
 
-
-
+def request_factory(request_meta):
+  environ = {param: request_meta.META[param] for param in meta_params}
+  return RequestFactory(**environ)
 
 def update_homepage(request):
   url = reverse('home')

@@ -3,11 +3,14 @@ import time
 import json
 import urlparse
 from django.core.handlers.wsgi import WSGIRequest
+from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.http.request import QueryDict
 from django.test.client import RequestFactory
 from django.views.decorators.cache import cache_page
 from tasks import *
+
+from django.conf import settings
 
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http.response import HttpResponse
@@ -122,10 +125,14 @@ def store_comment(request, slug):
     print 'Stale slugs:', article_slugs
     try:
       update_cache.delay(pickle_request(request))
+      send_email.delay('New Comment!', util.format_comment_email(request))
     except Exception as e:
       print e
 
+
     return JsonResponse(response_content)
+
+
 
 def _has_required_params(request):
   return all(item in request.POST.keys() for item in REQUIRED_PARAMS)

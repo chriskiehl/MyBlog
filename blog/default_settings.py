@@ -165,4 +165,10 @@ if not DEBUG:
 
 
 
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'kiehlbot@gmail.com'
+EMAIL_HOST_PASSWORD = '6a4602fc656bfc0152e1d62393a190b4'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 
+ADMINS = ('kiehlbot@gmail.com',)

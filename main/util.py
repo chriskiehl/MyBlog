@@ -2,6 +2,7 @@ import pickle
 import urllib2
 from PIL import Image, ImageFilter
 import cStringIO
+from django.core.mail import send_mail
 
 
 def create_thumbnail(source_image):
@@ -65,4 +66,17 @@ def pickle_request(request):
     if attrib not in output:
       output[attrib] = {}
   return output
+
+
+
+def format_comment_email(request):
+  author, body = request.POST['name'], request.POST['body']
+  return '''
+  New Comment on {0}.
+
+  Author: {1}
+  Body:
+  >>> {2}
+  '''.format(request.build_absolute_uri(), author, body)
+
 
