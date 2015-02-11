@@ -20,9 +20,16 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from main.models import Article, Comment
 from main.util import get_object_or_none, pickle_request
 
+JsonResponse = lambda content, *args, **kwargs: HttpResponse(
+  json.dumps(content),
+  content_type="application/json",
+  *args, **kwargs
+)
 
-JsonResponse = lambda x, **kwargs: HttpResponse(json.dumps(x), content_type="application/json", **kwargs)
-JsonErrorResponse = lambda x: HttpResponse(json.dumps({'error': x}), content_type="application/json", status=400)
+JsonErrorResponse = functools.partial(JsonResponse, status=400)
+JsonValidResponse = functools.partial(JsonResponse, status=200)
+# JsonResponse = lambda x, **kwargs: HttpResponse(json.dumps(x), , **kwargs)
+# JsonErrorResponse = lambda x: HttpResponse(json.dumps({'error': x}), content_type="application/json", status=400)
 
 
 
@@ -128,9 +135,10 @@ def store_comment(request, slug):
       send_email.delay('New Comment!', util.format_comment_email(request))
     except Exception as e:
       print e
-
-
-    return JsonResponse(response_content)
+    try:
+      return JsonValidResponse(response_content)
+    except Exception as e:
+      print e
 
 
 

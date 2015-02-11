@@ -104,8 +104,9 @@ class Article(models.Model):
     thumbnail_name = self.generate_thumbnail_filename(self.title_image)
 
     s3 = boto.connect_s3(settings.AWS_ACCESS_KEY_ID, settings.AWS_SECRET_ACCESS_KEY)
-    k = Key(s3.get_bucket(settings.AWS_STORAGE_BUCKET_NAME, validate=False, content_type='image/jpeg'))
+    k = Key(s3.get_bucket(settings.AWS_STORAGE_BUCKET_NAME, validate=False))
 
+    k.content_type='image/jpeg'
     k.key = thumbnail_name
 
     headers = {
