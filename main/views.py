@@ -6,6 +6,8 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.http.request import QueryDict
+from django.template import Context
+from django.template.base import Template
 from django.test.client import RequestFactory
 from django.views.decorators.cache import cache_page
 from tasks import *
@@ -149,7 +151,32 @@ def _get_missing(request):
   return ', '.join(p for p in REQUIRED_PARAMS if request.POST.get(p, None) is None)
 
 
+@cache_page(60 * 60 * 24)
+def rss(request):
+  template = Template('''<?xml version="1.0"?>
+<rss version="2.0">
+  <channel>
+    <title>ChrisKiehl.com</title>
+    <link>http://chriskiehl.com/</link>
+    <description>The blog where I pretend to be good at stuff</description>
+    {% for article in articles %}
+      <item>
+         <title>{{ article.title }}</title>
+         <link>{% url 'view_article' slug=article.slug %}</link>
+         <description>{{ article.body|striptags|truncatechars_html:370 }}</description>
+      </item>
+    {% endfor %}
+  </channel>
+</rss>
+  ''')
 
+  articles = Article.objects.filter(published=True).order_by('-pub_date')
+  return HttpResponse(
+    template.render(Context({'articles': articles})),
+    content_type="application/xml"
+  )
+
+@cache_page(60 * 60 * 24)
 def sitemap(request):
   xml_template = '''<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
