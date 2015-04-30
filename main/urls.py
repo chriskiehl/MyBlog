@@ -5,4 +5,5 @@ urlpatterns = patterns('',
     url(r'^$', views.article, name='asdf'),
     url(r'^(?P<slug>[\w-]+)/$', views.article, name='view_article'),
     url(r'^(?P<slug>[\w-]+)/storecomment/$', views.store_comment, name='comment_store'),
+
 )

@@ -28,6 +28,7 @@ class Article(models.Model):
   title = models.CharField(max_length=300)
   sub_title = models.CharField(max_length=300, null=True, blank=True)
   body = models.TextField(null=True)
+  working_draft = models.TextField(null=True)
   pub_date = models.DateTimeField('date published', null=True, blank=True)
   last_modified = models.DateTimeField('last modified', default=datetime.now())
   views = models.IntegerField(default=0)
@@ -40,9 +41,11 @@ class Article(models.Model):
   stale = models.BooleanField(default=False)
 
   content_out_of_date = False
-
-
   __original_instance = None
+
+
+  class Meta(object):
+    ordering = ('last_modified',)
 
   @classmethod
   def create(cls, title, **kwargs):
@@ -85,6 +88,7 @@ class Article(models.Model):
     self.body = self.strip_padding(self.body)
     self.stale = True
     Article.content_out_of_date = True
+
     super(Article, self).save()
 
   def _build_related_list(self):

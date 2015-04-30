@@ -2,6 +2,7 @@ import functools
 import time
 import json
 import urlparse
+from django.contrib.auth.models import User
 from django.core.handlers.wsgi import WSGIRequest
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
@@ -10,6 +11,11 @@ from django.template import Context
 from django.template.base import Template
 from django.test.client import RequestFactory
 from django.views.decorators.cache import cache_page
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from main.forms import MyCoolForm
+from main.serializers import ArticleSerializer, UserSerializer
 from tasks import *
 
 from django.conf import settings
@@ -22,17 +28,22 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from main.models import Article, Comment
 from main.util import get_object_or_none, pickle_request
 
-JsonResponse = lambda content, *args, **kwargs: HttpResponse(
-  json.dumps(content),
-  content_type="application/json",
-  *args, **kwargs
-)
+from rest_framework.views import APIView
+from rest_framework import generics
 
-JsonErrorResponse = functools.partial(JsonResponse, status=400)
-JsonValidResponse = functools.partial(JsonResponse, status=200)
-# JsonResponse = lambda x, **kwargs: HttpResponse(json.dumps(x), , **kwargs)
-# JsonErrorResponse = lambda x: HttpResponse(json.dumps({'error': x}), content_type="application/json", status=400)
+class UserList(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
+
+class UserDetail(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class ArticleList(generics.ListCreateAPIView):
+  queryset = Article.objects.all()
+  serializer_class = ArticleSerializer
 
 
 def cache_view(view_func):
@@ -199,6 +210,20 @@ def sitemap(request):
   xml = xml_template.format(body=body)
   return HttpResponse(xml, content_type="application/xml")
 
+def teeeeest(request):
+
+  initial = {'name': 'Max', 'stuff': [(x,x) for x in range(1,3)]}
+
+  if request.method == 'POST':
+    form = MyCoolForm(initial=initial, data=request.POST)
+
+    if form.is_valid():
+      for f in form.fields.values():
+        print f
+  else:
+    form = MyCoolForm(initial=initial)
+
+  return render(request, 'main/teeeeest.html', locals())
 
 
 

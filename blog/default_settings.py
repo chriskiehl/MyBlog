@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'blog',
     'main',
     'storages',
+    'rest_framework',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -172,3 +173,12 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 ADMINS = ('kiehlbot@gmail.com',)
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
+
