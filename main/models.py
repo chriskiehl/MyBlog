@@ -244,7 +244,7 @@ def model_builder():
     body="lorem ipsum loren impsum.",
     slug="parallelism-in-one-line/",
     views=20,
-    shouldDisplayComments = True,
+    should_display_comments = True,
     published = True
   )
 
