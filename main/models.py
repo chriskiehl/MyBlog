@@ -223,6 +223,54 @@ class Comment(models.Model):
           yield result
 
 
+def model_builder():
+  Article.objects.create(
+    title="How I use Python for Windows Automation",
+    sub_title="or how to make Adobe Premiere less painful",
+    thumbnail="https://awsblogstore.s3.amazonaws.com/main/images/Untitled-1%2520copy-thumb.jpg",
+    title_image="https://awsblogstore.s3.amazonaws.com/main/images/Untitled-1%20copy.jpg",
+    body="A bit of preface: I currently work in a small shop that provides recording services for conferences. The needs of a talking head at a podium are pretty basic from an editing stand point, so the way I organize my Premiere projects has adapted accordingly. After a bunch of iterations, I ended up with a folder hierarchy that is almost completely flat. Namely, one audio folder, one video folder, and then individual sequences for each talk.",
+    slug="How-I-Use-Python-for-Windows-Automation",
+    views=10,
+    should_display_comments = True,
+    published = True
+  )
+
+  Article.objects.create(
+    title="Parallelism in one line",
+    sub_title="A Better Model for Day to Day Threading Tasks",
+    thumbnail="https://awsblogstore.s3.amazonaws.com/main/images/parallel-thumb.jpg",
+    title_image="https://awsblogstore.s3.amazonaws.com/main/images/parallel.jpg",
+    body="lorem ipsum loren impsum.",
+    slug="parallelism-in-one-line/",
+    views=20,
+    shouldDisplayComments = True,
+    published = True
+  )
+
+  Article.objects.create(
+    title="The Great White Space Debate",
+    sub_title="lorem ipsum loren impsum.",
+    thumbnail="https://awsblogstore.s3.amazonaws.com/main/images/whitespace2-thumb.jpg",
+    title_image="https://awsblogstore.s3.amazonaws.com/main/images/whitespace2.jpg",
+    body="lorem ipsum loren impsum.",
+    slug="How-I-Use-Python-for-Windows-Automation",
+    views=5,
+    should_display_comments = True,
+    published = True
+  )
+
+  Article.objects.create(
+    title="Cleaner Code Through Partial Function Application",
+    sub_title="",
+    thumbnail="https://awsblogstore.s3.amazonaws.com/main/images/hahahahaha-thumb.jpg",
+    title_image="https://awsblogstore.s3.amazonaws.com/main/images/hahahahaha.jpg",
+    body="lorem ipsum loren impsum.",
+    slug="Cleaner-coding-through-partially-applied-functions",
+    views=50,
+    should_display_comments = True,
+    published = True
+  )
 
 
 @receiver(post_save, sender=Comment)
