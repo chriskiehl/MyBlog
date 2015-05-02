@@ -18,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '5b@p5_7gw=(9mmtcyn%-iqf8vpe@b5ev0@z*p4#@c)efwjv9vb'
+SECRET_KEY = os.getenv('DJANGO_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -142,8 +142,8 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'main/static'),
 )
 
-AWS_ACCESS_KEY_ID = 'AKIAIIYFFFOR2KL2MRUQ'
-AWS_SECRET_ACCESS_KEY = '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'
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = 'awsblogstore'
 AWS_CALLING_FORMAT = 'http://{0}.s3.amazonaws.com/'.format(AWS_STORAGE_BUCKET_NAME)
 
@@ -167,7 +167,7 @@ if not DEBUG:
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'kiehlbot@gmail.com'
-EMAIL_HOST_PASSWORD = '6a4602fc656bfc0152e1d62393a190b4'
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_BOT_PASSWORD')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
