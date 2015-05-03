@@ -5,7 +5,7 @@ from django import forms
 from django.http import HttpResponse
 from django.http.response import Http404
 
-from main.models import Article, Comment, Tag
+from main.models import Article, Tag
 
 JsonResponse = lambda d: HttpResponse(json.dumps(d), content_type="application/json")
 
@@ -24,7 +24,7 @@ def save_article(request, article_id):
 
 def get_admin_urls(urls):
     def get_urls():
-        my_urls = patterns('', (r'^main/article/(?P<article_id>\d+)/save-article/$', admin.site.admin_view(save_article)))
+        my_urls = patterns('', (r'^main/show_article/(?P<article_id>\d+)/save-show_article/$', admin.site.admin_view(save_article)))
         return my_urls + urls
     return get_urls
 
@@ -32,10 +32,6 @@ def get_admin_urls(urls):
 class TagAdmin(forms.ModelForm):
   model = Article.tags.through
 
-
-class CommentAdmin(admin.TabularInline):
-  model = Comment
-  extra = 0
 
 class RelatedAdminForm(forms.ModelForm):
   class Meta:
@@ -68,9 +64,10 @@ class RelatedAdminForm(forms.ModelForm):
 class ArticleForm(forms.ModelForm):
   class Meta:
     model = Article
+    fields = '__all__'
+
 
 class ArticleAdmin(admin.ModelAdmin):
-  inlines = [CommentAdmin]
   form = RelatedAdminForm
 
   def get_readonly_fields(self, request, obj=None):
@@ -98,10 +95,7 @@ class ArticleAdmin(admin.ModelAdmin):
 
 
 
-
-
 admin.site.register(Article, ArticleAdmin)
 admin.site.register(Tag)
-admin.site.register(Comment)
 admin_urls = get_admin_urls(admin.site.get_urls())
 admin.site.get_urls = admin_urls

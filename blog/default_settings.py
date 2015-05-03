@@ -79,13 +79,6 @@ if DEBUG:
       }
   }
 
-  if 'test' in sys.argv:
-    DATABASES['default'] = {
-      'ENGINE': 'django.db.backends.sqlite3',
-      'NAME': 'mytestdatabase'
-    }
-
-
 CACHES = {
   'default': {
       'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
@@ -172,3 +165,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 ADMINS = ('kiehlbot@gmail.com',)
+
+
+THUMBNAIL_WIDTH = 212
+THUMBNAIL_HEIGHT = 119

@@ -28,13 +28,14 @@ class Article(models.Model):
   title = models.CharField(max_length=300)
   sub_title = models.CharField(max_length=300, null=True, blank=True)
   body = models.TextField(null=True)
+  working_copy = models.TextField(null=True)
   pub_date = models.DateTimeField('date published', null=True, blank=True)
   last_modified = models.DateTimeField('last modified', default=datetime.now())
   views = models.IntegerField(default=0)
   should_display_comments = models.BooleanField(default=True)
   published = models.BooleanField(default=False)
-  tags = models.ManyToManyField(Tag, null=True, blank=True)
-  related = models.ManyToManyField('self', null=True, blank=True)
+  tags = models.ManyToManyField(Tag, blank=True)
+  related = models.ManyToManyField('self', blank=True)
   generate_related = models.BooleanField(default=True)
 
   stale = models.BooleanField(default=False)
@@ -43,17 +44,6 @@ class Article(models.Model):
 
 
   __original_instance = None
-
-  @classmethod
-  def create(cls, title, **kwargs):
-    return cls(
-      title_image=kwargs.get('title_image', ''),
-      thumbnail=kwargs.get('thumbnail', ''),
-      title=title,
-      sub_title=kwargs.get('sub_title', ''),
-      slug=kwargs.get('slug', ''),
-      body=kwargs.get('body', ''),
-    )
 
   def __init__(self, *args, **kwargs):
     super(Article, self).__init__(*args, **kwargs)
@@ -135,99 +125,6 @@ class Article(models.Model):
     # if we're checking the published box to ON
     return not_previously_published and self.published
 
-
-
-class CommentManager(models.Manager):
-  def get_queryset(self):
-    return self.model.MyQuerySet(self.model)
-
-
-class Node(object):
-  def __init__(self, comment):
-    self.comment = comment
-    self.id = comment.id
-    self.pid = comment.parent.id if comment.parent else None
-    self.children = []
-
-    def __str__(self):
-      return self.comment.author
-
-    def __repr__(self):
-      return self.__str__()
-
-
-class Comment(models.Model):
-  article = models.ForeignKey('Article', related_name='comments')
-  parent = models.ForeignKey('Comment', null=True, blank=True)
-  author = models.CharField(max_length=50)
-  body = models.TextField()
-  post_date = models.DateField(default=datetime.now())
-  deleted = models.BooleanField(default=False)
-  admin_comment = models.BooleanField(default=False)
-  objects = CommentManager()
-
-  def __unicode__(self):
-    return "Comment by: {0}".format(self.author)
-
-  def __repr__(self):
-    return self.__unicode__()
-
-
-
-  @classmethod
-  def create(cls, article, parent, author, body):
-    return cls(
-      article=article,
-      parent=parent,
-      author=author,
-      body=body,
-    )
-
-  class MyQuerySet(QuerySet):
-
-    def as_tree(self):
-      if not self.exists():
-        return iter([])
-      comment_nodes = [Node(comment) for comment in self]
-      lookup_table = {node.id: node for node in comment_nodes}
-
-      # populate children
-      for node in comment_nodes:
-        current = node
-        try:
-          lookup_table[current.pid].children.append(current)
-        except:
-          pass
-
-      fake_root_comment = Comment(article=comment_nodes[0].comment.article, parent_id=None, author="", body="")
-      root_id = 9999294999
-      root_node = Node(fake_root_comment)
-      for node in comment_nodes:
-        if not node.pid:
-          root_node.children.append(node)
-
-      return self.build_tree(root_node, 0)
-
-    def build_tree(self, node, depth):
-      if not node.children:
-        yield (depth, node.comment,)
-      else:
-        output = [(depth, node.comment,)]
-        for n in node.children:
-          output = chain(output, self.build_tree(n, depth + 1))
-        for result in output:
-          yield result
-
-
-
-
-@receiver(post_save, sender=Comment)
-def comment_post_save(sender, instance, *args, **kwargs):
-  # mark the article for updates
-  article = instance.article
-  article.stale = True
-  Article.content_out_of_date = True
-  article.save()
 
 
 

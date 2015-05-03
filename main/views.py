@@ -1,38 +1,18 @@
 import functools
-import time
-import json
 import urlparse
-from django.core.handlers.wsgi import WSGIRequest
-from django.core.mail import send_mail
-from django.core.urlresolvers import reverse
-from django.http.request import QueryDict
+from textwrap import dedent
+
 from django.template import Context
 from django.template.base import Template
-from django.test.client import RequestFactory
 from django.views.decorators.cache import cache_page
-from tasks import *
-
-from django.conf import settings
-
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http.response import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.csrf import ensure_csrf_cookie
 
-from main.models import Article, Comment
-from main.util import get_object_or_none, pickle_request
-
-JsonResponse = lambda content, *args, **kwargs: HttpResponse(
-  json.dumps(content),
-  content_type="application/json",
-  *args, **kwargs
-)
-
-JsonErrorResponse = functools.partial(JsonResponse, status=400)
-JsonValidResponse = functools.partial(JsonResponse, status=200)
-# JsonResponse = lambda x, **kwargs: HttpResponse(json.dumps(x), , **kwargs)
-# JsonErrorResponse = lambda x: HttpResponse(json.dumps({'error': x}), content_type="application/json", status=400)
-
+from tasks import *
+from main.models import Article
+from main.util import pickle_request
 
 
 def cache_view(view_func):
@@ -61,7 +41,6 @@ def cache_view(view_func):
   return _decorate
 
 
-@cache_view
 def index(request):
   articles = Article.objects.filter(published=True)
   most_recent = articles.order_by('-pub_date')[:3]
@@ -69,16 +48,13 @@ def index(request):
   return render(request, 'main/index.html', locals())
 
 
-@cache_view
+# @cache_view
 @ensure_csrf_cookie
-def article(request, slug):
+def show_article(request, slug):
   article = get_object_or_404(Article, slug=slug, published=True)
   related_posts = article.related.all()
   similarly_tagged = Article.objects.filter(tags__in=article.tags.all()).distinct()
-  comments = Comment.objects.select_related('parent_id').filter(article=article)
-  comment_tree = comments.as_tree() if article.should_display_comments else iter([])
-  response = render(request, 'main/article.html', locals())
-  return response
+  return render(request, 'main/article.html', locals())
 
 
 @cache_page(60 * 60 * 24)
@@ -102,73 +78,24 @@ def backlog(request, page):
   return render(request, 'main/backlog.html', locals())
 
 
-
-
-
-REQUIRED_PARAMS = ('parent_id', 'body', 'name')
-
-def store_comment(request, slug):
-  if not request.is_ajax() or not request.method == 'POST':
-    return JsonErrorResponse('Invalid Request')
-
-  if not _has_required_params(request):
-    return JsonErrorResponse('Missing required param(s): {0}'.format(_get_missing(request)))
-  try:
-    _article = Article.objects.get(slug=slug)
-  except Article.DoesNotExist:
-    return JsonErrorResponse('No matching article found')
-  else:
-    parent_id = int(request.POST['parent_id']) if request.POST['parent_id'] else None
-    parent_comment = get_object_or_none(Comment, id=parent_id)
-    comment = Comment.create(_article, parent_comment, request.POST['name'], request.POST['body'])
-    print 'saving comment'
-    comment.save()
-    comment_info = [
-      ('comment_id', comment.id),
-      ('parent_id',  comment.parent.id if comment.parent else '')
-    ]
-
-    response_content = dict(request.POST.items() + comment_info)
-
-    article_slugs = Article.objects.filter(stale=True, published=True).values_list('slug', flat=True)
-    print 'Stale slugs:', article_slugs
-    try:
-      update_cache.delay(pickle_request(request))
-      send_email.delay('New Comment!', util.format_comment_email(request))
-    except Exception as e:
-      print e
-    try:
-      return JsonValidResponse(response_content)
-    except Exception as e:
-      print e
-
-
-
-def _has_required_params(request):
-  return all(item in request.POST.keys() for item in REQUIRED_PARAMS)
-
-def _get_missing(request):
-  return ', '.join(p for p in REQUIRED_PARAMS if request.POST.get(p, None) is None)
-
-
 @cache_page(60 * 60 * 24)
 def rss(request):
-  template = Template('''<?xml version="1.0"?>
-<rss version="2.0">
-  <channel>
-    <title>ChrisKiehl.com</title>
-    <link>http://chriskiehl.com/</link>
-    <description>The blog where I pretend to be good at stuff</description>
-    {% for article in articles %}
-      <item>
-         <title>{{ article.title }}</title>
-         <link>{% url 'view_article' slug=article.slug %}</link>
-         <description>{{ article.body|striptags|truncatechars_html:370 }}</description>
-      </item>
-    {% endfor %}
-  </channel>
-</rss>
-  ''')
+  template = Template(dedent('''<?xml version="1.0"?>
+      <rss version="2.0">
+        <channel>
+          <title>ChrisKiehl.com</title>
+          <link>http://chriskiehl.com/</link>
+          <description>The blog where I pretend to be good at stuff</description>
+          {% for show_article in articles %}
+            <item>
+               <title>{{ show_article.title }}</title>
+               <link>{% url 'view_article' slug=show_article.slug %}</link>
+               <description>{{ show_article.body|striptags|truncatechars_html:370 }}</description>
+            </item>
+          {% endfor %}
+        </channel>
+      </rss>
+        '''))
 
   articles = Article.objects.filter(published=True).order_by('-pub_date')
   return HttpResponse(
@@ -178,11 +105,11 @@ def rss(request):
 
 @cache_page(60 * 60 * 24)
 def sitemap(request):
-  xml_template = '''<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  {body}
-</urlset>
-'''
+  xml_template = dedent('''<?xml version="1.0" encoding="UTF-8"?>
+      <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+        {body}
+      </urlset>
+    ''')
   wrap_url = lambda loc: '<url><loc>{loc}</loc></url>'.format(loc=loc)
 
   static_urls = [
