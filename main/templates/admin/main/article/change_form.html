@@ -8,47 +8,35 @@
     <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="{% static 'main/css/base/code.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'main/css/bootstrap.css' %}" />
-    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.4.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
+
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.26.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.8.0/lodash.js"></script>
     <script src="{% static 'main/js/lib/jquery/jquery-2.1.1.min.js' %} "></script>
     <script src="{% static 'main/js/lib/ckeditor/ckeditor.js' %} "></script>
+    <script>hljs.initHighlightingOnLoad();</script>
 
     <script type="text/javascript">
-        AWS.config.update({accessKeyId: 'AKIAIIYFFFOR2KL2MRUQ', secretAccessKey: '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'});
+        AWS.config.update({accessKeyId: '{{ AWS_ACCESS_KEY_ID }}', secretAccessKey: '{{AWS_SECRET_ACCESS_KEY}}'});
         AWS.config.region = 'us-east-1';
-        uploadPath = 'main/images/';
+        uploadPath = window.location.pathname.replace('admin', 'images').slice(1);
 
-
-        function debounce(func, wait, immediate) {
-            var timeout;
-            return function() {
-                var context = this, args = arguments;
-                var later = function() {
-                    timeout = null;
-                    if (!immediate) func.apply(context, args);
-                };
-                var callNow = immediate && !timeout;
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-                if (callNow) func.apply(context, args);
-            };
-        };
-
-        function editAreaSmallerThanWindow(iframeDoc) {
-            return iframeDoc.getElementsByTagName('html')[0].clientHeight >
-                   iframeDoc.getElementsByTagName('body')[0].clientHeight;
+        function clientHeight(iframe, tag) {
+            return iframe.getElementsByTagName(tag)[0].clientHeight
         }
 
-        function padEditArea(ckeditor, count) {
-            console.log('padding edit area');
+        function editAreaSmallerThanWindow(iframe) {
+            return clientHeight(iframe, 'html') > clientHeight(iframe, 'body');
+        }
+
+        function padEditArea(ckeditor) {
             var padding = Array(40).join('<p>&nbsp;</p>');
             ckeditor.setData(ckeditor.getData() + padding)
         }
 
         function upload(file) {
             var bucket = new AWS.S3({params: {Bucket: 'awsblogstore'}});
-            console.log("Uploading file: " + file.name);
+            console.log("Uploading file: " + uploadPath + file.name);
             var params = {Key: uploadPath + file.name, ContentType: file.type, Body: file, ACL: "public-read"};
             return new Promise(function(resolve, reject) {
                 bucket.upload(params, function (err, data) {
@@ -59,7 +47,6 @@
         }
 
         function insertImage(s3Object) {
-            console.log("Success!");
             var editor = CKEDITOR.instances.id_body;
             var elem = editor.document.createElement('img', {
                 attributes: {
@@ -70,17 +57,18 @@
             editor.insertElement(elem);
         }
 
-        function popError(err) {
+        function orPopError(err) {
             alert(err);
         }
-
 
         function dropHandler(e) {
             e.preventDefault();
             var file = e.dataTransfer.files[0];
             console.log("received file from drop: " + file);
-            upload(file).then(insertImage, popError);
+            upload(file).then(insertImage, orPopError);
         };
+
+        function doNothing(e) {}
 
         function saveArticle(ckeditor) {
             var editor = CKEDITOR.instances.id_body;
@@ -90,12 +78,12 @@
             saveMsg.show();
 
             var request = $.ajax({
-                url: './save-article/',
+                url: './patch-article/',
                 data: {
                     'body': ckeditor.getData(),
                     'csrfmiddlewaretoken': '{{ csrf_token}}'
                 },
-                type: 'POST',
+                type: 'POST'
             });
 
             request.done(function(response) {
@@ -106,50 +94,50 @@
             });
 
             request.fail(function(response) {
-                ER = response;
-                alert(response);
+                alert("Uh oh! We failed while writing your changes. Make sure to manually save!");
             })
 
             setTimeout(function() {
 
             }, 1000);
-
         }
 
+        function hasCsrf(str) { return str.indexOf('csrftoken') > -1 }
+        function cookieValue(str) { return str.split('=')[1].trim() }
+
         function getCsrfCookie() {
-            var cookie, _i, _len, _ref, _results;
-            _ref = document.cookie.split(';');
-            _results = [];
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              cookie = _ref[_i];
-              if (cookie.indexOf('csrftoken') > -1) {
-                _results.push($.trim(cookie.split('=')[1]));
-              }
-            }
-          return _results;
+            return document.cookie.split(';').filter(hasCsrf).map(cookieValue);
         };
 
-        function updateSlugText(text) {
-            $('#id_slug').val(text.replace(/\W+/g, '-').toLowerCase());
+        function slugify(text) {
+            return text.replace(/\W+/g, '-').toLowerCase();
         }
 
         $(document).ready(function() {
             $('[for=id_body]').hide();
             CKEDITOR.replace('id_body');
 
+            var slugField = $('#id_slug');
+            var titleField = $('#id_title')
+
+            titleField.on('keyup', function(e) {
+                slugField.val(slugify($(this).val()));
+            });
+
             setTimeout(function() {
                 var ckeditor = CKEDITOR.instances.id_body;
 
                 var iframe = document.getElementsByTagName('iframe')[0];
                 var iFrameDoc = iframe.contentDocument || iframe.contentWindow.document;
+
                 if (editAreaSmallerThanWindow(iFrameDoc)) {
                     padEditArea(ckeditor)
                 }
 
-                iFrameDoc.ondragover = function(e) { console.log(1); return false; };
-                iFrameDoc.ondrop = dropHandler
+                iFrameDoc.ondragover = doNothing;
+                iFrameDoc.ondrop = dropHandler;
 
-                ckeditor.on('change', debounce(function() {saveArticle(ckeditor);}, 500));
+                ckeditor.on('change', _.debounce(function() {saveArticle(ckeditor);}, 1000));
                 },
                 1000
             );
@@ -162,8 +150,6 @@
         width: 300px;
         min-height: 100px;
     }
-
-
 </style>
 
 
@@ -172,5 +158,13 @@
 {% block content %}
     {{ block.super }}
 
-    <p id="saved-msg" class="alert alert-success" style="width: 80px; position: absolute; right: 0; margin-right: 30px; display: none;" ></p>
+    <p id="saved-msg" class="alert alert-success" style="
+          width: 80px;
+          position: fixed;
+          right: 0px;
+          margin-right: 30px;
+          display: none;
+          top: 0;
+          z-index: 9999;
+    "></p>
 {% endblock %}

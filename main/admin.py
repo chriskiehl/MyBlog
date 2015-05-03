@@ -1,4 +1,5 @@
 import json
+from django.conf import settings
 from django.conf.urls import patterns
 from django.contrib import admin
 from django import forms
@@ -7,24 +8,42 @@ from django.http.response import Http404
 
 from main.models import Article, Tag
 
-JsonResponse = lambda d: HttpResponse(json.dumps(d), content_type="application/json")
 
-def save_article(request, article_id):
+class JsonResponse(HttpResponse):
+    def __init__(self, data, **kwargs):
+        content = json.dumps(data)
+        kwargs['content_type'] = 'application/json'
+        super(JsonResponse, self).__init__(content, **kwargs)
+
+
+def patch_article(request, article_id):
   body = request.POST.get('body', None)
-  if body:
-    try:
-      article = Article.objects.get(id=article_id)
-      article.body = body
-      article.save()
-      return JsonResponse({'success': 'Saved!'})
-    except Article.DoesNotExist:
-      pass
-  return JsonResponse({'error': 'Invalid Request'})
+  try:
+    article = Article.objects.get(id=article_id)
+    article.working_copy = body
+    article.save()
+    return JsonResponse({'success': 'updated'}, status=204)
+  except Exception as e:
+    return JsonResponse({'error': e.message}, status=400)
+
+
+def new_article(request):
+  if not request.POST:
+    JsonResponse({'error': 'Invalid Request'}, status=400)
+  else:
+    article = Article.objects.create(title="Untitled")
+    print article.id
+    return JsonResponse({'id': article.id}, status=201)
+
+
 
 
 def get_admin_urls(urls):
     def get_urls():
-        my_urls = patterns('', (r'^main/show_article/(?P<article_id>\d+)/save-show_article/$', admin.site.admin_view(save_article)))
+        my_urls = patterns('',
+           (r'^main/article/(?P<article_id>\d+)/patch-article/$', admin.site.admin_view(patch_article)),
+           (r'^main/article/new-article/$', admin.site.admin_view(new_article)),
+        )
         return my_urls + urls
     return get_urls
 
@@ -72,6 +91,16 @@ class ArticleAdmin(admin.ModelAdmin):
 
   def get_readonly_fields(self, request, obj=None):
     return self.readonly_fields + ('views', 'last_modified',)
+
+  def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
+    extra_context = extra_context or {}
+    print settings.AWS_ACCESS_KEY_ID
+    print settings.AWS_SECRET_ACCESS_KEY
+    extra_context.update({
+      'AWS_ACCESS_KEY_ID': settings.AWS_ACCESS_KEY_ID,
+      'AWS_SECRET_ACCESS_KEY': settings.AWS_SECRET_ACCESS_KEY
+    })
+    return super(ArticleAdmin, self).changeform_view(request, extra_context=extra_context)
 
   def save_related(self, request, form, formsets, change):
     article = form.instance
