@@ -1,7 +1,7 @@
-import functools
 import urlparse
-from textwrap import dedent
+import functools
 
+from textwrap import dedent
 from django.template import Context
 from django.template.base import Template
 from django.views.decorators.cache import cache_page
@@ -48,7 +48,6 @@ def index(request):
   return render(request, 'main/index.html', locals())
 
 
-# @cache_view
 @ensure_csrf_cookie
 def show_article(request, slug):
   article = get_object_or_404(Article, slug=slug, published=True)
@@ -57,7 +56,7 @@ def show_article(request, slug):
   return render(request, 'main/article.html', locals())
 
 
-@cache_page(60 * 60 * 24)
+@cache_page(5)
 def backlog(request, page):
   article_set = Article.objects.filter(published=True).order_by('-pub_date')
   if int(page) == 1:
@@ -78,7 +77,7 @@ def backlog(request, page):
   return render(request, 'main/backlog.html', locals())
 
 
-@cache_page(60 * 60 * 24)
+# @cache_page(60 * 60 * 24)
 def rss(request):
   template = Template(dedent('''<?xml version="1.0"?>
       <rss version="2.0">
@@ -103,7 +102,7 @@ def rss(request):
     content_type="application/xml"
   )
 
-@cache_page(60 * 60 * 24)
+# @cache_page(60 * 60 * 24)
 def sitemap(request):
   xml_template = dedent('''<?xml version="1.0" encoding="UTF-8"?>
       <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

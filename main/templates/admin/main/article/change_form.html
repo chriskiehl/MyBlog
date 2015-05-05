@@ -4,7 +4,7 @@
 {% block extrahead %}
     {{ block.super }}
 
-    <link rel="stylesheet" type="text/css" href="{% static 'main/css/main/main.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/main/styles.min.css' %}" />
     <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="{% static 'main/css/base/code.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'main/css/bootstrap.css' %}" />
@@ -17,6 +17,7 @@
     <script>hljs.initHighlightingOnLoad();</script>
 
     <script type="text/javascript">
+        {# Because Lazy #}
         AWS.config.update({accessKeyId: '{{ AWS_ACCESS_KEY_ID }}', secretAccessKey: '{{AWS_SECRET_ACCESS_KEY}}'});
         AWS.config.region = 'us-east-1';
         uploadPath = window.location.pathname.replace('admin', 'images').slice(1);
@@ -57,9 +58,10 @@
             editor.insertElement(elem);
         }
 
-        function orPopError(err) {
-            alert(err);
-        }
+
+
+        function doNothing(e) { }
+        function orPopError(err) { alert(err) }
 
         function dropHandler(e) {
             e.preventDefault();
@@ -67,8 +69,6 @@
             console.log("received file from drop: " + file);
             upload(file).then(insertImage, orPopError);
         };
-
-        function doNothing(e) {}
 
         function saveArticle(ckeditor) {
             var editor = CKEDITOR.instances.id_body;
@@ -78,28 +78,22 @@
             saveMsg.show();
 
             var request = $.ajax({
+                type: 'POST',
                 url: './patch-article/',
                 data: {
                     'body': ckeditor.getData(),
                     'csrfmiddlewaretoken': '{{ csrf_token}}'
                 },
-                type: 'POST'
+                success: function(response) {
+                    saveMsg.text('Saved');
+                    setTimeout(function() {
+                        saveMsg.hide()
+                    }, 1500);
+                },
+                error: function(response) {
+                    alert("Uh oh! We failed while writing your changes. Make sure to manually save!");
+                }
             });
-
-            request.done(function(response) {
-                saveMsg.text('Saved')
-                setTimeout(function() {
-                    saveMsg.hide()
-                }, 1500);
-            });
-
-            request.fail(function(response) {
-                alert("Uh oh! We failed while writing your changes. Make sure to manually save!");
-            })
-
-            setTimeout(function() {
-
-            }, 1000);
         }
 
         function hasCsrf(str) { return str.indexOf('csrftoken') > -1 }
@@ -118,7 +112,7 @@
             CKEDITOR.replace('id_body');
 
             var slugField = $('#id_slug');
-            var titleField = $('#id_title')
+            var titleField = $('#id_title');
 
             titleField.on('keyup', function(e) {
                 slugField.val(slugify($(this).val()));
@@ -137,10 +131,8 @@
                 iFrameDoc.ondragover = doNothing;
                 iFrameDoc.ondrop = dropHandler;
 
-                ckeditor.on('change', _.debounce(function() {saveArticle(ckeditor);}, 1000));
-                },
-                1000
-            );
+                ckeditor.on('change', _.debounce(function() { saveArticle(ckeditor) }, 1000));
+            }, 1000);
         })
 
     </script>
