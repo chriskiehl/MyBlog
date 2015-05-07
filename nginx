@@ -1,5 +1,6 @@
 proxy_cache_path /tmp/nginx keys_zone=one:20m inactive=60m;
 proxy_cache_key "$host$request_uri";
+proxy_cache_valid any 10s;
 
 
 server {
