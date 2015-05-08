@@ -1,15 +1,12 @@
 import os
 import boto
+import time
 from datetime import datetime
-from itertools import chain
 from operator import itemgetter
 
 from django.conf import settings
 from django.db import models
-from django.db.models import QuerySet
 from boto.s3.key import Key
-from django.db.models.signals import post_save
-from django.dispatch.dispatcher import receiver
 
 from main import util
 
@@ -38,16 +35,10 @@ class Article(models.Model):
   related = models.ManyToManyField('self', blank=True)
   generate_related = models.BooleanField(default=True)
 
-  stale = models.BooleanField(default=False)
-
-  content_out_of_date = False
-
-
-  __original_instance = None
+  last_modified_header = time.time()
 
   def __init__(self, *args, **kwargs):
     super(Article, self).__init__(*args, **kwargs)
-    self.__original_instance = self.__dict__
 
   def __unicode__(self):
     return "Article titled: {0}".format(self.title)
