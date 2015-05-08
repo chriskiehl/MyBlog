@@ -1,22 +1,11 @@
 import time
+from django.utils.cache import cc_delim_re
 
 
-class StackTimer(object):
+class VaryStripper(object):
 
-  timer = None
-  recording = False
-
-  def __init__(self):
-    pass
-
-  def process_request(self, request):
-    if self.timer == None:
-      # first time its been called. Init the timer
-      StackTimer.timer = time.time()
-      StackTimer.recording = True
-    elif self.recording:
-      print 'Time taken in Middleware: {0}'.format(time.time() - StackTimer.timer)
-      StackTimer.recording = not StackTimer.recording
-    else:
-      StackTimer.timer = time.time()
-      StackTimer.recording = not StackTimer.recording
+  def process_response(self, request, response):
+    print request.path
+    if '/admin/' not in request.path and response.has_header('Vary'):
+        del response['Vary']
+    return response

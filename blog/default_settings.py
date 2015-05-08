@@ -44,6 +44,7 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'main.middleware.VaryStripper',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -94,15 +95,6 @@ if DEBUG:
           'LOCATION': 'unique-snowflake'
     }
   }
-
-  # # running against memcached in virtual box
-  # CACHES = {
-  #     'default': {
-  #         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-  #         'LOCATION': '192.168.1.9:11211',
-  #         'KEY_PREFIX': "HelloWorld"
-  #     }
-  # }
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 

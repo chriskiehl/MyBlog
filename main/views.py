@@ -1,44 +1,13 @@
-import urlparse
-import functools
 
 from textwrap import dedent
 from django.template import Context
 from django.template.base import Template
-from django.views.decorators.cache import cache_page
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http.response import HttpResponse
 from django.shortcuts import render, get_object_or_404
-from django.views.decorators.csrf import ensure_csrf_cookie
 
 from tasks import *
 from main.models import Article
-from main.util import pickle_request
-
-
-def cache_view(view_func):
-  @functools.wraps(view_func)
-  def _decorate(request, *args, **kwargs):
-    query_string = urlparse.parse_qs(request.GET.urlencode())
-    if query_string.get('cache_update', None):
-      print 'Received cache update request. Rendering response'
-      return view_func(request, *args, **kwargs)
-
-    cache_key = util.build_cache_key(*args, **kwargs)
-    cached_response = cache.get(cache_key)
-    if cached_response:
-      print 'cache hit on Key:', cache_key
-      if Article.content_out_of_date:
-        print 'Cache content is stale. Submitting update task'
-        print 'Article status after setting to False: {0}'.format(Article.content_out_of_date)
-        update_cache.delay(pickle_request(request))
-        Article.content_out_of_date = False
-      return cached_response
-    else:
-      print 'cache miss for key:', cache_key
-      response = view_func(request, *args, **kwargs)
-      cache.set(cache_key, response, 99999)
-      return response
-  return _decorate
 
 
 def index(request):
@@ -48,7 +17,6 @@ def index(request):
   return render(request, 'main/index.html', locals())
 
 
-@ensure_csrf_cookie
 def show_article(request, slug):
   article = get_object_or_404(Article, slug=slug, published=True)
   related_posts = article.related.all()
@@ -56,7 +24,6 @@ def show_article(request, slug):
   return render(request, 'main/article.html', locals())
 
 
-@cache_page(5)
 def backlog(request, page):
   article_set = Article.objects.filter(published=True).order_by('-pub_date')
   if int(page) == 1:
@@ -77,7 +44,6 @@ def backlog(request, page):
   return render(request, 'main/backlog.html', locals())
 
 
-# @cache_page(60 * 60 * 24)
 def rss(request):
   template = Template(dedent('''<?xml version="1.0"?>
       <rss version="2.0">
@@ -102,7 +68,6 @@ def rss(request):
     content_type="application/xml"
   )
 
-# @cache_page(60 * 60 * 24)
 def sitemap(request):
   xml_template = dedent('''<?xml version="1.0" encoding="UTF-8"?>
       <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
