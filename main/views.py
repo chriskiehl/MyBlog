@@ -1,15 +1,60 @@
-
 from textwrap import dedent
 from django.template import Context
 from django.template.base import Template
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.http.response import HttpResponse
+from django.http.response import HttpResponse, Http404
 from django.shortcuts import render, get_object_or_404
+from django.views.decorators.cache import cache_page
+from rest_framework import status
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from main.serializers import ArticleSerializer, PublishedArticleSerializer
 
-from tasks import *
 from main.models import Article
 
 
+class ArticleList(ListCreateAPIView):
+  queryset = Article.objects.all()
+  serializer_class = ArticleSerializer
+
+  authentication_classes = (SessionAuthentication,)
+  permission_classes = (IsAuthenticated,)
+
+class ArticleDetail(RetrieveUpdateDestroyAPIView):
+  queryset = Article.objects.all()
+  serializer_class = ArticleSerializer
+
+  authentication_classes = (SessionAuthentication,)
+  permission_classes = (IsAuthenticated,)
+
+
+class ArticlePublish(APIView):
+  def get_or_404(self, cls, pk):
+    try:
+      return cls.objects.get(pk=pk)
+    except cls.DoesNotExist:
+      raise Http404
+
+  def put(self, request, pk, format=None):
+    article = self.get_or_404(Article, pk)
+    serializer = PublishedArticleSerializer(article, data=ArticleSerializer(article).data)
+    if serializer.is_valid():
+      serializer.save()
+      return Response(status=status.HTTP_204_NO_CONTENT)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+  def delete(self, request, pk, format=None):
+    article = self.get_or_404(Article, pk)
+    article.published = False
+    article.save()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# @cache_page(20)
 def index(request):
   articles = Article.objects.filter(published=True)
   most_recent = articles.order_by('-pub_date')[:3]

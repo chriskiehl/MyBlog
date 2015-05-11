@@ -1,7 +1,10 @@
 import json
 from operator import itemgetter
 from PIL import Image
+from django.contrib.auth.models import User
+import factory
 import pytest
+from rest_framework.test import APIRequestFactory, APIClient
 from main import util
 from random import randint
 from django.core.urlresolvers import reverse
@@ -9,6 +12,8 @@ from django.test import TestCase
 from main.models import Article,Tag
 from django.test import Client
 from itertools import product
+from rest_framework import status
+
 
 
 @pytest.mark.django_db
@@ -22,6 +27,77 @@ def test_sanity_of_core_page(client):
   assert responds_ok('/sitemap.xml')
   assert responds_ok('/rss.xml')
 
+
+### API ###
+
+@pytest.fixture
+def api_client():
+  test_user = User.objects.create(username='test', password='test')
+  client = APIClient()
+  client.force_authenticate(user=test_user)
+  return client
+
+
+@pytest.mark.django_db
+def test_sanity_api(api_client):
+  # Successful but empty
+  response = api_client.get('/api/articles')
+  assert response.status_code == status.HTTP_200_OK
+  assert len(response.data) == 0
+
+  # 404s
+  response = api_client.get('/api/articles/1')
+  assert response.status_code == status.HTTP_404_NOT_FOUND
+
+  # create
+  response = api_client.post('/api/articles', {'title': 'Title'})
+  assert response.status_code == status.HTTP_201_CREATED
+
+  # / now returning results
+  response = api_client.get('/api/articles')
+  assert response.status_code == status.HTTP_200_OK
+  assert len(response.data) == 1
+
+  # no longer 404s
+  response = api_client.get('/api/articles/1')
+  assert response.status_code == status.HTTP_200_OK
+
+
+
+@pytest.mark.django_db
+def test_publish_api_rejects_incomplete_articles(api_client):
+  # make the partial article
+  api_client.post('/api/articles', {'title': 'Title'})
+  assert api_client.get('/api/articles/1').status_code == status.HTTP_200_OK
+
+  response = api_client.put('/api/articles/1/publish')
+  missing_fields = response.data.keys()
+  assert response.status_code == status.HTTP_400_BAD_REQUEST
+  assert set(missing_fields) == {'sub_title', 'working_copy', 'slug'}
+
+
+@pytest.mark.django_db
+def test_publish_api_processes_valid_articles(api_client):
+  # make the partial article
+  response = api_client.post('/api/articles', {
+    'title': 'Title',
+    'slug':'slug',
+    'working_copy':'body text',
+    'sub_title':'subtitle'
+  })
+  print response.data
+  assert api_client.get('/api/articles/1').status_code == status.HTTP_200_OK
+
+  # not published
+  assert not Article.objects.get(pk=1).published
+  response = api_client.put('/api/articles/1/publish')
+  assert response.status_code == status.HTTP_204_NO_CONTENT
+  # published!
+  assert Article.objects.get(pk=1).published
+
+
+
+### Thumbnail generation ###
 
 def test_calc_aspect_ratio():
   sixteen_by_nine = Image.new('1', (16, 9))

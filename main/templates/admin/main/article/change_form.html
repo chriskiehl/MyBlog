@@ -17,10 +17,35 @@
     <script>hljs.initHighlightingOnLoad();</script>
 
     <script type="text/javascript">
-        {# Because Lazy #}
+{#        Because Lazy#}
         AWS.config.update({accessKeyId: '{{ AWS_ACCESS_KEY_ID }}', secretAccessKey: '{{AWS_SECRET_ACCESS_KEY}}'});
         AWS.config.region = 'us-east-1';
         uploadPath = window.location.pathname.replace('admin', 'images').slice(1);
+
+        function SaveDialog() {
+            var dlg = $('#saved-msg');
+            return {
+                showWorking: function() { dlg.show().text("Saving..") },
+                showSucessAndHide: function() {
+                    dlg.text('Saved');
+                    setTimeout(function() { dlg.fadeOut() }, 1500);
+                }
+            }
+        }
+
+        var ApiPaths = (function() {
+            var root = window.location.href.replace(window.location.pathname, '') + '/api/';
+            function articles() {
+                return root + 'articles'
+            }
+            function currentArticle() {
+                return this.articles() + '/' + $('[data-object-id]').attr('data-object-id');
+            }
+            return {
+                articles: articles,
+                currentArticle: currentArticle
+            }
+        })();
 
         function clientHeight(iframe, tag) {
             return iframe.getElementsByTagName(tag)[0].clientHeight
@@ -48,7 +73,7 @@
         }
 
         function insertImage(s3Object) {
-            var editor = CKEDITOR.instances.id_body;
+            var editor = CKEDITOR.instances.id_working_copy;
             var elem = editor.document.createElement('img', {
                 attributes: {
                     src: s3Object.Location
@@ -58,9 +83,7 @@
             editor.insertElement(elem);
         }
 
-
-
-        function doNothing(e) { }
+        function doNothing(e) {console.log("Nothing!") }
         function orPopError(err) { alert(err) }
 
         function dropHandler(e) {
@@ -71,68 +94,78 @@
         };
 
         function saveArticle(ckeditor) {
-            var editor = CKEDITOR.instances.id_body;
-            var saveMsg = $('#saved-msg');
-
-            saveMsg.text("Saving..");
-            saveMsg.show();
-
-            var request = $.ajax({
-                type: 'POST',
-                url: './patch-article/',
-                data: {
-                    'body': ckeditor.getData(),
-                    'csrfmiddlewaretoken': '{{ csrf_token}}'
-                },
-                success: function(response) {
-                    saveMsg.text('Saved');
-                    setTimeout(function() {
-                        saveMsg.hide()
-                    }, 1500);
-                },
-                error: function(response) {
-                    alert("Uh oh! We failed while writing your changes. Make sure to manually save!");
-                }
+            return new Promise(function(resolve, reject) {
+                $.ajax({
+                    beforeSend: function(xhr, settings) {
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    },
+                    xhrFields: {withCredentials: true},
+                    type: 'PATCH',
+                    url: ApiPaths.currentArticle(),
+                    data: {
+                        'working_copy': ckeditor.getData()
+                    },
+                    success: resolve,
+                    error: reject
+                });
             });
         }
 
-        function hasCsrf(str) { return str.indexOf('csrftoken') > -1 }
+        function hasCookie(name) {
+            return function(cookie) { return cookie.indexOf(name) > -1 }
+        }
         function cookieValue(str) { return str.split('=')[1].trim() }
 
-        function getCsrfCookie() {
-            return document.cookie.split(';').filter(hasCsrf).map(cookieValue);
+        function getCookie(name) {
+            return document.cookie.split(';').filter(hasCookie(name)).map(cookieValue);
         };
 
         function slugify(text) {
             return text.replace(/\W+/g, '-').toLowerCase();
         }
 
+        function injectCKEditor() {
+            $('[for=id_working_copy]').hide();
+            CKEDITOR.replace('id_working_copy');
+        }
+
+        function insertPublishButton() {
+            $('.submit-row').prepend('<input type="button" value="Publish!" id="publish-button">');
+        }
+
         $(document).ready(function() {
-            $('[for=id_body]').hide();
-            CKEDITOR.replace('id_body');
+            injectCKEditor();
+            insertPublishButton();
 
-            var slugField = $('#id_slug');
-            var titleField = $('#id_title');
+            CKEDITOR.on('instanceReady', function() {
+                var saveDialog = SaveDialog();
+                var ckeditor = CKEDITOR.instances.id_working_copy;
 
-            titleField.on('keyup', function(e) {
-                slugField.val(slugify($(this).val()));
+                var iframeBase = document.querySelector('iframe').contentDocument.querySelector('html');
+                var iframeBody = iframeBase.querySelector('body');
+
+                var $body =
+
+                iframeBody.ondragover = doNothing;
+                iframeBody.ondrop = dropHandler;
+
+                paddingToCenterBody = ((iframeBase.offsetWidth - iframeBody.offsetWidth) / 2) + 'px';
+                $(iframeBase).css({
+                    'height': '100%',
+                    'width': '100%',
+                    'overflow': 'hidden'
+                }).find('body').css({
+                    'height': '100%',
+                    'margin': '0',
+                    'padding-left': paddingToCenterBody,
+                    'padding-right': paddingToCenterBody
+                });
+
+                ckeditor.on('change', _.debounce(function() {
+                    saveDialog.showWorking();
+                    saveArticle(ckeditor).then(saveDialog.showSucessAndHide, orPopError);
+                }, 1000));
             });
-
-            setTimeout(function() {
-                var ckeditor = CKEDITOR.instances.id_body;
-
-                var iframe = document.getElementsByTagName('iframe')[0];
-                var iFrameDoc = iframe.contentDocument || iframe.contentWindow.document;
-
-                if (editAreaSmallerThanWindow(iFrameDoc)) {
-                    padEditArea(ckeditor)
-                }
-
-                iFrameDoc.ondragover = doNothing;
-                iFrameDoc.ondrop = dropHandler;
-
-                ckeditor.on('change', _.debounce(function() { saveArticle(ckeditor) }, 1000));
-            }, 1000);
         })
 
     </script>
@@ -149,7 +182,6 @@
 
 {% block content %}
     {{ block.super }}
-
     <p id="saved-msg" class="alert alert-success" style="
           width: 80px;
           position: fixed;
@@ -159,4 +191,6 @@
           top: 0;
           z-index: 9999;
     "></p>
+    <div data-object-id="{{ object_id }}"></div>
 {% endblock %}
+

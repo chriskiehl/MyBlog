@@ -55,8 +55,8 @@ class TagAdmin(forms.ModelForm):
 class RelatedAdminForm(forms.ModelForm):
   class Meta:
     model = Article
-    fields = [
-      'body',
+    fields = (
+      'working_copy',
       'title_image',
       'title',
       'sub_title',
@@ -66,19 +66,19 @@ class RelatedAdminForm(forms.ModelForm):
       'views',
       'should_display_comments',
       'published',
-      'tags',
       'generate_related',
-      'related'
-    ]
+      'related',
+      'tags',
+    )
 
-  def __init__(self, *args, **kwargs):
-    super(RelatedAdminForm, self).__init__(*args, **kwargs)
-    if self.instance.id:
-      self.fields['related'].queryset = Article.objects.filter(tags__in=self.instance.tags.all()).distinct()
-
+  # def __init__(self, *args, **kwargs):
+  #   super(RelatedAdminForm, self).__init__(*args, **kwargs)
+  #   if self.instance.id:
+  #     self.fields['related'].queryset = Article.objects.filter(tags__in=self.instance.tags.all()).distinct()
 
   def clean(self):
     super(RelatedAdminForm, self).clean()
+
 
 class ArticleForm(forms.ModelForm):
   class Meta:
@@ -90,17 +90,17 @@ class ArticleAdmin(admin.ModelAdmin):
   form = RelatedAdminForm
 
   def get_readonly_fields(self, request, obj=None):
-    return self.readonly_fields + ('views', 'last_modified',)
+    return self.readonly_fields + ('views', 'last_modified', 'pub_date')
 
   def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
+    print request.path
     extra_context = extra_context or {}
-    print settings.AWS_ACCESS_KEY_ID
-    print settings.AWS_SECRET_ACCESS_KEY
     extra_context.update({
       'AWS_ACCESS_KEY_ID': settings.AWS_ACCESS_KEY_ID,
-      'AWS_SECRET_ACCESS_KEY': settings.AWS_SECRET_ACCESS_KEY
+      'AWS_SECRET_ACCESS_KEY': settings.AWS_SECRET_ACCESS_KEY,
+      'object_id': object_id
     })
-    return super(ArticleAdmin, self).changeform_view(request, extra_context=extra_context)
+    return super(ArticleAdmin, self).changeform_view(request, object_id, form_url, extra_context=extra_context)
 
   def save_related(self, request, form, formsets, change):
     article = form.instance

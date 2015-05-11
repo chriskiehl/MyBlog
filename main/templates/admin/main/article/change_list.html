@@ -50,10 +50,15 @@
   <script src="{% static 'main/js/lib/jquery/jquery-2.1.1.min.js' %}" ></script>
   <script>
     function newArticle() {
+        var url = window.location.href.replace(window.location.pathname, '') + '/api/articles';
+
         $.ajax({
             type: 'POST',
-            url: 'new-article/',
-            data: {'csrfmiddlewaretoken': '{{ csrf_token}}'},
+            url: url,
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token}}',
+                'title': 'Untitled'
+            },
             success: function (response) {
                 window.location.replace(response.id);
             }

@@ -1,11 +1,11 @@
-import time
-from django.utils.cache import cc_delim_re
 
 
-class VaryStripper(object):
-
+class ConditionalSessionMiddleware(object):
+  '''
+  Only sends session related headers when in the admin to allow easier proxy caching
+  '''
   def process_response(self, request, response):
-    print request.path
-    if '/admin/' not in request.path and response.has_header('Vary'):
-        del response['Vary']
+    if not request.path.startswith('/admin'):
+      response._headers.pop('vary')
+      response.cookies.pop('csrftoken')
     return response

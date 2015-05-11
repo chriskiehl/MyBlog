@@ -41,10 +41,11 @@ INSTALLED_APPS = (
     'blog',
     'main',
     'storages',
+    'rest_framework'
 )
 
 MIDDLEWARE_CLASSES = (
-    'main.middleware.VaryStripper',
+    'main.middleware.ConditionalSessionMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -96,8 +97,9 @@ if DEBUG:
     }
   }
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
+SESSION_COOKIE_HTTPONLY = False
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
@@ -127,6 +129,9 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'main/static'),
 )
 
+
+CORS_ALLOW_CREDENTIALS = True
+
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = 'awsblogstore'
@@ -149,7 +154,6 @@ if not DEBUG:
 
 
 
-
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'kiehlbot@gmail.com'
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_BOT_PASSWORD')
@@ -161,3 +165,4 @@ ADMINS = ('kiehlbot@gmail.com',)
 
 THUMBNAIL_WIDTH = 212
 THUMBNAIL_HEIGHT = 119
+

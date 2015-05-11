@@ -21,11 +21,11 @@ class Tag(models.Model):
 class Article(models.Model):
   title_image = models.CharField(max_length=300, null=True, blank=True)
   thumbnail = models.CharField(max_length=300, null=True)
-  slug = models.CharField(max_length=100, blank=True)
   title = models.CharField(max_length=300)
   sub_title = models.CharField(max_length=300, null=True, blank=True)
+  slug = models.CharField(max_length=100, blank=True)
   body = models.TextField(null=True)
-  working_copy = models.TextField(null=True)
+  working_copy = models.TextField(null=True, blank=True)
   pub_date = models.DateTimeField('date published', null=True, blank=True)
   last_modified = models.DateTimeField('last modified', default=datetime.now())
   views = models.IntegerField(default=0)
@@ -53,19 +53,9 @@ class Article(models.Model):
       if self.title_image_changed(instance):
         self.thumbnail = self.create_thumbnail()
 
-      if self.publishing(instance):
-        self.pub_date = datetime.now()
+    self.working_copy = self.strip_padding(self.working_copy)
+    self.last_modified = datetime.now()
 
-    else:
-      if self.published:
-        self.pub_date = datetime.now()
-
-    if not self.slug:
-      self.slug = self.title.replace(' ', '-')
-
-    self.body = self.strip_padding(self.body)
-    self.stale = True
-    Article.content_out_of_date = True
     super(Article, self).save()
 
   def _build_related_list(self):

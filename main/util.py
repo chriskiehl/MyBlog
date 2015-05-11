@@ -1,7 +1,8 @@
-import pickle
 import urllib2
-from PIL import Image, ImageFilter
 import cStringIO
+
+from PIL import Image, ImageFilter
+
 from django.conf import settings
 
 
@@ -21,7 +22,6 @@ def create_thumbnail(source_image):
   output.seek(0)
   return output
 
-
 def calc_aspect_ratio(image):
   w, h = image.size
   return float(w)/h
@@ -35,57 +35,11 @@ def crop_center(im, target_size):
   right = (current_height / 2) + (target_height / 2)
   return im.crop((left, top, right, bottom))
 
-
 def get_object_or_none(cls, **kwargs):
   try:
     return cls.objects.get(**kwargs)
   except cls.DoesNotExist:
     return None
-
-def build_cache_key(*args, **kwargs):
-  cache_key = '-'.join(args) + '-'.join(kwargs.values())
-  return cache_key or 'home'
-
-
-def pickle_safe(d):
-  out = {}
-  for k, v in d.items():
-    try:
-      pickle.dumps(v)
-      out[k] = v
-    except:
-      pass
-  return out
-
-
-def pickle_request(request):
-  required_req_attributes = ('COOKIES', 'FILES', 'GET', 'META', 'POST', 'REQUEST')
-  output = {}
-  for k, v in request.__dict__.items():
-    if isinstance(v, dict):
-      output[k] = pickle_safe(v)
-    else:
-      try:
-        pickle.dumps(v)
-        output[k] = v
-      except:
-        pass
-  for attrib in required_req_attributes:
-    if attrib not in output:
-      output[attrib] = {}
-  return output
-
-
-
-def format_comment_email(request):
-  author, body = request.POST['name'], request.POST['body']
-  return '''
-  New Comment on {0}.
-
-  Author: {1}
-  Body:
-  >>> {2}
-  '''.format(request.build_absolute_uri(), author, body)
 
 def populate_db():
   # creates a couple of fake articles to play around with
