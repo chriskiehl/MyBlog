@@ -5,6 +5,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http.response import HttpResponse, Http404
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.cache import cache_page
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
@@ -54,21 +55,21 @@ class ArticlePublish(APIView):
     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-# @cache_page(20)
+@cache_page(10)
 def index(request):
   articles = Article.objects.filter(published=True)
   most_recent = articles.order_by('-pub_date')[:3]
   most_popular = articles.order_by('-views')[:3]
   return render(request, 'main/index.html', locals())
 
-
+@cache_page(10)
 def show_article(request, slug):
   article = get_object_or_404(Article, slug=slug, published=True)
   related_posts = article.related.all()
   similarly_tagged = Article.objects.filter(tags__in=article.tags.all()).distinct()
   return render(request, 'main/article.html', locals())
 
-
+@cache_page(10)
 def backlog(request, page):
   article_set = Article.objects.filter(published=True).order_by('-pub_date')
   if int(page) == 1:
@@ -88,7 +89,7 @@ def backlog(request, page):
 
   return render(request, 'main/backlog.html', locals())
 
-
+@cache_page(10)
 def rss(request):
   template = Template(dedent('''<?xml version="1.0"?>
       <rss version="2.0">
@@ -113,6 +114,7 @@ def rss(request):
     content_type="application/xml"
   )
 
+@cache_page(10)
 def sitemap(request):
   xml_template = dedent('''<?xml version="1.0" encoding="UTF-8"?>
       <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
