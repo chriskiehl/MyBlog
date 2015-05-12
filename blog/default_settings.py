@@ -10,7 +10,6 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-import sys
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -37,7 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'debug_toolbar',
+    # 'debug_toolbar',
     'blog',
     'main',
     'storages',
@@ -45,7 +44,6 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    # 'main.middleware.ConditionalSessionMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -73,29 +71,17 @@ DATABASES = {
 if DEBUG:
   DATABASES = {
       'default': {
-          'ENGINE': 'django.db.backends.postgresql_psycopg2',
+          'ENGINE': 'django.db.backends.sqlite3',
           'NAME': 'blogdb',
-          'USER': 'myuser',
-          'PASSWORD': 'password',
-          'HOST': ''
       }
   }
 
 CACHES = {
   'default': {
-      'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-      'LOCATION': '127.0.0.1:11211',
-      'KEY_PREFIX': "blogomatono"
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'right-here-man'
   }
 }
-
-if DEBUG:
-  CACHES = {
-    'default': {
-          'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-          'LOCATION': 'unique-snowflake'
-    }
-  }
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
