@@ -73,7 +73,7 @@ def test_publish_api_rejects_incomplete_articles(api_client):
   response = api_client.put('/api/articles/1/publish')
   missing_fields = response.data.keys()
   assert response.status_code == status.HTTP_400_BAD_REQUEST
-  assert set(missing_fields) == {'sub_title', 'working_copy', 'slug'}
+  assert set(missing_fields) == {'working_copy', 'slug'}
 
 
 @pytest.mark.django_db
