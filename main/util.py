@@ -30,9 +30,9 @@ def crop_center(im, target_size):
   target_width, target_height = target_size
   current_width, current_height  = im.size
   left = (current_width / 2) - (target_width / 2)
-  bottom = (current_width / 2) + (target_width / 2)
   top = (current_height / 2) - (target_height / 2)
-  right = (current_height / 2) + (target_height / 2)
+  bottom = (current_height / 2) + (target_height / 2)
+  right = (current_width / 2) + (target_width / 2)
   return im.crop((left, top, right, bottom))
 
 def get_object_or_none(cls, **kwargs):

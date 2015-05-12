@@ -76,8 +76,8 @@ class RelatedAdminForm(forms.ModelForm):
   #   if self.instance.id:
   #     self.fields['related'].queryset = Article.objects.filter(tags__in=self.instance.tags.all()).distinct()
 
-  def clean(self):
-    super(RelatedAdminForm, self).clean()
+  # def clean(self):
+  #   super(RelatedAdminForm, self).clean()
 
 
 class ArticleForm(forms.ModelForm):
@@ -93,7 +93,6 @@ class ArticleAdmin(admin.ModelAdmin):
     return self.readonly_fields + ('views', 'last_modified', 'pub_date')
 
   def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
-    print request.path
     extra_context = extra_context or {}
     extra_context.update({
       'AWS_ACCESS_KEY_ID': settings.AWS_ACCESS_KEY_ID,

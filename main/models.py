@@ -99,7 +99,7 @@ class Article(models.Model):
     return 'main/images/{0}-thumb{1}'.format(filename, ext)
 
   def title_image_changed(self, instance):
-    return instance.title_image != self.title_image
+    return self.title_image and instance.title_image != self.title_image
 
   def publishing(self, instance):
     not_previously_published = instance.published == False
