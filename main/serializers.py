@@ -14,7 +14,6 @@ class PublishedArticleSerializer(serializers.ModelSerializer):
     model = Article
 
   title = serializers.CharField(required=True, allow_blank=False)
-  sub_title = serializers.CharField(required=True, allow_blank=False)
   slug = serializers.CharField(required=True, allow_blank=False)
   working_copy = serializers.CharField(required=True, allow_blank=False)
 
