@@ -1,4 +1,5 @@
 from textwrap import dedent
+from django.core.urlresolvers import reverse
 from django.template import Context
 from django.template.base import Template
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -59,7 +60,7 @@ class ArticlePublish(APIView):
 
 @cache_page(31536000)
 def index(request):
-  articles = Article.objects.filter(published=True)
+  articles = Article.objects.filter(published=True).exclude(slug='about').exclude(slug='contact')
   most_recent = articles.order_by('-pub_date')[:3]
   most_popular = articles.order_by('-views')[:3]
   return render(request, 'main/index.html', locals())
