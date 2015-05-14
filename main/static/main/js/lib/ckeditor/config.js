@@ -12,6 +12,7 @@ CKEDITOR.editorConfig = function( config ) {
 
     config.toolbar = [
 	{ name: 'document', groups: [ 'mode', 'document', 'doctools'], items: [ 'Source']},
+    { name: 'links', items: [ 'Link', 'Unlink', 'Anchor' ] },
 	{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat' ] },
 	{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'] },
 	{ name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
@@ -38,3 +39,5 @@ CKEDITOR.editorConfig = function( config ) {
         { name: 'others' },
     ];
 };
+
+
