@@ -12,6 +12,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from main import util
 from main.serializers import ArticleSerializer, PublishedArticleSerializer
 
 from main.models import Article
@@ -44,6 +45,7 @@ class ArticlePublish(APIView):
     serializer = PublishedArticleSerializer(article, data=ArticleSerializer(article).data)
     if serializer.is_valid():
       serializer.save()
+      util.flush_nginx()
       return Response(status=status.HTTP_204_NO_CONTENT)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -55,21 +57,21 @@ class ArticlePublish(APIView):
     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-@cache_page(10)
+@cache_page(31536000)
 def index(request):
   articles = Article.objects.filter(published=True)
   most_recent = articles.order_by('-pub_date')[:3]
   most_popular = articles.order_by('-views')[:3]
   return render(request, 'main/index.html', locals())
 
-@cache_page(10)
+@cache_page(31536000)
 def show_article(request, slug):
   article = get_object_or_404(Article, slug=slug, published=True)
   related_posts = article.related.all()
   similarly_tagged = Article.objects.filter(tags__in=article.tags.all()).distinct()
   return render(request, 'main/article.html', locals())
 
-@cache_page(10)
+@cache_page(31536000)
 def backlog(request, page):
   article_set = Article.objects.filter(published=True).order_by('-pub_date')
   if int(page) == 1:
@@ -89,7 +91,7 @@ def backlog(request, page):
 
   return render(request, 'main/backlog.html', locals())
 
-@cache_page(10)
+@cache_page(31536000)
 def rss(request):
   template = Template(dedent('''<?xml version="1.0"?>
       <rss version="2.0">
@@ -114,7 +116,7 @@ def rss(request):
     content_type="application/xml"
   )
 
-@cache_page(10)
+@cache_page(31536000)
 def sitemap(request):
   xml_template = dedent('''<?xml version="1.0" encoding="UTF-8"?>
       <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

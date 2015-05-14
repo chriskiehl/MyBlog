@@ -78,7 +78,7 @@ if DEBUG:
 
 CACHES = {
   'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
         'LOCATION': 'right-here-man'
   }
 }
@@ -152,3 +152,4 @@ ADMINS = ('kiehlbot@gmail.com',)
 THUMBNAIL_WIDTH = 212
 THUMBNAIL_HEIGHT = 119
 
+NGINX_CACHE_PATH = '/tmp/nginx/'

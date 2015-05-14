@@ -1,10 +1,12 @@
 import urllib2
 import cStringIO
-
+import subprocess
 from PIL import Image, ImageFilter
 
 from django.conf import settings
 
+def flush_nginx():
+  subprocess.call('sudo rm {}*'.format(settings.NGINX_CACHE_PATH), shell=True)
 
 def create_thumbnail(source_image):
   target_width = settings.THUMBNAIL_WIDTH
