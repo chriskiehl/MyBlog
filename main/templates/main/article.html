@@ -54,5 +54,37 @@
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
+    <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            function hasCookie(name) {
+                return function(cookie) { return cookie.indexOf(name) > -1 }
+            }
+            function cookieValue(str) { return str.split('=')[1].trim() }
+
+            function getCookie(name) {
+                return document.cookie.split(';').filter(hasCookie(name)).map(cookieValue);
+            };
+
+            /*
+            Log a view via ajax (since the main page is served straight outta niginx's cache
+             */
+            $.ajax({
+                beforeSend: function(xhr, settings) {
+                    xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                },
+                xhrFields: {withCredentials: true},
+                type: 'POST',
+                url: 'views/',
+                data: {},
+                success: function() {
+                    console.log("Cool!");
+                },
+                error: function() {
+                    console.log("Not cool!")
+                }
+            });
+        })
+    </script>
 
 {% endblock %}

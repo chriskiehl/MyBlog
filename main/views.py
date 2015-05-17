@@ -72,6 +72,14 @@ def show_article(request, slug):
   similarly_tagged = Article.objects.filter(tags__in=article.tags.all()).distinct()
   return render(request, 'main/article.html', locals())
 
+def record_view(request, slug):
+  if request.method == 'POST':
+    article = Article.objects.get(slug=slug)
+    article.views += 1
+    article.save()
+    return HttpResponse('Saved!')
+  return HttpResponse('Not Saved!')
+
 @cache_page(31536000)
 def backlog(request, page):
   article_set = Article.objects.filter(published=True).order_by('-pub_date')
