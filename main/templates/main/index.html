@@ -1,56 +1,72 @@
 {% extends 'main/base.html' %}
-
+{% load staticfiles %}
 {% block primary_content %}
 
     <div class="section">
         <h2>Most Recent</h2>
-        <div class="most-recent">
-            <div>
-                <h3>{{ most_recent.0.title }}</h3>
-                <img src="{{ most_recent.0.title_image }}" alt="Title Image for article: {{ most_recent.0.title }}">
-                {{ most_recent.0.body|safe|truncatechars_html:370 }}
-            </div>
-            <a href="{% url 'view_article' most_recent.0.slug %}">Read more >></a>
-        </div>
+{#        <div class="most-recent">#}
+{#            <div>#}
+{#                <h3>{{ most_recent.0.title }}</h3>#}
+{#                <img src="{{ most_recent.0.title_image }}" alt="Title Image for article: {{ most_recent.0.title }}">#}
+{#                {{ most_recent.0.body|safe|truncatechars_html:370 }}#}
+{#            </div>#}
+{#            <a href="{% url 'view_article' most_recent.0.slug %}">Read more >></a>#}
+{#        </div>#}
     </div>
 
     <div class="section most-popular">
-        <h2>Most Popular</h2>
-        <div class="pop-section">
-            {% for article in most_popular %}
-                <div class="pop-prev">
-                    <a href="{% url 'view_article' article.slug %}">
-                        <img src="{{ article.thumbnail }}" width="210" height="118" alt="Thumbnail for article: {{ article.title }}">
-                    </a>
-                    <h4>{{ article.title }}</h4>
-                    <div class="sub-title">
-                        <h5>{{ article.sub_title }}</h5>
-                    </div>
-                    <a href="{% url 'view_article' article.slug %}">Read >></a>
-                </div>
-            {% endfor %}
-        </div>
+{#        <h2>Most Popular</h2>#}
+{#        <div class="pop-section">#}
+{#            {% for article in most_popular %}#}
+{#                <div class="pop-prev">#}
+{#                    <a href="{% url 'view_article' article.slug %}">#}
+{#                        <img src="{{ article.thumbnail }}" width="210" height="118" alt="Thumbnail for article: {{ article.title }}">#}
+{#                    </a>#}
+{#                    <h4>{{ article.title }}</h4>#}
+{#                    <div class="sub-title">#}
+{#                        <h5>{{ article.sub_title }}</h5>#}
+{#                    </div>#}
+{#                    <a href="{% url 'view_article' article.slug %}">Read >></a>#}
+{#                </div>#}
+{#            {% endfor %}#}
+{#        </div>#}
     </div>
 
     <div class="section">
         <h2>Backlog</h2>
-        {% for prev_article in most_recent|slice:"1:" %}
-            <div class="most-recent">
-                <div>
-                    <h3>{{ prev_article.title }}</h3>
-                    <div class="image-cropper">
-                        <img src="{{ prev_article.title_image }}" alt="Title Image for article: {{ prev_article.title }}">
-                    </div>
-                    {{ prev_article.body|safe|truncatechars_html:370 }}
-                </div>
-                <a href="{% url 'view_article' slug=prev_article.slug %}">Read more >></a>
+        <div class="most-recent" data-bind="foreach: articles">
+            <div>
+                <h3 data-bind="text: title"></h3>
+{#                <div class="image-cropper">#}
+{#                    <img src="{{ prev_article.title_image }}" alt="Title Image for article: {{ prev_article.title }}">#}
+{#                </div>#}
+                <div data-bind="html: body"></div>
             </div>
-            <hr>
-        {% endfor %}
+            <a href="#">Read more >></a>
+        </div>
+        <hr>
     </div>
 
     <div class="section section-last">
         <a href="{% url 'backlog-paginator' page=1 %}" style="float: left;" class="page-ctrl">Prev</a>
     </div>
+        <script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.1.0.js"></script>
+    <script src="{% static 'main/js/lib/jquery/jquery-2.1.1.min.js' %} "></script>
+    <script>
+        function Article(title, body) {
+            var self = this;
+            self.title = title;
+            self.body = body;
+        }
 
+        function ArticleViewModel() {
+            var self = this;
+            self.articles = ko.observableArray();
+
+            $.getJSON('http://127.0.0.1:8001/api/articles', self.articles);
+        }
+
+        ko.applyBindings(new ArticleViewModel());
+
+    </script>
 {% endblock %}

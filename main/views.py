@@ -23,8 +23,8 @@ class ArticleList(ListCreateAPIView):
   queryset = Article.objects.all()
   serializer_class = ArticleSerializer
 
-  authentication_classes = (SessionAuthentication,)
-  permission_classes = (IsAuthenticated,)
+  # authentication_classes = (SessionAuthentication,)
+  # permission_classes = (IsAuthenticated,)
 
 class ArticleDetail(RetrieveUpdateDestroyAPIView):
   queryset = Article.objects.all()
@@ -60,9 +60,9 @@ class ArticlePublish(APIView):
 
 @cache_page(31536000)
 def index(request):
-  articles = Article.objects.filter(published=True).exclude(slug='about').exclude(slug='contact')
-  most_recent = articles.order_by('-pub_date')[:3]
-  most_popular = articles.order_by('-views')[:3]
+  # articles = Article.objects.filter(published=True).exclude(slug='about').exclude(slug='contact')
+  # most_recent = articles.order_by('-pub_date')[:3]
+  # most_popular = articles.order_by('-views')[:3]
   return render(request, 'main/index.html', locals())
 
 @cache_page(31536000)
