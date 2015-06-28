@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     # 'debug_toolbar',
     'blog',
     'main',
+    'temp_poc',
     'storages',
     'rest_framework'
 )

@@ -1,0 +1,26 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Poop!</title>
+
+    <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Merriweather' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/main/styles.min.css' %}" />
+
+    <meta name="viewport" content="width=device-width" />
+    <link href="http://vjs.zencdn.net/4.12/video-js.css" rel="stylesheet">
+	<script src="http://vjs.zencdn.net/4.12/video.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>S3 Streaming Demp</h1>
+        <video id="example_video_1" class="video-js vjs-default-skin" controls preload="auto" width="960" height="480" autoplay data-setup='{"example_option":true}'>
+            <source src="https://s3.amazonaws.com/iqm-test-bucket/103.mp4" type="video/mp4">
+        </video>
+        <p>AWS S3 streaming to video.js</p>
+    </div>
+</body>
+</html>
