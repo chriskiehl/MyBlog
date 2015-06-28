@@ -9,18 +9,48 @@
     <link href='http://fonts.googleapis.com/css?family=Merriweather' rel='stylesheet' type='text/css'>
 
     <link rel="stylesheet" type="text/css" href="{% static 'main/css/main/styles.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
 
     <meta name="viewport" content="width=device-width" />
     <link href="http://vjs.zencdn.net/4.12/video-js.css" rel="stylesheet">
 	<script src="http://vjs.zencdn.net/4.12/video.js"></script>
+	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>S3 Streaming Demp</h1>
-        <video id="example_video_1" class="video-js vjs-default-skin" controls preload="auto" width="960" height="480" autoplay data-setup='{"example_option":true}'>
+    <div style="width: 980px; margin: 0 auto;">
+        <h1>S3 Streaming Demo</h1>
+        <video id="example_video_1" class="video-js vjs-default-skin" controls preload="auto" width="960" height="480" data-setup='{"example_option":true}'>
             <source src="https://s3.amazonaws.com/iqm-test-bucket/103.mp4" type="video/mp4">
+{#            <source src="{{ STATIC_URL }}media/103.mp4" type="video/mp4">#}
         </video>
         <p>AWS S3 streaming to video.js</p>
+
+        <br>
+        <p>We jump to specific points in the video. So, if the user wants to save their progress they could.</p>
+        <form class="form-inline">
+            <div class="form-group">
+                <label for="exampleInputEmail1">Enter timestamp (in seconds):</label>
+                <input id="time" type="email" class="form-control" id="exampleInputEmail1" placeholder="345">
+             </div>
+             <button id="tbutton" type="button" class="btn btn-primary" style="width: inherit">Jump to Timestap</button>
+        </form>
     </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#tbutton').on('click', function() {
+                if ($('#time').val()) {
+                    _player = videojs('example_video_1');
+                    console.log(parseInt($('#time').val()));
+                    _player.currentTime(parseInt($('#time').val()));
+                    _player.pause();
+                    setTimeout(function() {
+                        _player.play();
+                    }, 3000)
+
+                }
+            });
+        })
+    </script>
 </body>
 </html>
