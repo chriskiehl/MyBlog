@@ -167,7 +167,11 @@ You can also follow me on [Github](https://github.com/chriskiehl), which is the 
             [:div
              (most-recent (first articles))
              [:div.section.most-popular
-              (most-popular (take 3 articles))]
+              ;; todo: track page hits...
+              (most-popular (filter #(#{"Cleaner-coding-through-partially-applied-functions"
+                                        "parallelism-in-one-line"
+                                        "packaging-gooey-with-pyinstaller"} (:slug %))
+                                    articles))]
              [:section.section-last
               (all-articles articles)]])))
 
@@ -177,7 +181,7 @@ You can also follow me on [Github](https://github.com/chriskiehl), which is the 
     :title "About"
     :body [:div
            [:img.about-photo {:src "https://s3.amazonaws.com/awsblogstore/main/images/self-portrait-2018.png"
-                              :srcset "https:/s3.amazonaws.com/awsblogstore/articles/52ac83c1/fa0e332c-self-portrait-2018-2960px.jpeg 2960w, https:/s3.amazonaws.com/awsblogstore/articles/52ac83c1/fa0e332c-self-portrait-2018-2466px.jpeg 2466w, https:/s3.amazonaws.com/awsblogstore/articles/52ac83c1/fa0e332c-self-portrait-2018-1972px.jpeg 1972w, https:/s3.amazonaws.com/awsblogstore/articles/52ac83c1/fa0e332c-self-portrait-2018-1478px.jpeg 1478w, https:/s3.amazonaws.com/awsblogstore/articles/52ac83c1/fa0e332c-self-portrait-2018-984px.jpeg 984w, https:/s3.amazonaws.com/awsblogstore/articles/52ac83c1/fa0e332c-self-portrait-2018-490px.jpeg 490w"
+                              :srcset "https://s3.amazonaws.com/awsblogstore/articles/52ac83c1/fa0e332c-self-portrait-2018-2960px.jpeg 2960w, https://s3.amazonaws.com/awsblogstore/articles/52ac83c1/fa0e332c-self-portrait-2018-2466px.jpeg 2466w, https://s3.amazonaws.com/awsblogstore/articles/52ac83c1/fa0e332c-self-portrait-2018-1972px.jpeg 1972w, https://s3.amazonaws.com/awsblogstore/articles/52ac83c1/fa0e332c-self-portrait-2018-1478px.jpeg 1478w, https://s3.amazonaws.com/awsblogstore/articles/52ac83c1/fa0e332c-self-portrait-2018-984px.jpeg 984w, https://s3.amazonaws.com/awsblogstore/articles/52ac83c1/fa0e332c-self-portrait-2018-490px.jpeg 490w"
                               :alt "Self Portrait - 2018"}]
            [:h1 "Howdy, Howdy! I'm Chris."]
            [:div.markdown-body (md/md-to-html-string about-me!)]]))
