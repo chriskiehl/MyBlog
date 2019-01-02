@@ -143,9 +143,9 @@ After=network.target
 [Service]
 
 Environment=USERNAME=ckiehl
-Environment=PASSWORD=thegreatblogadminpassword
-Environment=AWS_ACCESS_KEY=AKIAIBCQQV26QJFTEDCA
-Environment=AWS_SECRET_KEY=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
+Environment=PASSWORD={key}
+Environment=AWS_ACCESS_KEY={key}
+Environment=AWS_SECRET_KEY={key}
 Environment=AWS_ENDPOINT=us-west-1
 Environment=AWS_REGION=us-east-1  # s3 region
 
