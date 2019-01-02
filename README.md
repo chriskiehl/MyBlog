@@ -1,5 +1,9 @@
 # My Super Awesome Blog
 
+<p align='center'>
+ <img src='https://cloud.githubusercontent.com/assets/1408720/7717628/8907ae1e-fe72-11e4-8c40-d21102dc6cdc.jpg'>
+</p>
+
 Build on top of Clojure/ring with a light sprinkling of Clojurescript + Re-Frame for the admin interactions 
  
 Rendered server side and served up hot and fresh from an nginx proxy cache.  
