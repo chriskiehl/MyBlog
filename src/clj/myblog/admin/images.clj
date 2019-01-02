@@ -89,7 +89,7 @@
                filename (format "%s-%spx.%s" name size "jpeg")
                output-path (.getPath (io/file target-dir filename))
                s3-key (.getPath (io/file "articles" article-id filename))
-               s3-content-path (.getPath (io/file public-root "articles" article-id name))
+               s3-content-path (str public-root (.getPath (io/file "articles" article-id name)))
                public-url (str public-root s3-key)]
            {:name name
             :filename filename
