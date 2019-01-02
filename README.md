@@ -16,7 +16,7 @@ Rendered server side and served up hot and fresh from an nginx proxy cache.
  
   
 
-# Running this mamajama (development):
+## Running this mamajama (development):
 
 **profiles.clj**
 
@@ -53,7 +53,7 @@ ssh -L 3000:localhost:3000 devbox@192.168.0.107
 
 
 
-# Deploying from scratch 
+## Deploying from scratch 
  
 Currently targets a bare Digital Ocean droplet running `Ubuntu 18.04 x64`.  
 
