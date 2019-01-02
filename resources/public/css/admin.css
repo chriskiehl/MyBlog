@@ -1,0 +1,35 @@
+
+
+.admin-header {
+    height: 60px;
+    width: 100%;
+    border-bottom: 1px solid #e1e4e8;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 0 20px;
+}
+
+.dats-me {
+    height: auto;
+    width: 40px;
+}
+
+.dashboard-content {
+    width: 900px;
+    margin: 0 auto;
+    margin-top: 60px;
+}
+
+.article-pagehead {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e1e4e8;
+    margin-bottom: 20px;
+}
+
+.tag-margin {
+    margin-left: 10px;
+}
