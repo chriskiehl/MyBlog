@@ -19,7 +19,7 @@
 
 (defn login-form [{:keys [error] :as props}]
   [:form.text-center
-   {:action "/login/" :method "POST"
+   {:action "/login" :method "POST"
     :style (str "border: 1px solid #cacaca;"
                 "padding: 30px;"
                 "width: 400px;"
@@ -80,7 +80,7 @@
    [:div.admin-header
     [:img.dats-me {:src "https://awsblogstore.s3.amazonaws.com/main/images/circle_avatar.png"}]
     [:div {:style "flex: 1 1 auto; padding-left: 16px;"} [:h3.f3-light {:style "margin: 0"} "Admin"]]
-    [:form {:action "/logout/" :method "POST"}
+    [:form {:action "/logout" :method "POST"}
       [:button.btn {:type "submit"} "Logout"]]]
    [:div.dashboard-content
     (when (not (empty? articles))
