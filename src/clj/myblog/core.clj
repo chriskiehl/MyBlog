@@ -63,7 +63,7 @@
 
 
 (defn admin-url? [request]
-  (.startsWith (:uri request) "/admin/"))
+  (.startsWith (:uri request) "/admin"))
 
 
 (defn api-auth-middleware [handler]
