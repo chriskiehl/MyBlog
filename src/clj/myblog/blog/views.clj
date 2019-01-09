@@ -113,7 +113,7 @@ You can also follow me on [Github](https://github.com/chriskiehl), which is the 
        body]
       ]
      (footer)
-     ;(include-js "/js/external/google-analytics.js")
+     (include-js "/js/external/google-analytics.js")
      (include-js "/js/external/highlight.js")
      "<script>hljs.initHighlightingOnLoad()</script>"]))
 
