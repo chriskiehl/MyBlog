@@ -1,6 +1,7 @@
 (ns myblog.blog.views
   (:require [hiccup.core :refer :all]
             [hiccup.page :refer [html5 include-css include-js]]
+            [hiccup.element :refer [javascript-tag]]
             [markdown.core :as md]
             [myblog.admin.util :as util]))
 
@@ -103,6 +104,13 @@ You can also follow me on [Github](https://github.com/chriskiehl), which is the 
              :content "text/html;charset=UTF-8"}]
      [:meta {:name "viewport"
              :content "width=device-width"}]
+     (javascript-tag
+       "window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+        ga('create', 'UA-58876262-1', 'auto');
+        ga('send', 'pageview');")
+     [:script {:src "https://www.google-analytics.com/analytics.js"
+               :async true}]
+
      (include-css "/css/styles.css")
      (include-css "/css/highlight.css")
      [:title (str title " - Blogomatano")]]
@@ -113,7 +121,6 @@ You can also follow me on [Github](https://github.com/chriskiehl), which is the 
        body]
       ]
      (footer)
-     (include-js "/js/external/google-analytics.js")
      (include-js "/js/external/highlight.js")
      "<script>hljs.initHighlightingOnLoad()</script>"]))
 
