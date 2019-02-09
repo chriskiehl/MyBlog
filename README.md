@@ -272,7 +272,10 @@ sudo systemctl restart nginx.service
 This is to allow our cron to read the logs and calc page views. 
 
 ```
-sudo chmod 755 /var/log/nginx && chmod 644 /var/log/nginx/*.log && chmod 644 /var/log/nginx/*.gz
+sudo chmod 755 /etc/nginx/logs/ 
+sudo chmod 644 /etc/nginx/logs/*.log 
+sudo chmod 644 /etc/nginx/logs/*.log.* 
+sudo chmod 644 /etc/nginx/logs/*.gz 
 ```
 
 Update the log rotation perms so our above change doesn't get clobbered.  
@@ -281,7 +284,29 @@ Update the log rotation perms so our above change doesn't get clobbered.
 sudo vim /etc/logrotate.d/nginx
 ```
 
-Replace `create 0640 www-data adm` with `create 0644 www-data adm`
+First line should be updated to match our log dir, and the `create` line should be updated from `640` to `644`
+
+```
+/etc/nginx/logs/*.log {
+        daily
+        missingok
+        rotate 14
+        compress
+        delaycompress
+        notifempty
+        create 0644 www-data adm
+        sharedscripts
+        prerotate
+                if [ -d /etc/logrotate.d/httpd-prerotate ]; then \
+                        run-parts /etc/logrotate.d/httpd-prerotate; \
+                fi \
+        endscript
+        postrotate
+                invoke-rc.d nginx rotate >/dev/null 2>&1
+        endscript
+}
+       
+```
 
 
 

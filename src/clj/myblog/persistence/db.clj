@@ -199,7 +199,7 @@
                                            :comparison-operator "GE"}}
                               :filter-expression "#s = :pub OR #s = :rev"
                               :projection-expression
-                              "#qk, id, #wc, #w, #c, words, #s, #v, #t, #ti, #tis, #tia, #p, #sl, #ds"
+                              "#qk, id, #wc, #w, #c, words, #s, #v, #t, #ti, #tis, #tia, #p, #sl, #ds, #vs"
                               :expression-attribute-names {"#s" "state"
                                                            "#w" "written-on"
                                                            "#p" "published-on"
@@ -212,7 +212,8 @@
                                                            "#tia" "title-image-alt"
                                                            "#sl" "slug"
                                                            "#ds" "description"
-                                                           "#qk" "query-key"}
+                                                           "#qk" "query-key"
+                                                           "#vs" "views"}
                               :expression-attribute-values {":pub" "published"
                                                             ":rev" "revising"}
                               ))

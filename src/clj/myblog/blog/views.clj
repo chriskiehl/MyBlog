@@ -175,10 +175,7 @@ You can also follow me on [Github](https://github.com/chriskiehl), which is the 
              (most-recent (first articles))
              [:div.section.most-popular
               ;; todo: track page hits...
-              (most-popular (filter #(#{"Cleaner-coding-through-partially-applied-functions"
-                                        "parallelism-in-one-line"
-                                        "packaging-gooey-with-pyinstaller"} (:slug %))
-                                    articles))]
+              (most-popular (take 3 (reverse (sort-by :views articles))))]
              [:section.section-last
               (all-articles articles)]])))
 

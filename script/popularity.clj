@@ -27,7 +27,7 @@
 
 
 (defn list-access-files []
-  (as-> "/var/log/nginx/" $
+  (as-> "/etc/nginx/logs/" $
         (java.io.File. $)
         (.listFiles $)
         (map str $)
@@ -47,6 +47,7 @@
 
 (defn compute-pageviews
   []
+  (println "will process: " (list-access-files))
   (->> (list-access-files)
        (map (comp process-pageviews slurp-contents))
        (apply merge-with +)))
