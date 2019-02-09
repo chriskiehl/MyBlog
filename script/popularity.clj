@@ -11,19 +11,31 @@
 ;; 173.56.55.31 - - [09/Feb/2019:03:04:19 +0000] \"GET /article/parallelism-in-one-line/ HTTP/1.1\" 301 194 \"-\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/605.1.15 (KHTML, like Gecko)\"
 ;;
 ;; any line with GET /article/:slug is matched and counted
+;; {slug1 20, slug2 123, slugN 2000}
 
 
-(defn slurp-gzip [path]
-  (with-open [in (java.util.zip.GZIPInputStream.
-                   (clojure.java.io/input-stream
-                     path))]
-    (slurp in)))
+(defn readlines-gzip [path process-lines]
+  (with-open [lines (as-> path $
+                          (clojure.java.io/input-stream $)
+                          (java.util.zip.GZIPInputStream. $)
+                          (java.io.InputStreamReader. $)
+                          (java.io.BufferedReader. $))]
+    (process-lines (line-seq lines))))
 
 
-(defn slurp-contents [path]
+
+(defn readlines [path process-lines]
+  (with-open [lines (as-> path $
+                          (clojure.java.io/input-stream $)
+                          (java.io.InputStreamReader. $)
+                          (java.io.BufferedReader. $))]
+    (process-lines (line-seq lines))))
+
+
+(defn lineseq-contents [path f]
   (if (clojure.string/ends-with? path "gz")
-    (slurp-gzip path)
-    (slurp path)))
+    (readlines-gzip path f)
+    (readlines path f)))
 
 
 (defn list-access-files []
@@ -37,9 +49,8 @@
 (defn process-pageviews
   "parse all the nginx logs and produce a frequencies map
   from article-slug -> number of views"
-  [raw-logs]
-  (as-> raw-logs $
-        (clojure.string/split-lines $)
+  [lines]
+  (as-> lines $
         (map #(second (re-find #"/article/([\w-]+)" %)) $)
         (filter (complement nil?) $)
         (frequencies $)))
@@ -49,7 +60,7 @@
   []
   (println "will process: " (list-access-files))
   (->> (list-access-files)
-       (map (comp process-pageviews slurp-contents))
+       (map #(lineseq-contents % process-pageviews))
        (apply merge-with +)))
 
 
