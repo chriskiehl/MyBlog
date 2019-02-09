@@ -290,7 +290,7 @@ First line should be updated to match our log dir, and the `create` line should 
 /etc/nginx/logs/*.log {
         daily
         missingok
-        rotate 14
+        rotate 50
         compress
         delaycompress
         notifempty
@@ -307,6 +307,28 @@ First line should be updated to match our log dir, and the `create` line should 
 }
        
 ```
+
+Update and run
+
+```
+logrotate -f -v /etc/logrotate.d/nginx
+```
+
+Add the following entry. Runs every day at 3am. 
+
+```
+0 3 /home/ckiehl/MyBlog/bin/pageviews.sh
+```
+
+## Setting up the pageview cron 
+
+Page views are computed from the nginx logs because writing to Dynamo on every page hit is too expensive.. 
+
+```
+crontab -e 
+```
+
+
 
 
 
