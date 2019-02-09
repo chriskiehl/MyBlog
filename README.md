@@ -252,7 +252,6 @@ sudo mkdir /etc/nginx/logs/
 sudo mkdir -p /data/nginx/cache
 ```
 
-
 Sanity check the config with 
 
 ```
@@ -267,6 +266,22 @@ sudo systemctl stop nginx.service
 sudo systemctl restart nginx.service
 ```
 
+**Make the logs readable by non-root nginx users:**
+
+
+This is to allow our cron to read the logs and calc page views. 
+
+```
+sudo chmod 755 /var/log/nginx && chmod 644 /var/log/nginx/*.log && chmod 644 /var/log/nginx/*.gz
+```
+
+Update the log rotation perms so our above change doesn't get clobbered.  
+
+```
+sudo vim /etc/logrotate.d/nginx
+```
+
+Replace `create 0640 www-data adm` with `create 0644 www-data adm`
 
 
 
@@ -282,5 +297,15 @@ lein uberjar
 ```
 lein cljsbuild once prod
 ```
+
+
+## Standard Code Deployment
+ 
+```
+cd MyBlog/
+sh ./bin/update.sh
+sudo systemctl restart webapp.service
+```
+
 
 
