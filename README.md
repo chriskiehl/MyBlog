@@ -317,7 +317,7 @@ logrotate -f -v /etc/logrotate.d/nginx
 Add the following entry. Runs every day at 3am. 
 
 ```
-0 3 /home/ckiehl/MyBlog/bin/pageviews.sh
+0 3 * * * /home/ckiehl/MyBlog/bin/pageviews.sh
 ```
 
 ## Setting up the pageview cron 
