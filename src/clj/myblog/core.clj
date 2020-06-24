@@ -49,10 +49,7 @@
   <script>
     window.onload = function () {myblog.core.run();}
   </script>
-
-
-  "
-  "</body>
+  </body>
   </html>"))
 
 
@@ -79,7 +76,7 @@
     (if (and (admin-url? request)
              (not (contains? (:session request) :identity)))
       (do (println "User not authenticated. Redirecting to /login/")
-          (redirect "/login/"))
+          (redirect "/login"))
       (handler request))))
 
 
@@ -106,6 +103,7 @@
      (GET  "/" [] blog-controllers/home-page)
      (GET  "/article/:slug" [slug] (blog-controllers/article-page slug))
      (GET  "/about" [] blog-controllers/about-page)
+     (GET  "/patrons" [] blog-controllers/patrons)
      (GET  "/rss.xml" [] blog-controllers/rss-feed)
      (GET  "/login" [] (controllers/login-page))
      (POST "/login" [] controllers/login-page)

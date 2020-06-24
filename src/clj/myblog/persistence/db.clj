@@ -160,8 +160,6 @@
 
 
 (defn list-articles []
-  (println "using creds: " *creds*)
-  (println "using table: " *table-name*)
   (f/ok-> (f/try* (ddb2/query *creds*
                               :table-name *table-name*
                               :scan-index-forward false

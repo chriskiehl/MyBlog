@@ -27,7 +27,6 @@
           (content-type "application/xml")))))
 
 
-
 (defn article-page [slug]
   (let [article (f/ok-> (db/get-published-article slug)
                         articles/serialize
@@ -38,4 +37,16 @@
 
 
 (defn about-page [request]
-  (views/about-page))
+  (let [about-me (slurp (clojure.java.io/resource "public/about/about.md"))]
+    (views/about-page about-me)))
+
+
+(defn load-cool-people []
+  (-> "public/patrons/patrons.edn"
+      (clojure.java.io/resource)
+      (slurp )
+      (read-string)))
+
+(defn patrons [request]
+  (let [cool-people (load-cool-people)]
+    (views/patrons-page cool-people)))

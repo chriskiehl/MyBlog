@@ -9,24 +9,24 @@
 ;; build up an HTML doc, and then dump it to disk for direct serving
 
 
-(def about-me!
-  "
-I'm a software developer and overall pretty cool guy. This blog is where I pretend to be an expert at things.
-
-I currently work for [Amazon](https://www.amazon.com) and live in Seattle, WA.
-
-I dig functional languages like Clojure and Haskell, but also love the 'second best for everything' language that is Python.
-
-My big Open Source claim to fame is creating [Gooey](https://github.com/chriskiehl/Gooey).
-
-Want me to build something for you? Hit me up! I lack loyalty to my current gig and am powered by a constant greedy desire for mo' money (and solving mo' problems).
-
-Want Gooey releases to be churned out faster? [Sponsor its development](mailto:ckiehl@gmail.com?subject='I want to help support open source software with my money!')!
-
-Just wanna chat? Drop me a line at [ckiehl@gmail.com](mailto:ckiehl@gmail.com). If you're a
-recruiter, feel free to message me on [LinkedIn](https://www.linkedin.com/in/chris-kiehl-34426587/).
-You can also follow me on [Github](https://github.com/chriskiehl), which is the extent of my Social Media.
-")
+;(def about-me!
+;  "
+;I'm a software developer and overall pretty cool guy. This blog is where I pretend to be an expert at things.
+;
+;I currently work for [Amazon](https://www.amazon.com) and live in Seattle, WA.
+;
+;I dig functional languages like Clojure and Haskell, but also love the 'second best for everything' language that is Python.
+;
+;My big Open Source claim to fame is creating [Gooey](https://github.com/chriskiehl/Gooey).
+;
+;Want me to build something for you? Hit me up! I lack loyalty to my current gig and am powered by a constant greedy desire for mo' money (and solving mo' problems).
+;
+;Want Gooey releases to be churned out faster? [Sponsor its development](mailto:ckiehl@gmail.com?subject='I want to help support open source software with my money!')!
+;
+;Just wanna chat? Drop me a line at [ckiehl@gmail.com](mailto:ckiehl@gmail.com). If you're a
+;recruiter, feel free to message me on [LinkedIn](https://www.linkedin.com/in/chris-kiehl-34426587/).
+;You can also follow me on [Github](https://github.com/chriskiehl), which is the extent of my Social Media.
+;")
 
 
 
@@ -49,6 +49,7 @@ You can also follow me on [Github](https://github.com/chriskiehl), which is the 
       [:li [:a {:href "/about"} "About"]]
       [:li [:a {:href "https://github.com/chriskiehl" :target "_blank"} "Projects"]]
       [:li [:a {:href "mailto:ckiehl@gmail.com"} "Contact"]]
+      [:li [:a {:href "/patrons"} "Patrons"]]
       [:li [:a {:href "/rss.xml" :target "_blank"} "RSS Feed"]]]]])
 
 
@@ -180,7 +181,7 @@ You can also follow me on [Github](https://github.com/chriskiehl), which is the 
               (all-articles articles)]])))
 
 
-(defn about-page []
+(defn about-page [about-me!]
   (base-page
     :title "About"
     :body [:div
@@ -206,4 +207,23 @@ You can also follow me on [Github](https://github.com/chriskiehl), which is the 
     :body [:div "Hey uh.. nothing is here. sweet 404 page pending.."]))
 
 
+(defn patrons-page [{:keys [last-updated patrons] :as cool-people}]
+  (base-page
+    :title "Patrons - the mightiest of people!"
+    :body
+    [:div
+     [:div
+      [:img.about-photo {:src "https://s3.amazonaws.com/awsblogstore/main/images/chriskiehl-website-waving-banner.jpg"}]
+      [:h1 "These awesome people are supporting open source on "
+        [:a {:href "https://www.patreon.com/chriskiehl"} "Patreon"]]
+      [:p (str "Last updated on " last-updated)]]
+     [:div
+      (for [{:keys [group names]} patrons]
+        (when (seq names)
+          [:div
+           [:h3 group]
+           [:ul
+             (for [name names]
+               [:li name])]]))]
+     [:h2 " -- Thank you!"]]))
 

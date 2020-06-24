@@ -22,8 +22,6 @@
 (def authdata {(:username env) (:password env)})
 
 
-(println authdata)
-
 (defn bad-response
   "Returns a skeletal Ring response with the given body, status
   of 400, and no headers."
@@ -49,7 +47,7 @@
         found-password (get authdata username)]
     (if (and found-password (= found-password password))
       (let [updated-session (assoc session :identity (keyword username))]
-        (-> (redirect "/admin/")
+        (-> (redirect "/admin")
             (assoc :session updated-session)))
       (response (templates/login-page {:error true}))))))
 

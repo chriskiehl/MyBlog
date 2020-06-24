@@ -1,0 +1,9 @@
+{:last-updated "June 23, 2020"
+ :patrons [{:group "Corporate Sponsors"
+            :names []}
+           {:group "Sponsors"
+            :names []}
+           {:group "Fans"
+            :names ["Joseph Rhodes"]}
+           {:group "Observers"
+            :names []}]}
