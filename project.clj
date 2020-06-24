@@ -3,7 +3,7 @@
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.9.0"]
+  :dependencies [[org.clojure/clojure "1.10.1"]
                  [org.clojure/clojurescript "1.10.439"]
                  [ring/ring-core "1.6.3"]
                  [ring/ring-jetty-adapter "1.6.3"]
@@ -35,7 +35,7 @@
   :ring {:handler myblog.core/app}
   :plugins [[lein-environ "1.1.0"]
             [lein-exec "0.3.7"]
-            [lein-ring "0.12.1"]
+            [lein-ring "0.12.5"]
             [lein-cljsbuild "1.1.7"]
             [lein-figwheel "0.5.18"]]
   :source-paths ["src/clj" "script"]
