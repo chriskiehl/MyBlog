@@ -2,7 +2,7 @@
  :patrons [{:group "Corporate Sponsors"
             :names []}
            {:group "Sponsors"
-            :names []}
+            :names ["Qteal"]}
            {:group "Fans"
             :names ["Joseph Rhodes"]}
            {:group "Observers"
