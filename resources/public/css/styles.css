@@ -81,7 +81,8 @@ nav ul {
 
 .footer {
     width: 960px;
-    margin: 0 auto;
+    margin: 20px auto;
+    padding-bottom: 20px;
 }
 
 .primary-content {
@@ -271,7 +272,7 @@ article img {
     margin: auto;
 }
 
-.markdown-body blockquote {
+blockquote {
     padding: 0 1em;
     color: #6a737d;
     border-left: 0.25em solid #dfe2e5;

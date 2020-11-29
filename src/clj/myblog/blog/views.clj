@@ -196,9 +196,7 @@
   (base-page
     :title title
     :body [:div
-           [:article (md/md-to-html-string published-body)]
-           [:div#disqus_thread]
-           (include-js "/js/external/disqus.js")]))
+           [:article (md/md-to-html-string published-body)]]))
 
 
 (defn error-404-page []
