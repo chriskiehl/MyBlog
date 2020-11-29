@@ -3,7 +3,5 @@
             :names []}
            {:group "Sponsors"
             :names ["Qteal"]}
-           {:group "Fans"
-            :names ["Joseph Rhodes"]}
-           {:group "Observers"
-            :names []}]}
+           {:group "Individuals"
+            :names ["Nicholas", "Joseph Rhodes"]}]}

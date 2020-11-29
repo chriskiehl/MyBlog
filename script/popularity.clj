@@ -70,7 +70,7 @@
   (doseq [[slug views] views-map]
 
     (let [article (f/ok-> (db/get-published-article slug)
-                         (#(controller/retrieve-article {} (:id %)))
+                          (#(controller/retrieve-article {} (:id %)))
                           :body
                           (assoc :views views))]
       (when (not (f/failed? article))

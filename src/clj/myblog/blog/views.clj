@@ -214,7 +214,7 @@
     [:div
      [:div
       [:img.about-photo {:src "https://s3.amazonaws.com/awsblogstore/main/images/chriskiehl-website-waving-banner.jpg"}]
-      [:h1 "These awesome people are supporting open source on "
+      [:h1 "These awesome people and organizations are supporting open source on "
         [:a {:href "https://www.patreon.com/chriskiehl"} "Patreon"]]
       [:p (str "Last updated on " last-updated)]]
      [:div
