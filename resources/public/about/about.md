@@ -10,6 +10,4 @@ Want me to build something for you? Hit me up! I lack loyalty to my current gig 
 
 Want Gooey releases to be churned out faster? [Sponsor its development](https://www.patreon.com/chriskiehl)!
 
-Just wanna chat? Drop me a line at [ckiehl@gmail.com](mailto:ckiehl@gmail.com). If you're a
-recruiter, feel free to message me on [LinkedIn](https://www.linkedin.com/in/chris-kiehl-34426587/).
-You can also follow me on [Github](https://github.com/chriskiehl), which is the extent of my Social Media.
+Just wanna chat? Drop me a line: [me@chriskiehl.com](mailto:me@chriskiehl.com). I have a [LinkedIn](https://www.linkedin.com/in/chris-kiehl-34426587/), but I have no idea why and never use it. You can also follow me on [Github](https://github.com/chriskiehl), which is the extent of my Social Media.

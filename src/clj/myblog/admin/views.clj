@@ -75,13 +75,41 @@
    (map dashboard-article articles)])
 
 
+(defn config-controls []
+  [:div.Box {:style "margin-bottom: 60px" :class "Box--condensed"}
+
+    [:div.Box-row.d-flex.flex-items-center
+     [:div.flex-auto
+      [:div [:strong "About Blurb"]
+       [:span.Label.Label--outline.tag-margin "Cool Summary, Bro"]]
+      [:div.text-small.text-gray-light
+       "View or manage the about blurb on the site"]]
+     [:a {:href "/admin/about"} [:button.btn.btn-sm  "Edit"]]]
+
+   [:div.Box-row.d-flex.flex-items-center
+    [:div.flex-auto
+     [:div [:strong "Patrons"]
+      [:span.Label.Label--outline.tag-margin "The real heros"]]
+     [:div.text-small.text-gray-light
+      "View or manage the current Patreon supporters"]]
+    [:a {:href "/admin/patrons"} [:button.btn.btn-sm  "Edit"]]]])
+
+
+(defn header []
+  [:div.admin-header
+   [:img.dats-me {:src "https://awsblogstore.s3.amazonaws.com/main/images/circle_avatar.png"}]
+   [:div {:style "flex: 1 1 auto; padding-left: 16px;"} [:h3.f3-light {:style "margin: 0"} "Admin"]]
+   [:form {:action "/logout" :method "POST"}
+    [:button.btn {:type "submit"} "Logout"]]])
+
 (defn dashboard [articles]
   [:div {:style "width: 100%"}
-   [:div.admin-header
-    [:img.dats-me {:src "https://awsblogstore.s3.amazonaws.com/main/images/circle_avatar.png"}]
-    [:div {:style "flex: 1 1 auto; padding-left: 16px;"} [:h3.f3-light {:style "margin: 0"} "Admin"]]
-    [:form {:action "/logout" :method "POST"}
-      [:button.btn {:type "submit"} "Logout"]]]
+   (header)
+   [:div.dashboard-content
+    [:div
+     [:div.article-pagehead
+      [:h2.f2-light "Config"]]
+     (config-controls)]]
    [:div.dashboard-content
     (when (not (empty? articles))
       (let [recents (take 2 (reverse (sort-by :written-on articles)))]
@@ -106,6 +134,22 @@
               :body  [:pre body]}))
 
 
+(defn -about-editor [blurb-text]
+  [:div
+   (header)
+   [:div.dashboard-content
+     [:form.form-group
+      {:action "/admin/about" :method "post"}
+      [:div.form-group-header
+       [:label {:for "example-textarea"} "About Blurb"]]
+      [:div.form-group-body
+       [:textarea#example-textarea.form-control
+        (:body blurb-text)]]
+      [:button.btn.btn-primary
+       {:type "submit" :style "float: right; margin-top: 20px;"}
+       "Save"]]]])
+
+
 (defn login-page [& [props]]
   (base-page {:title "chriskiehl.com - No sneaky business, now..."
               :body (login-form props)}))
@@ -114,3 +158,8 @@
 (defn admin-dashboard [articles]
   (base-page {:title "chriskiehl.com - Dashboard"
               :body (dashboard articles)}))
+
+
+(defn about-editor [blurb-text]
+  (base-page {:title "chriskiehl.com - Edit about section"
+              :body (-about-editor blurb-text)}))

@@ -31,26 +31,26 @@
   (contains? (:session request) :identity))
 
 
-(defn page [] (str "
-  <!DOCTYPE html>
-    <html lang='en'>
-      <head>
-      <meta http-equiv='content-type' content='text/html;charset=UTF-8' />
-      <meta name='viewport content='width=device-width' />
-
-      <link rel='stylesheet' type='text/css' href='/css/primer.css' />
-      <link rel='stylesheet' type='text/css' href='/css/highlight.css' />
-      <link rel='stylesheet' type='text/css' href='/css/editor.css' />
-      <title>Blogomatano - Editing</title>
-      </head>
-  <body>
-  <div id='app'></div>
-  <script src='/js/main.js' type='text/javascript'></script>
-  <script>
-    window.onload = function () {myblog.core.run();}
-  </script>
-  </body>
-  </html>"))
+;(defn page [] (str "
+;  <!DOCTYPE html>
+;    <html lang='en'>
+;      <head>
+;      <meta http-equiv='content-type' content='text/html;charset=UTF-8' />
+;      <meta name='viewport content='width=device-width' />
+;
+;      <link rel='stylesheet' type='text/css' href='/css/primer.css' />
+;      <link rel='stylesheet' type='text/css' href='/css/highlight.css' />
+;      <link rel='stylesheet' type='text/css' href='/css/editor.css' />
+;      <title>Blogomatano - Editing</title>
+;      </head>
+;  <body>
+;  <div id='app'></div>
+;  <script src='/js/main.js' type='text/javascript'></script>
+;  <script>
+;    window.onload = function () {myblog.core.run();}
+;  </script>
+;  </body>
+;  </html>"))
 
 
 
@@ -99,20 +99,21 @@
 
 (defroutes app-routes
    (routes
-     api-routes
+     ;api-routes
      (GET  "/" [] blog-controllers/home-page)
+     (GET  "/rss.xml" [] blog-controllers/rss-feed)
      (GET  "/article/:slug" [slug] (blog-controllers/article-page slug))
      (GET  "/about" [] blog-controllers/about-page)
      (GET  "/patrons" [] blog-controllers/patrons)
-     (GET  "/rss.xml" [] blog-controllers/rss-feed)
-     (GET  "/login" [] (controllers/login-page))
-     (POST "/login" [] controllers/login-page)
-     (POST "/logout" [] controllers/logout)
-     (GET  "/admin" [] controllers/admin-dashboard)
-     (POST "/admin/new" [] controllers/admin-create-article)
-     (GET  "/admin/story/:id" [id] (page))
-     (GET  "/admin/story/:id/history/:revision" [id revision :as request] (controllers/admin-history request id revision))
-     (GET "/article/:id" [id] (html [:h3 "Gave me some of dat sweet" id]))
+     (GET  "/local" [] blog-controllers/local)
+     ;(GET  "/login" [] (controllers/login-page))
+     ;(POST "/login" [] controllers/login-page)
+     ;(POST "/logout" [] controllers/logout)
+     ;(GET  "/admin" [] controllers/admin-dashboard)
+     ;(POST "/admin/new" [] controllers/admin-create-article)
+     ;(GET  "/admin/story/:id" [id] (page))
+     ;(GET  "/admin/story/:id/history/:revision" [id revision :as request] (controllers/admin-history request id revision))
+     ;(GET  "/admin/about" [] controllers/admin-about)
      (route/resources "/")
      (route/not-found "Wha? Geit outta here")))
 
@@ -128,8 +129,8 @@
         (wrap-json-params $)
         (wrap-multipart-params $)
         ;(logging-middleware $)
-        (admin-redirect-middleware $)
-        (api-auth-middleware $)
+        ;(admin-redirect-middleware $)
+        ;(api-auth-middleware $)
         (wrap-session $)
         ))
 

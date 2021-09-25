@@ -4,8 +4,9 @@
             [myblog.admin.markdown :as markdown]
             [myblog.blog.views :as views]
             [hiccup.core :as hiccup]
-            [ring.util.response :refer [response content-type]]
-            [failjure.core :as f]))
+            [ring.util.response :refer [response content-type header]]
+            [failjure.core :as f])
+  (:import (java.io FileInputStream File)))
 
 
 (defn home-page [request]
@@ -47,6 +48,20 @@
       (slurp )
       (read-string)))
 
+
 (defn patrons [request]
   (let [cool-people (load-cool-people)]
     (views/patrons-page cool-people)))
+
+
+(defn log [x]
+  (println x)
+  x)
+
+(defn local [req]
+  (-> (FileInputStream. (File. (.getPath (clojure.java.io/resource "public/about/foo.html.gz"))))
+      response
+      (content-type "text/html")
+      (header "Content-Encoding" "gzip")
+      log
+      ))

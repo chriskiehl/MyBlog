@@ -45,6 +45,21 @@
           (clojure.string/trim $))))
 
 
+(defn parse-enhanced-image
+  "Parses a customized version of the markdown tag into
+  its requisite pieces
+
+    ![image@1024,819,614,409,204+png](path/to/thing)
+
+  This houses the widths available,the format of the image, and
+  the root path where it lives in S3
+  "
+  [markdown-srcset]
+  {:root-url (parse-content-root markdown-srcset)
+   :ext (parse-extension markdown-srcset)
+   :widths (parse-widths markdown-srcset)})
+
+
 (defn parse-md-srcset
   "Parses the custom markdown srcset format to produce
   fully qualified URLs paired with their widths.
@@ -69,6 +84,8 @@
     (map vector
          (map #(gstring/format template content-root % ext) widths)
          (map #(str % "w") widths))))
+
+
 
 
 (defn image-tag [url-width-pairs]

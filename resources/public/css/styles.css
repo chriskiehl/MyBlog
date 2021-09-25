@@ -216,13 +216,20 @@ nav ul {
 }
 
 .image-pill {
-    width: 53.333px;
+    min-width: 53.333px;
     height: 30px;
     background-position: center;
     border: none;
     overflow: hidden;
     padding: .1% 0 0 0;
     position: relative;
+}
+
+.previous-article {
+    display: flex;
+    align-items: center;
+    border-top: 1px solid #91b5e93b;
+    padding: 6px 0 6px 0px;
 }
 
 .section {

@@ -3,7 +3,6 @@
             [environ.core :refer [env]]))
 
 
-
 (defn create-articles-table
   "Articles Table - Primary storage for article drafts."
   [creds table-name]

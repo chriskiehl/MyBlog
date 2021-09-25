@@ -9,7 +9,7 @@
   (:import (com.amazonaws AmazonServiceException)
            (java.time LocalDateTime)))
 
-(def *table-name* (:table-name env))
+(def *table-name* "articles")
 
 (def *creds*
   (util/drop-blank-vals
@@ -279,3 +279,5 @@
           :item
           db-deser))
 
+(defn fetch-about-text []
+  (get-revision "about" "0"))

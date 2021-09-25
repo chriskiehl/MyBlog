@@ -9,29 +9,6 @@
 ;; build up an HTML doc, and then dump it to disk for direct serving
 
 
-;(def about-me!
-;  "
-;I'm a software developer and overall pretty cool guy. This blog is where I pretend to be an expert at things.
-;
-;I currently work for [Amazon](https://www.amazon.com) and live in Seattle, WA.
-;
-;I dig functional languages like Clojure and Haskell, but also love the 'second best for everything' language that is Python.
-;
-;My big Open Source claim to fame is creating [Gooey](https://github.com/chriskiehl/Gooey).
-;
-;Want me to build something for you? Hit me up! I lack loyalty to my current gig and am powered by a constant greedy desire for mo' money (and solving mo' problems).
-;
-;Want Gooey releases to be churned out faster? [Sponsor its development](mailto:ckiehl@gmail.com?subject='I want to help support open source software with my money!')!
-;
-;Just wanna chat? Drop me a line at [ckiehl@gmail.com](mailto:ckiehl@gmail.com). If you're a
-;recruiter, feel free to message me on [LinkedIn](https://www.linkedin.com/in/chris-kiehl-34426587/).
-;You can also follow me on [Github](https://github.com/chriskiehl), which is the extent of my Social Media.
-;")
-
-
-
-
-
 
 (defn copyright-fixture []
   (let [year (.getYear (java.time.LocalDateTime/now))]
@@ -48,7 +25,7 @@
      [:ul.list-unstyled.primary-nav
       [:li [:a {:href "/about"} "About"]]
       [:li [:a {:href "https://github.com/chriskiehl" :target "_blank"} "Projects"]]
-      [:li [:a {:href "mailto:ckiehl@gmail.com"} "Contact"]]
+      [:li [:a {:href "mailto:me@chriskiehl.com"} "Contact"]]
       [:li [:a {:href "/patrons"} "Patrons"]]
       [:li [:a {:href "/rss.xml" :target "_blank"} "RSS Feed"]]]]])
 
@@ -135,7 +112,7 @@
 
 (defn archive-link [{:keys [published-on title slug title-image title-image-srcset] :as article}]
   [:div {:style "margin: 10px 0"}
-    [:div {:style "display: flex; align-items: center;  "}
+    [:div {:class "previous-article"}
      [:div.image-pill
       [:img.thumb-image {:src title-image
                          :srcset title-image-srcset}]]
@@ -155,7 +132,7 @@
    [:link (str "https://chriskiehl.com/article/" slug)]
    [:description description]
    [:pubDate (:published-on article)]
-   [:author "ckiehl@gmail.com"]])
+   [:author "me@chriskiehl.com"]])
 
 
 (defn rss-feed [articles]

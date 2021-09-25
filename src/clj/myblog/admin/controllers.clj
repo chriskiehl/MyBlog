@@ -19,9 +19,6 @@
   {:-write stringify-localdate})
 
 
-(def authdata {(:username env) (:password env)})
-
-
 (defn bad-response
   "Returns a skeletal Ring response with the given body, status
   of 400, and no headers."
@@ -44,7 +41,8 @@
   ([{:keys [params session] :as request}]
   (let [username (:username params)
         password (:password params)
-        found-password (get authdata username)]
+        found-password (get authdata username)
+        _ (println (get authdata username))]
     (if (and found-password (= found-password password))
       (let [updated-session (assoc session :identity (keyword username))]
         (-> (redirect "/admin")
@@ -99,6 +97,21 @@
       result)))
 
 
+(defn admin-about
+  ""
+  [request]
+  (if (= (:request-method request) :post)
+
+    (let [result (f/ok-> (db/fetch-about-text)
+                         templates/about-editor
+                         response)]
+      (if (f/failed? result)
+        (do (println result)
+            (bad-response (f/message result)))
+        result))
+
+  ))
+
 ;;
 ;; API Controllers
 ;;
@@ -111,15 +124,6 @@
     (if (= (:type data) :not-found)
       (assoc resp :status 404)
       resp)))
-
-
-;(defn sign-url [request]
-;  (let [id (str (java.util.UUID/randomUUID))
-;        result (s3/sign-url id)]
-;    (if (f/failed? result)
-;      (format-errors (f/message result))
-;      (response result))))
-
 
 
 
