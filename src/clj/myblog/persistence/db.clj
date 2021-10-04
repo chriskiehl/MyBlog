@@ -9,9 +9,9 @@
   (:import (com.amazonaws AmazonServiceException)
            (java.time LocalDateTime)))
 
-(def *table-name* "articles")
+(def ^:dynamic *table-name* "articles")
 
-(def *creds*
+(def ^:dynamic *creds*
   (util/drop-blank-vals
     {:access-key (:aws-access-key env)
      :secret-key (:aws-secret-key env)

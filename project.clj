@@ -11,6 +11,9 @@
                  [environ "1.1.0"]
                  [failjure "1.3.0"]
                  [ring/ring-json "0.4.0"]
+                 [org.imgscalr/imgscalr-lib "4.2"]
+                 [com.twelvemonkeys.imageio/imageio "3.7.0"]
+                 [com.twelvemonkeys.imageio/imageio-jpeg "3.7.0"]
                  [reagent "0.7.0"]
                  [re-frame "0.10.6"]
                  [cljsjs/moment "2.22.2-2"]
@@ -69,7 +72,7 @@
              :profiles/dev {}
              :project/dev {:env {:aws-secret-key "super"
                                  :aws-access-key "secret"
-                                 :aws-endpoint "http://localhost:8000"
+                                 :aws-endpoint "us-west-1"
                                  :table-name "dev-articles"
                                  :username "admin"
                                  :password "pass"}}

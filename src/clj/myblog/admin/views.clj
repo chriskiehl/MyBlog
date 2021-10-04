@@ -83,7 +83,7 @@
       [:div [:strong "About Blurb"]
        [:span.Label.Label--outline.tag-margin "Cool Summary, Bro"]]
       [:div.text-small.text-gray-light
-       "View or manage the about blurb on the site"]]
+       "View or manage the about blurb on the pages"]]
      [:a {:href "/admin/about"} [:button.btn.btn-sm  "Edit"]]]
 
    [:div.Box-row.d-flex.flex-items-center

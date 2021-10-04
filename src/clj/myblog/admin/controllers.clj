@@ -19,6 +19,9 @@
   {:-write stringify-localdate})
 
 
+(def authdata {(:username env) (:password env)})
+
+
 (defn bad-response
   "Returns a skeletal Ring response with the given body, status
   of 400, and no headers."
