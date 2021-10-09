@@ -4,17 +4,29 @@
  <img src='https://cloud.githubusercontent.com/assets/1408720/7717628/8907ae1e-fe72-11e4-8c40-d21102dc6cdc.jpg'>
 </p>
 
-Build on top of Clojure/ring with a light sprinkling of Clojurescript + Re-Frame for the admin interactions 
- 
-Rendered server side and served up hot and fresh from an nginx proxy cache.  
+Rendered server side and served up hot and fresh from an nginx proxy cache. This is my clunky static site generator which builds my blog from an [Obsidian](https://obsidian.md/) vault.  
 
 
 **Core Features:** 
  
  * is blog 
 
+
+### Usage 
+
+**Adding a new page:** 
+
+```
+lein exec -p script/manage.clj add-page /path/to/file.md
+```
+
+**Updating the root pages (home / RSS.xml)
+
+```
+lein exec -p script/manage.clj update-roots
+```
  
-  
+ 
 
 ## Running this mamajama (development):
 
@@ -28,11 +40,15 @@ Add a `profiles.clj` in the same directory as `project.clj`.
 {:profiles/prod {:env {:aws-access-key "{key}"
                        :aws-secret-key "{key}"
                        :username "{key}"
-                       :password "{key}"}}
+                       :password "{key}"
+                       :vault-url "path/to/vault/root"
+                       :s3-host "path/to/public/bucket"}}
  :profiles/dev {:env {:aws-access-key "asdf"
                       :aws-secret-key "asdf"
                       :username "admin"
-                      :password "password"}}}
+                      :password "password"
+                      :vault-url "path/to/vault/root"
+                      :s3-host "path/to/public/bucket"}}}
 ```
 
 
@@ -41,23 +57,9 @@ Server
 ```lein ring server-headless 3001```
 
 
-Client + REPL 
-
-```lein figwheel```
-
-Port forwarding to use browser on host:
- 
-```
-ssh -L 3000:localhost:3000 devbox@192.168.0.107
-```
-
-
-
 ## Deploying from scratch 
  
 Currently targets a bare Digital Ocean droplet running `Ubuntu 18.04 x64`.  
-
- 
 
 
 Initial bookkeeping

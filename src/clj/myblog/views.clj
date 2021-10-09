@@ -1,36 +1,10 @@
-(ns myblog.blog.views
+(ns myblog.views
   (:require [hiccup.core :refer :all]
             [hiccup.page :refer [html5 include-css include-js]]
             [hiccup.element :refer [javascript-tag]]
             [markdown.core :as md]
-            [myblog.admin.util :as util]))
-
-;; The blog side of things is entirely static. These functions exist to
-;; build up an HTML doc, and then dump it to disk for direct serving
-
-
-;(def about-me!
-;  "
-;I'm a software developer and overall pretty cool guy. This blog is where I pretend to be an expert at things.
-;
-;I currently work for [Amazon](https://www.amazon.com) and live in Seattle, WA.
-;
-;I dig functional languages like Clojure and Haskell, but also love the 'second best for everything' language that is Python.
-;
-;My big Open Source claim to fame is creating [Gooey](https://github.com/chriskiehl/Gooey).
-;
-;Want me to build something for you? Hit me up! I lack loyalty to my current gig and am powered by a constant greedy desire for mo' money (and solving mo' problems).
-;
-;Want Gooey releases to be churned out faster? [Sponsor its development](mailto:ckiehl@gmail.com?subject='I want to help support open source software with my money!')!
-;
-;Just wanna chat? Drop me a line at [ckiehl@gmail.com](mailto:ckiehl@gmail.com). If you're a
-;recruiter, feel free to message me on [LinkedIn](https://www.linkedin.com/in/chris-kiehl-34426587/).
-;You can also follow me on [Github](https://github.com/chriskiehl), which is the extent of my Social Media.
-;")
-
-
-
-
+            [myblog.markdown :refer [srcset]]
+            [hiccup.core :as hiccup]))
 
 
 (defn copyright-fixture []
@@ -48,30 +22,23 @@
      [:ul.list-unstyled.primary-nav
       [:li [:a {:href "/about"} "About"]]
       [:li [:a {:href "https://github.com/chriskiehl" :target "_blank"} "Projects"]]
-      [:li [:a {:href "mailto:ckiehl@gmail.com"} "Contact"]]
+      [:li [:a {:href "mailto:me@chriskiehl.com"} "Contact"]]
       [:li [:a {:href "/patrons"} "Patrons"]]
       [:li [:a {:href "/rss.xml" :target "_blank"} "RSS Feed"]]]]])
 
 
-(defn landing []
-  [:div ])
-
-
-(defn popular-preview [{:keys [title slug subtitle title-image title-image-srcset] :as article}]
+(defn popular-preview [{:keys [title slug title-images] :as article}]
   [:div.pop-prev
    [:a {:href (str "/article/" slug) :display "box"}
     [:div.thumb-container
-     [:img.thumb-image {:src title-image
-            :srcset title-image-srcset}]]]
+     [:img.thumb-image {:src (-> title-images :images last :url)
+            :srcset (srcset (:images title-images))}]]]
    [:h4 title]
-   [:div.sub-title
-    [:h5 subtitle]]
    [:a {:href (str "/article/" slug)} [:span.light-link "Read >>"]]])
 
 
 
-(defn most-recent [{:keys [title title-image title-image-srcset slug published-on] :as article}]
-  (println (dissoc article :body :published-body))
+(defn most-recent [{:keys [title title-images slug] :as article}]
   [:div.section
    [:div.most-recent
     [:div.article-preview
@@ -81,8 +48,8 @@
       [:a {:href (str "/article/" slug)}
         [:img
           {:class "article-image"
-           :src title-image
-           :srcset title-image-srcset
+           :src (:url (first (:images title-images)))
+           ;:srcset (srcset title-images)
            :alt (str "Title image for " title)
            }]]]
      [:div {:style "margin-top: 24px"}
@@ -133,15 +100,15 @@
     (map popular-preview articles)]])
 
 
-(defn archive-link [{:keys [published-on title slug title-image title-image-srcset] :as article}]
+(defn archive-link [{:keys [published-on title slug title-images] :as article}]
   [:div {:style "margin: 10px 0"}
-    [:div {:style "display: flex; align-items: center;  "}
+    [:div {:class "previous-article"}
      [:div.image-pill
-      [:img.thumb-image {:src title-image
-                         :srcset title-image-srcset}]]
+      [:img.thumb-image {:src (-> title-images :images last :url)
+                         :srcset (srcset (:images title-images))}]]
      [:a.archive-link {:href (str "/article/" slug)}
       title [:span {:style "padding-left: 10px; font-size: 12px"}
-             (format "(%s)" (util/calendar published-on))]]]])
+             published-on]]]])
 
 (defn all-articles [articles]
   [:div
@@ -155,19 +122,20 @@
    [:link (str "https://chriskiehl.com/article/" slug)]
    [:description description]
    [:pubDate (:published-on article)]
-   [:author "ckiehl@gmail.com"]])
+   [:author "me@chriskiehl.com"]])
 
 
 (defn rss-feed [articles]
-  [:rss {:version 2.0}
-   [:channel
-    [:title "chriskiehl.com"]
-    [:link "https://chriskiehl.com"]
-    [:description "The blog where I pretend to be good at stuff"]
-    (map rss-item articles)]])
+  (hiccup/html
+    [:rss {:version 2.0}
+     [:channel
+      [:title "chriskiehl.com"]
+      [:link "https://chriskiehl.com"]
+      [:description "The blog where I pretend to be good at stuff"]
+      (map rss-item articles)]]))
 
 
-(defn home-page [articles]
+(defn home-page [articles popular]
   (base-page
     :title "Home"
     :body (if (empty? articles)
@@ -175,10 +143,10 @@
             [:div
              (most-recent (first articles))
              [:div.section.most-popular
-              ;; todo: track page hits...
-              (most-popular (take 3 (reverse (sort-by :views articles))))]
+              (most-popular popular)]
              [:section.section-last
-              (all-articles articles)]])))
+              (all-articles articles)]
+             ])))
 
 
 (defn about-page [about-me!]
@@ -196,7 +164,7 @@
   (base-page
     :title title
     :body [:div
-           [:article (md/md-to-html-string published-body)]]))
+           [:article published-body]]))
 
 
 (defn error-404-page []

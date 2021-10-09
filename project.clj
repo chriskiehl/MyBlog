@@ -11,6 +11,9 @@
                  [environ "1.1.0"]
                  [failjure "1.3.0"]
                  [ring/ring-json "0.4.0"]
+                 [org.imgscalr/imgscalr-lib "4.2"]
+                 [com.twelvemonkeys.imageio/imageio-core "3.7.0"]
+                 [com.twelvemonkeys.imageio/imageio-jpeg "3.7.0"]
                  [reagent "0.7.0"]
                  [re-frame "0.10.6"]
                  [cljsjs/moment "2.22.2-2"]
@@ -19,7 +22,7 @@
                  [cljs-ajax "0.5.1"]
                  [ring/ring-json "0.4.0"]
                  [com.amazonaws/aws-java-sdk "1.11.464"]
-                 [markdown-clj "1.0.5"]
+                 [markdown-clj "1.10.6"]
                  [org.ocpsoft.prettytime/prettytime "3.2.7.Final"]
                  [hiccup "1.0.5"]
                  [org.clojure/core.async "0.4.490"]
@@ -69,11 +72,14 @@
              :profiles/dev {}
              :project/dev {:env {:aws-secret-key "super"
                                  :aws-access-key "secret"
-                                 :aws-endpoint "http://localhost:8000"
-                                 :table-name "dev-articles"
-                                 :username "admin"
-                                 :password "pass"}}
+                                 :aws-endpoint "us-west-1"
+                                 :stage :dev
+                                 :vault-url "some/file/path"
+                                 :s3-host ""}}
              :project/prod {:env {:aws-secret-key nil
                                   :aws-access-key nil
                                   :aws-endpoint "us-west-1"
-                                  :table-name "articles"}}})
+                                  :table-name "articles"
+                                  :stage :prod
+                                  :vault-url "some/file/path"
+                                  :s3-host ""}}})
