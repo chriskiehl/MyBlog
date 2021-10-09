@@ -14,38 +14,33 @@
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [ring.middleware.multipart-params :refer [wrap-multipart-params]]
             [ring.middleware.json :refer [wrap-json-response wrap-json-params]]
-            [clojure.java.io :as io])
-  (:import (java.nio.file Files)
-           (java.io File FileInputStream)))
+            [clojure.java.io :as io]))
 
 
-(defn build-page-cache []
-  (as-> (file-seq (File. (.getPath (clojure.java.io/resource "public/pages")))) $
-        (filter #(.isFile %) $)
-        (zipmap
-          (map #(.getName %) $)
-          (map #(Files/readAllBytes (.toPath %)) $))))
+(defn slurp-bytes
+  "Slurp the bytes from a slurpable thing"
+  [x]
+  (with-open [out (java.io.ByteArrayOutputStream.)]
+    (clojure.java.io/copy (clojure.java.io/input-stream x) out)
+    (.toByteArray out)))
 
 
-(def page-cache
-  "Reads the gzipped blog content out of the resources
-  dir and caches it in memory.
+(defn load-resource [slug]
+  (some-> (clojure.java.io/resource (str "public/pages/" slug))
+          (slurp-bytes)))
 
-  (doesn't actually cache for dev modes)"
+
+(def load-page
   (if (= (:stage env) "prod")
-    (do (println "using fixed page cache")
-        (constantly (build-page-cache)))
-    (do (println "using live reload")
-        build-page-cache)))
-
-
+    (memoize load-resource)
+    load-resource))
 
 
 (defn retrieve-page
   "retrieve an already rendered page by its page slug/id"
   [id]
   {:pre [(string? id)]}
-  (some-> (get (page-cache) id)
+  (some-> (load-page id)
           io/input-stream
           response
           (update-in [:headers]
@@ -88,4 +83,4 @@
 
 (defn -main [& args]
   (println args)
-  (jetty/run-jetty app {:port 8080}))
+  (jetty/run-jetty app {:port 8080 }))

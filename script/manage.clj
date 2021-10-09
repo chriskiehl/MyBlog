@@ -9,4 +9,4 @@
                        (println "All done!"))
     "update-roots" (do (m/update-roots)
                        (println "All content roots updated!"))
-    (throw (ex-info "unrecognized argument: " (second *command-line-args*)))))
+    "unrecognized argument"))

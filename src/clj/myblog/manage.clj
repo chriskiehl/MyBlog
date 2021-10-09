@@ -50,6 +50,16 @@
     (save-metadata (:metadata x))
     (save-page (-> x :metadata :slug) (:html x))))
 
+
+(defn remove-page [slug]
+  (let [page (clojure.java.io/resource (str "public/pages/" slug))
+        resource (clojure.java.io/resource "public/data/data.edn")
+        data (read-string (slurp resource))]
+    (io/delete-file (.getPath page))
+    (->> (dissoc data slug)
+         (spit resource))))
+
+
 (defn update-roots []
   (do
     (save-page "home" (pages/build-home))
