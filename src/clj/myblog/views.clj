@@ -31,7 +31,7 @@
   [:div.pop-prev
    [:a {:href (str "/article/" slug) :display "box"}
     [:div.thumb-container
-     [:img.thumb-image {:src (-> title-images :images last :url)
+     [:img.thumb-image {:src (-> title-images :images first :url)
             :srcset (srcset (:images title-images))}]]]
    [:h4 title]
    [:a {:href (str "/article/" slug)} [:span.light-link "Read >>"]]])

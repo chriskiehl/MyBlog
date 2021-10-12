@@ -20,6 +20,7 @@
 (def s3-host (:s3-host env))
 (def vault-url (:vault-url env))
 
+(println s3-host)
 
 (defn filetype
   "Extract the extension/type from the file's path.

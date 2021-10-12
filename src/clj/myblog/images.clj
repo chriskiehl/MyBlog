@@ -37,8 +37,9 @@
   "Creates 6 even step downs from the main width"
   [width]
   {:pre [(int? width)]}
-  (let [step (int (/ width 6))
-        steps (map #(int (- width (* % step))) (range 6))]
+  (let [largest-size (min 800 width)
+        step (int (/ largest-size 6))
+        steps (map #(int (- largest-size (* % step))) (range 6))]
     (filter #(> % 0) steps)))
 
 

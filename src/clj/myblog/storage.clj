@@ -19,7 +19,6 @@
   {:pre [(t/>> string? key)
          (instance? InputStream content)
          (map? (or metadata {}))]}
-  "https://awsblogstore.s3.amazonaws.com/temp/temp.jpg"
   (s3/put-object
     (assoc creds :endpoint "us-east-1")
     :region "us-east-1"
