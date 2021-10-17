@@ -2,7 +2,7 @@
   (:require [myblog.types :as t]
             [hiccup.core :as hiccup]
             [cljs.spec.alpha :as s])
-  (:import (myblog.types ImageSrcSet RemoteSrc Gif RemoteSrcSet Mp4 Other Mp3)))
+  (:import (myblog.types ImageSrcSet RemoteSrc Gif RemoteSrcSet Mp4 Other Mp3 Webm)))
 
 
 
@@ -43,7 +43,16 @@
              :controls "true"
              :style "max-width: 100%"}
      [:source {:src (:url content)
-               :type " video/mp4"}]]))
+               :type "video/mp4"}]]))
+
+
+(defmethod to-html Webm [^Webm content]
+  (hiccup/html
+    [:video {:autoplay "false"
+             :controls "true"
+             :style "max-width: 100%"}
+     [:source {:src (:url content)
+               :type "video/webm"}]]))
 
 
 (defmethod to-html Mp3 [^Mp3 content]
@@ -52,7 +61,7 @@
              :controls "true"
              :style "max-width: 100%"}
      [:source {:src (:url content)
-               :type " audio/mp3"}]]))
+               :type "audio/mp3"}]]))
 
 
 (defmethod to-html Other [^Other content]

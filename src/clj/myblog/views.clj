@@ -81,16 +81,17 @@
 
      (include-css "/css/styles.css")
      (include-css "/css/highlight.css")
+     (include-css "https://d39wtn5cxihhz5.cloudfront.net/content/styles-12341232.css")
      [:title (str title " - Blogomatano")]]
     [:body
      [:div.blog-container
       (sidebar)
       [:div.primary-content {:style "margin-top: 25px;"}
-       body]
-      ]
+       body]]
      (footer)
      (include-js "/js/external/highlight.js")
-     "<script>hljs.initHighlightingOnLoad()</script>"]))
+     "<script>hljs.initHighlightingOnLoad()</script>"
+     ]))
 
 
 (defn most-popular [articles]
@@ -164,13 +165,8 @@
   (base-page
     :title title
     :body [:div
-           [:article published-body]]))
+           [:article {:id "article"} published-body]]))
 
-
-(defn error-404-page []
-  (base-page
-    :title "Uh, never heard of it, bub"
-    :body [:div "Hey uh.. nothing is here. sweet 404 page pending.."]))
 
 
 (defn patrons-page [{:keys [last-updated patrons] :as cool-people}]

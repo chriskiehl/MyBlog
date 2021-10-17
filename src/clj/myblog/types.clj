@@ -72,6 +72,7 @@ gzip :: Metadata -> FinalHtml -> Effect Unit
 (defrecord StaticImage [link url classes alt])
 (defrecord Gif [link url classes alt])
 (defrecord Mp4 [link url classes alt])
+(defrecord Webm [link url classes alt])
 (defrecord Mp3 [link url classes alt])
 (defrecord Other [link url classes alt])
 
@@ -93,9 +94,9 @@ gzip :: Metadata -> FinalHtml -> Effect Unit
 (s/def :obsidian/derefed-link
   (s/keys :req [:obsidian/link-text :local/filename :local/content]))
 
-(s/def :local/content (instance-of StaticImage Gif Mp4 Mp3 Other))
-(s/def :processed/content (instance-of ImageSrcSet Gif Mp4 Mp3 Other))
-(s/def :remote/content (instance-of RemoteSrcSet Gif Mp4 Mp3 Other))
+(s/def :local/content (instance-of StaticImage Gif Mp4 Webm Mp3 Other))
+(s/def :processed/content (instance-of ImageSrcSet Gif Mp4 Webm Mp3 Other))
+(s/def :remote/content (instance-of RemoteSrcSet Gif Mp4 Webm Mp3 Other))
 
 (s/def :obsidian/derefed-links (s/coll-of :obsidian/derefed-link))
 

@@ -13,7 +13,7 @@
             [myblog.images :as images]
             [myblog.markdown :refer [to-html]])
   (:import (java.io File)
-           (myblog.types StaticImage Gif Other ImageSrcSet Mp4 Mp3 ImageSrc RemoteSrc RemoteSrcSet)
+           (myblog.types StaticImage Gif Other ImageSrcSet Mp4 Mp3 ImageSrc RemoteSrc RemoteSrcSet Webm)
            (java.awt.image BufferedImage)))
 
 
@@ -45,6 +45,7 @@
     "png"  (StaticImage. link-text url classes alt-text)
     "gif"  (Gif. link-text url classes alt-text)
     "mp4"  (Mp4. link-text url classes alt-text)
+    "webm" (Webm. link-text url classes alt-text)
     "mp3"  (Mp3. link-text url classes alt-text)
     (Other. link-text url classes alt-text)))
 
