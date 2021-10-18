@@ -21,7 +21,7 @@ A clunky static site generator which builds my blog from an [Obsidian](https://o
 lein exec -p script/manage.clj add-page /path/to/file.md
 ```
 
-**Updating the root pages (home / RSS.xml)
+**Updating the root pages (home / RSS.xml):**
 
 ```
 lein exec -p script/manage.clj update-roots
