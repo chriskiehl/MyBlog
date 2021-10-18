@@ -39,8 +39,9 @@
 
 (defmethod to-html Mp4 [^Mp4 content]
   (hiccup/html
-    [:video {:autoplay "false"
+    [:video {:autoplay false
              :controls "true"
+             :muted true
              :style "max-width: 100%"}
      [:source {:src (:url content)
                :type "video/mp4"}]]))
@@ -48,8 +49,9 @@
 
 (defmethod to-html Webm [^Webm content]
   (hiccup/html
-    [:video {:autoplay "false"
+    [:video {:autoplay false
              :controls "true"
+             :muted true
              :style "max-width: 100%"}
      [:source {:src (:url content)
                :type "video/webm"}]]))
@@ -59,6 +61,7 @@
   (hiccup/html
     [:audio {:autoplay "false"
              :controls "true"
+             :muted true
              :style "max-width: 100%"}
      [:source {:src (:url content)
                :type "audio/mp3"}]]))

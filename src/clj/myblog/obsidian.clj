@@ -126,7 +126,10 @@
 
 (defn build-key
   ([url] (build-key "" url))
-  ([prefix, ^String url] (str "content/" prefix (.getName (File. url)))))
+  ([prefix, ^String url]
+   (let [name (.getName (File. url))
+         url-safe (clojure.string/replace name #"\s" "-")]
+     (str "content/" prefix url-safe))))
 
 
 (defn build-meta [url]
