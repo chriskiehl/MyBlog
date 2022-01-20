@@ -23,7 +23,6 @@
       [:li [:a {:href "/about"} "About"]]
       [:li [:a {:href "https://github.com/chriskiehl" :target "_blank"} "Projects"]]
       [:li [:a {:href "mailto:me@chriskiehl.com"} "Contact"]]
-      [:li [:a {:href "/patrons"} "Patrons"]]
       [:li [:a {:href "/rss.xml" :target "_blank"} "RSS Feed"]]]]])
 
 
