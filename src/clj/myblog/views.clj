@@ -77,7 +77,10 @@
         ga('send', 'pageview');")
      [:script {:src "https://www.google-analytics.com/analytics.js"
                :async true}]
-
+     [:script {:src "https://polyfill.io/v3/polyfill.min.js?features=es6"}]
+     [:script#MathJax-script {:async "true" :src "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"}]
+     (javascript-tag "window.MathJax = {
+        tex: {inlineMath: [['$', '$'], ['\\\\(', '\\\\)']]}};")
      (include-css "/css/styles.css")
      (include-css "/css/highlight.css")
      (include-css "https://d39wtn5cxihhz5.cloudfront.net/content/styles-12341232.css")
