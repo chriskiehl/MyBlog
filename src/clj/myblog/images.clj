@@ -48,7 +48,7 @@
   rewrites the filename to one prefixed with the image size"
   [url size]
   (let [filename (.getName (File. ^String url))
-        filename (first (clojure.string/split filename #"\."))
+        filename (.substring filename 0 (.lastIndexOf filename "."))
         filename (str filename ".jpeg")]
     (str "memory/" size filename)))
 
