@@ -29,3 +29,8 @@ figwheel_server.log
 resources/public/images/*
 resources/public/js/out/*
 resources/public/js/main.js
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
