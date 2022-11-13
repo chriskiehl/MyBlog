@@ -71,12 +71,6 @@
              :content "text/html;charset=UTF-8"}]
      [:meta {:name "viewport"
              :content "width=device-width"}]
-     (javascript-tag
-       "window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-        ga('create', 'UA-58876262-1', 'auto');
-        ga('send', 'pageview');")
-     [:script {:src "https://www.google-analytics.com/analytics.js"
-               :async true}]
      [:script {:src "https://polyfill.io/v3/polyfill.min.js?features=es6"}]
      [:script#MathJax-script {:async "true" :src "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"}]
      (javascript-tag "window.MathJax = {
