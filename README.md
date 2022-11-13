@@ -146,6 +146,7 @@ Would you like to enable Spot Fleet requests for this environment? (y/N): n
 eb deploy
 ```
 
+This'll zip and push everything out to Beanstalk, at which point the dockerfile will take over. 
 
 
 
