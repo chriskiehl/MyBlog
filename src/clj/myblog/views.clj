@@ -59,7 +59,10 @@
 
 (defn footer []
   [:footer.footer
-   (copyright-fixture)])
+   (copyright-fixture)
+   [:div {:style "clear: both"}]
+   [:div {:style "float: right"}
+    [:small (format "Made by a human being. Not GPT")]]])
 
 
 (defn base-page [& {:keys [title body]
