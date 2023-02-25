@@ -182,13 +182,13 @@ nav ul {
     .pop-section {
         display: flex;
         flex-wrap: wrap;
-
     }
 
     .pop-prev {
         width: 100%;
+        max-width: inherit;
         flex: 1 1 auto;
-        margin-bottom: 12px;
+        margin-bottom: 50px;
     }
 }
 
@@ -277,6 +277,32 @@ article img {
     max-width: 100%;
     margin: auto;
 }
+
+
+@media only screen and (max-width: 670px) {
+    .primary-content {
+        padding: 0;
+    }
+}
+
+@media only screen and (max-width: 670px) {
+    .pop-section .thumb-container {
+        width: 100%;
+        height: auto;
+        overflow: hidden;
+        background: none;
+    }
+
+    .pop-section .thumb-image {
+        max-width: 100%;
+        position: relative;
+        padding: 0;
+
+    }
+}
+
+
+
 
 blockquote {
     padding: 0 1em;

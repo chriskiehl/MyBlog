@@ -189,7 +189,7 @@
     (when (nil? raw-metadata)
       (throw (ex-info "unable to parse metadata. Missing EDN block!" {})))
     (let [metadata (read-string raw-metadata)]
-      (s/assert :meta/raw-meta metadata)
+      (s/assert :blog/raw-meta metadata)
       {:raw-meta metadata :body body})))
 
 
@@ -203,13 +203,13 @@
         (dissoc :title-image))))
 
 
-(defn obsidian->html
+(defn obsidian->blog
   "Reads the obsidian source file, extracts its embedded content
    and uploads it to the C L O U D and finally, replaces the local file
    links the now remote content"
   [file-path]
   {:pre [(t/>> :local/url file-path)]
-   :post [(t/>> :obsidian/processed %)]}
+   :post [(t/>> :blog/article %)]}
   (let [index (index-files vault-url)
         raw-obsidian-src (slurp file-path)
         {:keys [raw-meta body]} (parse-source raw-obsidian-src)
@@ -219,11 +219,6 @@
         remote-content (map (comp upload pre-process) content-links)
         processed-body (md/md-to-html-string (rewrite-links body remote-content))
         final-metadata (title-image raw-meta remote-content)]
-    (println "Processed Metadata:")
-    (clojure.pprint/pprint final-metadata)
-    (println "\nPreprocessed Page Body:\n")
-    (println processed-body)
-    {:meta/metadata final-metadata
-     :obsidian/body processed-body}))
+    (assoc final-metadata :static-content processed-body)))
 
 

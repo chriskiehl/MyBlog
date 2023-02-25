@@ -1,37 +1,27 @@
 (ns myblog.pages
   (:require [myblog.types :as t]
+            [myblog.storage]
             [myblog.views :as views]))
 
 
 
-(defn- load-metadata []
-  (let [resource (clojure.java.io/resource "public/data/data.edn")]
-    (read-string (slurp resource))))
+(defn article
+  "retrieve an already rendered page by its page slug/id"
+  [db id]
+  {:pre [(string? id)]}
+  (some-> (get db id)
+          views/article-page))
 
 
-(defn- load-popular []
-  (let [resource (clojure.java.io/resource "public/data/popular.edn")]
-    (read-string (slurp resource))))
-
-
-(defn build-markdown-page
-  "Builds an article/standalone page from the
-  markdown source"
-  [metadata body]
-  (let [payload {:title (:title metadata) :published-body body}]
-    (views/article-page payload)))
-
-
-(defn build-home
+(defn home
   "Builds the home page based on the available articles
   and human supplied 'most popular' section"
-  []
-  {:pre []
+  [db]
+  {:pre [(t/>> :blog/db db)]
    :post []}
-  (let [meta (load-metadata)
-        top-slugs (load-popular)
-        popular (map #(get meta %) top-slugs)
-        all-articles (->> (vals meta)
+  (let [top-slugs (myblog.storage/load-popular)
+        popular (map #(get db %) top-slugs)
+        all-articles (->> (vals db)
                           (filter #(= (:type %) :article))
                           (sort-by :published-on)
                           (reverse))]
@@ -40,11 +30,10 @@
     (views/home-page all-articles popular)))
 
 
-(defn build-rss
+(defn rss-feed
   "Generates the RSS feed from the available articles"
-  []
-  (let [meta (load-metadata)
-        all-articles (->> (vals meta)
+  [db]
+  (let [all-articles (->> (vals db)
                           (filter #(= (:type %) :article))
                           (sort-by :published-on)
                           (reverse))]

@@ -83,8 +83,8 @@ gzip :: Metadata -> FinalHtml -> Effect Unit
 
 (s/def :obsidian/source string?)
 (s/def :obsidian/body string?)
-(s/def :obsidian/parsed (s/keys :req-un [:meta/raw-meta :obsidian/body]))
-(s/def :obsidian/processed (s/keys :req [:meta/metadata :obsidian/body]))
+(s/def :obsidian/parsed (s/keys :req-un [:blog/raw-meta :obsidian/body]))
+(s/def :obsidian/processed (s/keys :req [:blog/metadata :obsidian/body]))
 
 (s/def :obsidian/classes string?)
 (s/def :obsidian/alt-text string?)
@@ -125,30 +125,41 @@ gzip :: Metadata -> FinalHtml -> Effect Unit
 (s/def :obsidian/index (s/and not-empty (s/map-of :file/name :file/path)))
 (s/def :obsidian/replacements (s/map-of :obsidian/link :file/path))
 
-(s/def :meta/slug #(re-matches #"[\w-]*" %))
-(s/def :meta/title non-empty-str?)
-(s/def :meta/title-image :obsidian/link-text)
-(s/def :meta/title-images :remote/content)
-(s/def :meta/type #{:article :standalone})
-(s/def :meta/description non-empty-str?)
-(s/def :meta/published-on #(re-matches #"\d{4}-\d{2}-\d{2}" %))
+(s/def :blog/slug #(re-matches #"[\w-]*" %))
+(s/def :blog/title non-empty-str?)
+(s/def :blog/title-image :obsidian/link-text)
+(s/def :blog/title-images :remote/content)
+(s/def :blog/type #{:article :standalone})
+(s/def :blog/description non-empty-str?)
+(s/def :blog/published-on #(re-matches #"\d{4}-\d{2}-\d{2}" %))
+(s/def :blog/static-content non-empty-str?)
+
+(s/def :blog/raw-meta (s/keys :req-un [:blog/slug
+                                       :blog/title
+                                       :blog/title-image
+                                       :blog/type
+                                       :blog/description
+                                       :blog/published-on]))
 
 
-(s/def :meta/raw-meta (s/keys :req-un [:meta/slug
-                                       :meta/title
-                                       :meta/title-image
-                                       :meta/type
-                                       :meta/description
-                                       :meta/published-on]))
+(s/def :blog/metadata (s/keys :req-un [:blog/slug
+                                       :blog/title
+                                       :blog/title-images
+                                       :blog/type
+                                       :blog/description
+                                       :blog/published-on
+                                       :obsidian/body]))
+
+(s/def :blog/article
+  (s/keys :req-un [:blog/slug
+                   :blog/title
+                   :blog/title-images
+                   :blog/type
+                   :blog/description
+                   :blog/published-on
+                   :blog/static-content]))
 
 
-(s/def :meta/metadata (s/keys :req-un [:meta/slug
-                                       :meta/title
-                                       :meta/title-images
-                                       :meta/type
-                                       :meta/description
-                                       :meta/published-on]))
-
-
-
+(s/def :blog/db
+  (s/map-of :blog/slug :blog/article))
 

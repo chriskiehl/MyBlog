@@ -23,6 +23,7 @@
       [:li [:a {:href "/about"} "About"]]
       [:li [:a {:href "https://github.com/chriskiehl" :target "_blank"} "Projects"]]
       [:li [:a {:href "mailto:me@chriskiehl.com"} "Contact"]]
+      [:li [:b [:a {:href "/help-plz"} "Halp!"]]]
       [:li [:a {:href "/rss.xml" :target "_blank"} "RSS Feed"]]]]])
 
 
@@ -160,31 +161,11 @@
            [:div.markdown-body (md/md-to-html-string about-me!)]]))
 
 
-(defn article-page [{:keys [title published-body] :as article}]
+(defn article-page [{:keys [title static-content] :as article}]
   (base-page
     :title title
     :body [:div
-           [:article {:id "article"} published-body]]))
+           [:article {:id "article"} static-content]]))
 
 
-
-(defn patrons-page [{:keys [last-updated patrons] :as cool-people}]
-  (base-page
-    :title "Patrons - the mightiest of people!"
-    :body
-    [:div
-     [:div
-      [:img.about-photo {:src "https://s3.amazonaws.com/awsblogstore/main/images/chriskiehl-website-waving-banner.jpg"}]
-      [:h1 "These awesome people and organizations are supporting open source on "
-        [:a {:href "https://www.patreon.com/chriskiehl"} "Patreon"]]
-      [:p (str "Last updated on " last-updated)]]
-     [:div
-      (for [{:keys [group names]} patrons]
-        (when (seq names)
-          [:div
-           [:h3 group]
-           [:ul
-             (for [name names]
-               [:li name])]]))]
-     [:h2 " -- Thank you!"]]))
 

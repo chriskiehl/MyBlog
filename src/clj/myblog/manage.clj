@@ -29,38 +29,33 @@
     (write-gzip  target-file html)))
 
 
-(defn- save-metadata [metadata]
-  (let [resource (clojure.java.io/resource "public/data/data.edn")
-        data (read-string (slurp resource))]
-    (->> (assoc data (:slug metadata) metadata)
-         (spit resource))))
 
+(defn reload-all
+  "Here for the times when I need to re-render
+  all the static content."
+  [published-path]
+  (doseq [f (->> (file-seq (clojure.java.io/file published-path))
+                 (filter #(.isFile %))
+                 ;; the theater article is a javascript rendered page, so there's
+                 ;; no edn blob or markdown for us to process. Thus: excluded.
+                 (filter #(not (clojure.string/includes? (.getAbsolutePath %) "Theater"))))]
+    (println (.getAbsolutePath f))
+    (myblog.manage/add-page (.getAbsolutePath f))))
 
-(defn- obsidian->blog-page
-  [file-path]
-  (let [{:keys [:meta/metadata :obsidian/body]} (obsidian/obsidian->html file-path)]
-    {:metadata metadata
-     :html (pages/build-markdown-page metadata body)}))
 
 
 (defn add-page
   [file-path]
   {:pre [(t/>> :local/url file-path)]}
-  (let [x (obsidian->blog-page file-path)]
-    (save-metadata (:metadata x))
-    (save-page (-> x :metadata :slug) (:html x))))
+  (let [db (myblog.storage/load-db)
+        page (obsidian/obsidian->blog file-path)]
+    (myblog.storage/save-db (assoc db (:slug page) page))))
 
 
 (defn remove-page [slug]
-  (let [page (clojure.java.io/resource (str "public/pages/" slug))
-        resource (clojure.java.io/resource "public/data/data.edn")
-        data (read-string (slurp resource))]
+  (let [db (myblog.storage/load-db)
+        page (clojure.java.io/resource (str "public/pages/" slug))]
     (io/delete-file (.getPath page))
-    (->> (dissoc data slug)
-         (spit resource))))
+    (->> (dissoc db slug)
+         (myblog.storage/save-db))))
 
-
-(defn update-roots []
-  (do
-    (save-page "home" (pages/build-home))
-    (save-page "rss.xml" (pages/build-rss))))
