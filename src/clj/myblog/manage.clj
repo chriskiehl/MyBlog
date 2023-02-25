@@ -29,6 +29,24 @@
     (write-gzip  target-file html)))
 
 
+(defn add-page
+  "Adds a new statically rendered page into our 'db'"
+  [file-path]
+  {:pre [(t/>> :local/url file-path)]}
+  (let [db (myblog.storage/load-db)
+        page (obsidian/obsidian->blog file-path)]
+    (myblog.storage/save-db (assoc db (:slug page) page))))
+
+
+(defn remove-page
+  "Removes an existing page from our 'db'"
+  [slug]
+  (let [db (myblog.storage/load-db)
+        page (clojure.java.io/resource (str "public/pages/" slug))]
+    (io/delete-file (.getPath page))
+    (->> (dissoc db slug)
+         (myblog.storage/save-db))))
+
 
 (defn reload-all
   "Here for the times when I need to re-render
@@ -40,22 +58,4 @@
                  ;; no edn blob or markdown for us to process. Thus: excluded.
                  (filter #(not (clojure.string/includes? (.getAbsolutePath %) "Theater"))))]
     (println (.getAbsolutePath f))
-    (myblog.manage/add-page (.getAbsolutePath f))))
-
-
-
-(defn add-page
-  [file-path]
-  {:pre [(t/>> :local/url file-path)]}
-  (let [db (myblog.storage/load-db)
-        page (obsidian/obsidian->blog file-path)]
-    (myblog.storage/save-db (assoc db (:slug page) page))))
-
-
-(defn remove-page [slug]
-  (let [db (myblog.storage/load-db)
-        page (clojure.java.io/resource (str "public/pages/" slug))]
-    (io/delete-file (.getPath page))
-    (->> (dissoc db slug)
-         (myblog.storage/save-db))))
-
+    (add-page (.getAbsolutePath f))))
