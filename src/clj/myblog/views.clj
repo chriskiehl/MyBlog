@@ -66,7 +66,7 @@
     [:small (format "Made by a human being. Not GPT")]]])
 
 
-(defn base-page [& {:keys [title body]
+(defn base-page [& {:keys [title body meta]
                     :or  {title ""}
                     :as  params}]
   (html5
@@ -75,6 +75,8 @@
              :content "text/html;charset=UTF-8"}]
      [:meta {:name "viewport"
              :content "width=device-width"}]
+     [:meta {:name "description"
+             :content (or meta "A pretty cool website")}]
      [:script {:src "https://polyfill.io/v3/polyfill.min.js?features=es6"}]
      [:script#MathJax-script {:async "true" :src "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"}]
      (javascript-tag "window.MathJax = {
@@ -164,9 +166,10 @@
            [:div.markdown-body (md/md-to-html-string about-me!)]]))
 
 
-(defn article-page [{:keys [title static-content] :as article}]
+(defn article-page [{:keys [title description static-content] :as article}]
   (base-page
     :title title
+    :meta description
     :body [:div
            [:article {:id "article"} static-content]]))
 
