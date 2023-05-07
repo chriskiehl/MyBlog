@@ -89,6 +89,9 @@
       [:div.primary-content {:style "margin-top: 25px;"}
        body]]
      (footer)
+     [:script {:defer "true"
+               :src "https://static.cloudflareinsights.com/beacon.min.js"
+               :data-cf-beacon "{\"token\": \"d3e0e137186d4250959fda9d93cfaeff\"}"}]
      (include-js "/js/external/highlight.js")
      "<script>hljs.initHighlightingOnLoad()</script>"
      ]))
