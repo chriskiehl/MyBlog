@@ -1,4 +1,4 @@
-FROM clojure:latest
+FROM clojure:temurin-17-lein-2.10.0-alpine
 COPY . /usr/src/clj/myblog
 WORKDIR /usr/src/clj/myblog
 RUN ["lein", "uberjar"]
