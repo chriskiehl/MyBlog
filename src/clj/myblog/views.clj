@@ -23,8 +23,9 @@
       [:li [:a {:href "/about"} "About"]]
       [:li [:a {:href "https://github.com/chriskiehl" :target "_blank"} "Projects"]]
       [:li [:a {:href "mailto:me@chriskiehl.com"} "Contact"]]
+      [:li [:a {:href "https://www.manning.com/books/data-oriented-programming-in-java"} "Book"]]
       [:li [:b [:a {:href "/help-plz"} "Halp!"]]]
-      [:li [:a {:href "/rss.xml" :target "_blank"} "RSS Feed"]]]]])
+      [:li [:a {:href "/rss.xml" :target "_blank"} "RSS"]]]]])
 
 
 (defn popular-preview [{:keys [title slug title-images] :as article}]
