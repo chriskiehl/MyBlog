@@ -149,8 +149,6 @@
             [:div "uh oh. We didn't find anything. This is an error!"]
             [:div
              (most-recent (first articles))
-             [:div.section.most-popular
-              (most-popular popular)]
              [:section.section-last
               (all-articles articles)]
              ])))
