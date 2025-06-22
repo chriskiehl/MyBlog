@@ -78,13 +78,11 @@
              :content "width=device-width"}]
      [:meta {:name "description"
              :content (or meta "A pretty cool website")}]
-     [:script {:src "https://polyfill.io/v3/polyfill.min.js?features=es6"}]
-     [:script#MathJax-script {:async "true" :src "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"}]
+     [:script#MathJax-script {:async "true" :src "/js/external/highlight.js"}]
      (javascript-tag "window.MathJax = {
         tex: {inlineMath: [['$', '$'], ['\\\\(', '\\\\)']]}};")
      (include-css "/css/styles.css")
      (include-css "/css/highlight.css")
-     (include-css "https://d39wtn5cxihhz5.cloudfront.net/content/styles-12341232.css")
      [:title (str title " - Blogomatano")]]
     [:body
      [:div.blog-container
