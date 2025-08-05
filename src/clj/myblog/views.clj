@@ -78,7 +78,7 @@
              :content "width=device-width"}]
      [:meta {:name "description"
              :content (or meta "A pretty cool website")}]
-     [:script#MathJax-script {:async "true" :src "/js/external/highlight.js"}]
+     [:script#MathJax-script {:async "true" :src "/js/external/mathjax.js"}]
      (javascript-tag "window.MathJax = {
         tex: {inlineMath: [['$', '$'], ['\\\\(', '\\\\)']]}};")
      (include-css "/css/styles.css")
