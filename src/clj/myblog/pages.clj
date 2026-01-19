@@ -38,3 +38,6 @@
                           (sort-by :published-on)
                           (reverse))]
     (views/rss-feed all-articles)))
+
+
+(defn robots [] "User-agent: *\nAllow: /")

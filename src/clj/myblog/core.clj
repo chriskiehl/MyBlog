@@ -36,6 +36,11 @@
           response
           (content-type "application/xml")))
 
+(defn robots []
+  (-> (pages/robots)
+       response
+       (content-type "text/plain")))
+
 
 (defroutes app-routes
    (routes
@@ -44,6 +49,7 @@
      (GET "/help-plz" [] (retrieve-article db "halp-plz"))
      (GET "/rss.xml" [] (rss-feed db))
      (GET "/article/:slug" [slug] (retrieve-article db slug))
+     (GET "/robots.txt" [] (robots))
      (route/resources "/")
      (route/not-found "Wha? Geit outta here")))
 
