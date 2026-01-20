@@ -67,7 +67,7 @@
     [:small (format "Made by a human being. Not GPT")]]])
 
 
-(defn base-page [& {:keys [title body meta]
+(defn base-page [& {:keys [title body meta canonical-path]
                     :or  {title ""}
                     :as  params}]
   (html5
@@ -78,6 +78,8 @@
              :content "width=device-width"}]
      [:meta {:name "description"
              :content (or meta "A pretty cool website")}]
+     (when canonical-path
+       [:link {:rel "canonical" :href (str "https://chriskiehl.com/" canonical-path)}])
      [:script#MathJax-script {:async "true" :src "/js/external/mathjax.js"}]
      (javascript-tag "window.MathJax = {
         tex: {inlineMath: [['$', '$'], ['\\\\(', '\\\\)']]}};")
@@ -143,6 +145,7 @@
 (defn home-page [articles popular]
   (base-page
     :title "Home"
+    :canonical-path ""
     :body (if (empty? articles)
             [:div "uh oh. We didn't find anything. This is an error!"]
             [:div
@@ -155,6 +158,7 @@
 (defn about-page [about-me!]
   (base-page
     :title "About"
+    :canonical-path "about"
     :body [:div
            [:img.about-photo {:src "https://s3.amazonaws.com/awsblogstore/main/images/self-portrait-2018.png"
                               :srcset "https://s3.amazonaws.com/awsblogstore/articles/52ac83c1/fa0e332c-self-portrait-2018-2960px.jpeg 2960w, https://s3.amazonaws.com/awsblogstore/articles/52ac83c1/fa0e332c-self-portrait-2018-2466px.jpeg 2466w, https://s3.amazonaws.com/awsblogstore/articles/52ac83c1/fa0e332c-self-portrait-2018-1972px.jpeg 1972w, https://s3.amazonaws.com/awsblogstore/articles/52ac83c1/fa0e332c-self-portrait-2018-1478px.jpeg 1478w, https://s3.amazonaws.com/awsblogstore/articles/52ac83c1/fa0e332c-self-portrait-2018-984px.jpeg 984w, https://s3.amazonaws.com/awsblogstore/articles/52ac83c1/fa0e332c-self-portrait-2018-490px.jpeg 490w"
@@ -163,9 +167,12 @@
            [:div.markdown-body (md/md-to-html-string about-me!)]]))
 
 
-(defn article-page [{:keys [title description static-content] :as article}]
+(defn article-page [{:keys [title description static-content type slug] :as article}]
   (base-page
     :title title
+    :canonical-path (if (= type :article)
+                      (str "article/" slug)
+                      slug)
     :meta description
     :body [:div
            [:article {:id "article"} static-content]]))

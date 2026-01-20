@@ -46,7 +46,7 @@
    (routes
      (GET "/" [] (pages/home db))
      (GET "/about" [] (retrieve-article db "about"))
-     (GET "/help-plz" [] (retrieve-article db "halp-plz"))
+     (GET "/help-plz" [] (retrieve-article db "help-plz"))
      (GET "/rss.xml" [] (rss-feed db))
      (GET "/article/:slug" [slug] (retrieve-article db slug))
      (GET "/robots.txt" [] (robots))

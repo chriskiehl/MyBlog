@@ -7,4 +7,6 @@
   (case cmd
     "add-page"     (do (m/add-page path)
                        (println "All done!"))
+    "remove-page"     (do (m/remove-page path)
+                       (println "All done!"))
     "unrecognized argument"))

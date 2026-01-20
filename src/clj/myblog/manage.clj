@@ -41,9 +41,7 @@
 (defn remove-page
   "Removes an existing page from our 'db'"
   [slug]
-  (let [db (myblog.storage/load-db)
-        page (clojure.java.io/resource (str "public/pages/" slug))]
-    (io/delete-file (.getPath page))
+  (let [db (myblog.storage/load-db)]
     (->> (dissoc db slug)
          (myblog.storage/save-db))))
 
