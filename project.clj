@@ -29,7 +29,6 @@
                  [compojure "1.6.1"]
                  ;[rum "0.11.2"]
                  [figwheel-sidecar "0.5.18"]
-                 [buddy "2.0.0"]
                  [buddy/buddy-auth "2.1.0"]
                  [com.fasterxml.jackson.core/jackson-databind "2.9.7"]
                  [cljsjs/showdown "1.8.6-0"]
