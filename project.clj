@@ -28,7 +28,6 @@
                  [org.clojure/core.async "0.4.490"]
                  [compojure "1.6.1"]
                  ;[rum "0.11.2"]
-                 [figwheel-sidecar "0.5.18"]
                  [buddy/buddy-auth "2.1.0"]
                  [com.fasterxml.jackson.core/jackson-databind "2.9.7"]
                  [cljsjs/showdown "1.8.6-0"]
@@ -39,12 +38,9 @@
                  [com.cognitect.aws/logs "822.2.1145.0"]
                  [com.cognitect.aws/s3 "822.2.1145.0"]]
   :ring {:handler myblog.core/app}
-  :plugins [[lein-environ "1.1.0"]
-            [lein-exec "0.3.7"]
-            [lein-ring "0.12.5"]
-            [lein-cljsbuild "1.1.7"]
-            [lein-figwheel "0.5.18"]
-            [lein-classpath-jar "0.1.0"]]
+  :repositories [["central" "https://repo.maven.apache.org/maven2/"]
+                 ["clojars" "https://repo.clojars.org/"]]
+  :plugins [[lein-environ "1.1.0"]]
   :source-paths ["src/clj" "script"]
   :clean-targets [:target-path "out"]
   :cljsbuild {
