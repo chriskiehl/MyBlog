@@ -4,7 +4,7 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
-  :repositories [["central" "https://repo.maven.apache.org/maven2/"]
+  :repositories [["central" "https://maven-central.storage-download.googleapis.com/maven2/"]
                  ["clojars" "https://repo.clojars.org/"]]
 
   :dependencies [[org.clojure/clojure "1.10.1"]

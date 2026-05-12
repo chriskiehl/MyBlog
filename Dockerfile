@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1.7
-
 FROM clojure:temurin-17-lein AS build
 WORKDIR /usr/src/clj/myblog
 
@@ -9,16 +7,9 @@ ENV JAVA_TOOL_OPTIONS="-Djava.net.preferIPv4Stack=true \
 -Dmaven.wagon.rto=120000"
 
 COPY project.clj .
-RUN mkdir -p /root/.m2
-COPY maven-settings.xml /root/.m2/settings.xml
-RUN --mount=type=cache,target=/root/.m2/repository \
-    --mount=type=cache,target=/root/.lein \
-    lein deps
-
+RUN lein deps
 COPY . .
-RUN --mount=type=cache,target=/root/.m2/repository \
-    --mount=type=cache,target=/root/.lein \
-    lein uberjar
+RUN lein uberjar
 
 FROM amazoncorretto:17
 WORKDIR /
