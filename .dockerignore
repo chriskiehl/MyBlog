@@ -1,0 +1,13 @@
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+
+.git
+.gitignore
+profiles.clj
+.lein-env
+.cpcache
+target
+.idea
+*.iml
+all-combined.txt
+b64test.txt
