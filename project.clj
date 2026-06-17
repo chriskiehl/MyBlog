@@ -60,7 +60,9 @@
 
   :ring {:handler myblog.core/app}
 
-  :plugins [[lein-environ "1.1.0"]]
+  :plugins [[lein-environ "1.1.0"]
+            [lein-exec "0.3.7"]
+            [lein-ring "0.12.5"]]
 
   :source-paths ["src/clj" "script"]
   :clean-targets [:target-path "out"]
